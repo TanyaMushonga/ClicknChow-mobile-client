@@ -22,7 +22,7 @@ const CustomHeader = () => {
         <TouchableOpacity
           className="rounded-full overflow-hidden"
           onPress={() => {
-            route.push("/account");
+          
           }}
         >
           {imgUrl ? (
