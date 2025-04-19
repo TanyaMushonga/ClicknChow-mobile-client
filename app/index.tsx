@@ -1,20 +1,35 @@
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { View, ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Index = () => {
-  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    setIsMounted(true);
+    const checkInitialRoute = async () => {
+      try {
+        const hasOnboarded = await AsyncStorage.getItem("hasOnboarded");
+
+        if (hasOnboarded === "true") {
+          router.replace("/(root)/(tabs)/home");
+        } else {
+          router.replace("/(auth)/welcome");
+        }
+      } catch (error) {
+        console.error("Error checking initial route:", error);
+        router.replace("/(auth)/welcome");
+      }
+    };
+
+    checkInitialRoute();
   }, []);
 
-  useEffect(() => {
-    if (isMounted) {
-      router.push("/(auth)/welcome");
-    }
-  }, [isMounted]);
-
-  return null;
+  return (
+    <View className="flex-1 items-center justify-center bg-background">
+      <ActivityIndicator size="large" color="#df4124" />
+    </View>
+  );
 };
 
 export default Index;

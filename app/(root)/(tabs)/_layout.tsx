@@ -1,95 +1,81 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { useRouter, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
+import { useColorScheme } from "react-native";
 
-const CustomHeader = () => {
-  const route = useRouter();
-  const imgUrl = null;
-  return (
-    <View className="flex-row justify-between items-center px-4 pt-10 pb-4 bg-white border-b border-gray-200">
-      <Text className="text-3xl font-bold">Bophelo</Text>
-      <View className="flex-row items-center">
-        <TouchableOpacity
-          className="mr-4"
-          onPress={() => {
-        
-          }}
-        >
-          <Ionicons name="notifications-outline" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="rounded-full overflow-hidden"
-          onPress={() => {
-          
-          }}
-        >
-          {imgUrl ? (
-            <Image
-              source={{ uri: "https://example.com/profile-photo.jpg" }}
-              className="w-8 h-8"
-            />
-          ) : (
-            <View className="bg-gray-400 p-2">
-              <AntDesign name="user" size={24} color="black" />
-            </View>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-
-const _layout = () => {
+const TabsLayout = () => {
+  const colorScheme = useColorScheme();
   return (
     <Tabs
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName:
-            | "home"
-            | "home-outline"
-            | "person"
-            | "person-outline"
-            | "people"
-            | "people-outline"
-            | "chatbox"
-            | "chatbox-outline"
-            | undefined;
+          let iconName: keyof typeof Ionicons.glyphMap;
 
-          if (route.name === "home") {
-            iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "patients") {
-            iconName = focused ? "people" : "people-outline";
-          } else if (route.name === "consultation") {
-            iconName = focused ? "chatbox" : "chatbox-outline";
-          } else if (route.name === "account") {
-            iconName = focused ? "person" : "person-outline";
+          switch (route.name) {
+            case "home":
+              iconName = focused ? "home" : "home-outline";
+              break;
+            case "search":
+              iconName = focused ? "search" : "search-outline";
+              break;
+            case "order":
+              iconName = focused ? "receipt" : "receipt-outline";
+              break;
+            case "cart":
+              iconName = focused ? "cart" : "cart-outline";
+              break;
+            case "profile":
+              iconName = focused ? "person" : "person-outline";
+              break;
+            default:
+              iconName = "home-outline";
           }
 
-          // You can return any component that you like here!
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#51a9e7",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: "#df4124",
+        tabBarInactiveTintColor: colorScheme === "dark" ? "#a0a0a0" : "gray",
         tabBarStyle: {
-          backgroundColor: "#f8f8f8",
+          backgroundColor: colorScheme === "dark" ? "#121212" : "#ffffff",
           paddingBottom: 5,
+          height: 60,
+          borderTopColor: colorScheme === "dark" ? "#2c2c2c" : "#e0e0e0",
         },
+        headerShown: false,
       })}
     >
       <Tabs.Screen
         name="home"
         options={{
-          headerShown: true,
-          header: () => <CustomHeader />,
+          title: "Home",
         }}
       />
-      <Tabs.Screen name="patients" options={{ headerShown: false }} />
-      <Tabs.Screen name="consultation" options={{ headerShown: false }} />
-      <Tabs.Screen name="account" options={{ headerShown: false }} />
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: "Search",
+        }}
+      />
+      <Tabs.Screen
+        name="order"
+        options={{
+          title: "Orders",
+        }}
+      />
+      <Tabs.Screen
+        name="cart"
+        options={{
+          title: "Cart",
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+        }}
+      />
     </Tabs>
   );
 };
 
-export default _layout;
+export default TabsLayout;

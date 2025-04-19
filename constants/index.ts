@@ -1,32 +1,32 @@
-import lottery1 from "../assets/images/lottery1.jpg";
-import lottery2 from "../assets/images/lottery2.jpg";
-import lottery3 from "../assets/images/lottery3.jpg";
+import food1 from "../assets/images/onboarding/food1.jpg";
+import food2 from "../assets/images/onboarding/food2.jpg";
+import food3 from "../assets/images/onboarding/food3.jpg";
 
 export const images = {
-  lottery1,
-  lottery2,
-  lottery3,
+  food1,
+  food2,
+  food3,
 };
 
 export const onboarding = [
   {
     id: 1,
-    title: "Welcome to Zim Lottery",
-    description: "Experience the thrill of winning big with Zim Lottery.",
-    image: images.lottery1,
+    title: "Welcome to Click n Chow",
+    description: "Delicious meals delivered right to your doorstep.",
+    image: images.food1,
   },
   {
     id: 2,
-    title: "Easy Ticket Purchase",
+    title: "Easy Ordering Process",
     description:
-      "Buy lottery tickets quickly and securely from the comfort of your home.",
-    image: images.lottery2,
+      "Browse restaurants, customize your meals, and order in just a few taps.",
+    image: images.food2,
   },
   {
     id: 3,
-    title: "Track Your Winnings",
+    title: "Track Your Delivery",
     description:
-      "Keep track of your tickets and check if you've won instantly.",
-    image: images.lottery3,
+      "Stay updated with real-time tracking and never miss a meal again.",
+    image: images.food3,
   },
 ];

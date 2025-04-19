@@ -3,23 +3,34 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 import { onboarding } from "@/constants/index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Welcome = () => {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const swiperRef = React.useRef<Swiper | null>(null);
 
-  const handleSkip = () => {
-    router.push("/signIn");
-  };
+const handleSkip = async () => {
+  try {
+    await AsyncStorage.setItem("hasOnboarded", "true");
+    router.replace("/(root)/(tabs)/home");
+  } catch (error) {
+    console.error("Error saving onboarding status:", error);
+  }
+};
 
-  const handleNext = () => {
-    if (currentIndex === onboarding.length - 1) {
-      router.push("/signIn");
-    } else {
-      swiperRef.current?.scrollBy(1);
+const handleNext = async () => {
+  if (currentIndex === onboarding.length - 1) {
+    try {
+      await AsyncStorage.setItem("hasOnboarded", "true");
+      router.replace("/(root)/(tabs)/home");
+    } catch (error) {
+      console.error("Error saving onboarding status:", error);
     }
-  };
+  } else {
+    swiperRef.current?.scrollBy(1);
+  }
+};
 
   return (
     <View className="flex flex-1 h-full relative bg-background dark:bg-background">
