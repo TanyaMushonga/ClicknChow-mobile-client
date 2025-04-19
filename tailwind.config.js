@@ -1,10 +1,48 @@
+ow / tailwind.config.js;
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // NOTE: Update this to include the paths to all of your component files.
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
-  presets: [require("nativewind/preset")],
+  content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: "#df4124",
+          light: "#f86442",
+          dark: "#b33015",
+        },
+        secondary: "#2b4c7e",
+        accent: "#ff934f",
+        background: "#ffffff",
+        surface: "#f5f5f5",
+        text: {
+          primary: "#1a1a1a",
+          secondary: "#4a4a4a",
+        },
+        border: "#e0e0e0",
+        error: "#dc2626",
+        success: "#059669",
+        warning: "#f59e0b",
+      },
+      darkMode: {
+        primary: {
+          DEFAULT: "#ff5a3c",
+          light: "#ff7a61",
+          dark: "#df4124",
+        },
+        secondary: "#3e6db2",
+        accent: "#ffb067",
+        background: "#121212",
+        surface: "#1e1e1e",
+        text: {
+          primary: "#ffffff",
+          secondary: "#a0a0a0",
+        },
+        border: "#2c2c2c",
+        error: "#ef4444",
+        success: "#10b981",
+        warning: "#f59e0b",
+      },
+    },
   },
   plugins: [],
-}
+};

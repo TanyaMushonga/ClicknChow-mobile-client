@@ -27,10 +27,10 @@ const SignIn = () => {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" className="flex-1 bg-white">
+    <KeyboardAvoidingView behavior="padding" className="flex-1">
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View className="flex-1 bg-white">
+          <View className="flex-1">
             <View className="w-full flex flex-row">
               <TouchableOpacity
                 className="w-3/4 ps-10 py-16"
