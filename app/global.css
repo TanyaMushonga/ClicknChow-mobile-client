@@ -1,10 +1,12 @@
+/* global.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
+  /* Light Theme */
   --primary: #df4124;
-  --primary-light: #f86442;
+  --primary-light: #ff6b4a;
   --primary-dark: #b33015;
   --secondary: #2b4c7e;
   --accent: #ff934f;
@@ -19,6 +21,7 @@
 }
 
 [data-theme="dark"] {
+  /* Dark Theme */
   --primary: #ff5a3c;
   --primary-light: #ff7a61;
   --primary-dark: #df4124;
@@ -34,12 +37,7 @@
   --warning: #f59e0b;
 }
 
-.bg-primary {
-  background-color: var(--primary);
-}
-.text-primary-color {
-  color: var(--primary);
-}
-.border-primary {
-  border-color: var(--primary);
-}
+/* Utility Classes */
+.bg-primary { background-color: var(--primary); }
+.text-primary { color: var(--primary); }
+.border-primary { border-color: var(--primary); }

@@ -26,7 +26,7 @@ const Index = () => {
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center bg-background">
+    <View className="flex-1 items-center justify-center">
       <ActivityIndicator size="large" color="#df4124" />
     </View>
   );

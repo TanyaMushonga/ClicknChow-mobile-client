@@ -1,47 +1,25 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
-  // NOTE: Update this to include the paths to all of your component files.
+  darkMode: "class",
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "#df4124",
-          light: "#f86442",
-          dark: "#b33015",
-        },
-        secondary: "#2b4c7e",
-        accent: "#ff934f",
-        background: "#ffffff",
-        surface: "#f5f5f5",
-        text: {
-          primary: "#1a1a1a",
-          secondary: "#4a4a4a",
-        },
-        border: "#e0e0e0",
-        error: "#dc2626",
-        success: "#059669",
-        warning: "#f59e0b",
-      },
-      darkMode: {
-        primary: {
-          DEFAULT: "#ff5a3c",
-          light: "#ff7a61",
-          dark: "#df4124",
-        },
-        secondary: "#3e6db2",
-        accent: "#ffb067",
-        background: "#121212",
-        surface: "#1e1e1e",
-        text: {
-          primary: "#ffffff",
-          secondary: "#a0a0a0",
-        },
-        border: "#2c2c2c",
-        error: "#ef4444",
-        success: "#10b981",
-        warning: "#f59e0b",
+        // Map all colors to CSS variables
+        primary: "var(--primary)",
+        "primary-light": "var(--primary-light)",
+        "primary-dark": "var(--primary-dark)",
+        secondary: "var(--secondary)",
+        accent: "var(--accent)",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        border: "var(--border)",
+        error: "var(--error)",
+        success: "var(--success)",
+        warning: "var(--warning)",
       },
     },
   },
