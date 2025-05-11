@@ -7,6 +7,9 @@ const _layout = () => {
     <GestureHandlerRootView>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="notifications" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="address" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );
