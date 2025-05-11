@@ -58,7 +58,7 @@ const handleNext = async () => {
               <Text className="text-4xl font-bold mb-2 text-background text-center">
                 {item.title}
               </Text>
-              <Text className="text-xl text-center text-background">
+              <Text className="text-xl text-center text-background px-4">
                 {item.description}
               </Text>
             </View>
