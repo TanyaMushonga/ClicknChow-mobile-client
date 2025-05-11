@@ -1,11 +1,13 @@
 import food1 from "../assets/images/onboarding/food1.jpg";
 import food2 from "../assets/images/onboarding/food2.jpg";
 import food3 from "../assets/images/onboarding/food3.jpg";
+import placeholder from "../assets/placeholder.png"
 
 export const images = {
   food1,
   food2,
   food3,
+  placeholder
 };
 
 export const onboarding = [
