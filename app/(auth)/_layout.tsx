@@ -35,7 +35,6 @@ const AuthLayout = () => {
   return (
     <Stack>
       <Stack.Screen name="welcome" options={{ headerShown: false }} />
-      <Stack.Screen name="Otp" options={{ headerShown: false }} />
     </Stack>
   );
 };
