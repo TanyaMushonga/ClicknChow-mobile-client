@@ -39,5 +39,37 @@
 
 /* Utility Classes */
 .bg-primary { background-color: var(--primary); }
+.bg-primary-light { background-color: var(--primary-light); }
+.bg-primary-dark { background-color: var(--primary-dark); }
+.bg-secondary { background-color: var(--secondary); }
+.bg-accent { background-color: var(--accent); }
+.bg-background { background-color: var(--background); }
+.bg-surface { background-color: var(--surface); }
+.bg-error { background-color: var(--error); }
+.bg-success { background-color: var(--success); }
+.bg-warning { background-color: var(--warning); }
+
 .text-primary { color: var(--primary); }
+.text-primary-light { color: var(--primary-light); }
+.text-primary-dark { color: var(--primary-dark); }
+.text-secondary { color: var(--secondary); }
+.text-accent { color: var(--accent); }
+.text-background { color: var(--background); }
+.text-surface { color: var(--surface); }
+.text-error { color: var(--error); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-text-primary { color: var(--text-primary); }
+.text-text-secondary { color: var(--text-secondary); }
+
 .border-primary { border-color: var(--primary); }
+.border-primary-light { border-color: var(--primary-light); }
+.border-primary-dark { border-color: var(--primary-dark); }
+.border-secondary { border-color: var(--secondary); }
+.border-accent { border-color: var(--accent); }
+.border-background { border-color: var(--background); }
+.border-surface { border-color: var(--surface); }
+.border-error { border-color: var(--error); }
+.border-success { border-color: var(--success); }
+.border-warning { border-color: var(--warning); }
+.border-border { border-color: var(--border); }
