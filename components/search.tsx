@@ -16,12 +16,12 @@ const Search = () => {
   return (
     <TouchableOpacity
       onPress={() => router.push("/search")}
-      className="mx-3"
+      className="my-3"
       style={[
         { padding: 10, borderRadius: 30 },
         colorScheme === "dark"
-          ? { backgroundColor: "#171717" }
-          : { backgroundColor: "#ecede9" },
+          ? { backgroundColor: "#252525" }
+          : { backgroundColor: "#f6f6f5" },
       ]}
     >
       <View className="flex flex-row w-full">
