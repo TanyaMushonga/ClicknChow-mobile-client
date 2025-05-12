@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import LocationHeader from "@/components/LocationHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Search from "@/components/search";
 
 const TabsLayout = () => {
   const colorScheme = useColorScheme();
@@ -43,7 +44,7 @@ const TabsLayout = () => {
             case "home":
               iconName = isFocused ? "home" : "home-outline";
               break;
-            case "search":
+            case "explore":
               iconName = isFocused ? "search" : "search-outline";
               break;
             case "order":
@@ -135,14 +136,24 @@ const TabsLayout = () => {
           header: () => (
             <SafeAreaView edges={["top"]}>
               <LocationHeader />
+              <View
+                style={[
+                  {
+                    borderBottomWidth: 1,
+                    marginBottom: 15,
+                    borderColor: colorScheme === "dark" ? "#181816" : "#d5d5d3",
+                  },
+                ]}
+              />
+              <Search />
             </SafeAreaView>
           ),
           headerShown: true,
         }}
       />
       <Tabs.Screen
-        name="search"
-        options={{ title: "Search", headerShown: false }}
+        name="explore"
+        options={{ title: "Explore", headerShown: false }}
       />
       <Tabs.Screen
         name="cart"

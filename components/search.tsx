@@ -14,9 +14,21 @@ const Search = () => {
   const router = useRouter();
 
   return (
-    <TouchableOpacity className="bg-primary p-2">
+    <TouchableOpacity
+      onPress={() => router.push("/search")}
+      className="mx-3"
+      style={[
+        { padding: 10, borderRadius: 30 },
+        colorScheme === "dark"
+          ? { backgroundColor: "#171717" }
+          : { backgroundColor: "#ecede9" },
+      ]}
+    >
       <View className="flex flex-row w-full">
-        <View className="flex flex-row items-center gap-4">
+        <View
+          className="flex flex-row items-center space-x-4"
+          style={{ display: "flex", gap: 3, alignItems: "center" }}
+        >
           <MaterialIcons
             name="search"
             size={26}
