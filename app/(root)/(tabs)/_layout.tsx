@@ -134,18 +134,8 @@ const TabsLayout = () => {
         options={{
           title: "home",
           header: () => (
-            <SafeAreaView edges={["top"]}>
+            <SafeAreaView edges={["top"]} style={{ height: 80 }}>
               <LocationHeader />
-              <View
-                style={[
-                  {
-                    borderBottomWidth: 1,
-                    marginBottom: 15,
-                    borderColor: colorScheme === "dark" ? "#181816" : "#d5d5d3",
-                  },
-                ]}
-              />
-              <Search />
             </SafeAreaView>
           ),
           headerShown: true,
