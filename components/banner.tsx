@@ -80,7 +80,7 @@ const Banner = () => {
   );
 
   return (
-    <>
+    <View>
       <FlatList
         ref={flatListRef}
         data={banners}
@@ -117,7 +117,7 @@ const Banner = () => {
           return <Animated.View key={i} style={[styles.dot, { opacity }]} />;
         })}
       </View>
-    </>
+    </View>
   );
 };
 
