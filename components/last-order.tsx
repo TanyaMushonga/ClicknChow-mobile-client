@@ -6,7 +6,7 @@ import { images } from "@/constants";
 const LastOrder = () => {
   return (
     <>
-      <View className="flex-row justify-between items-center mb-3">
+      <View className="flex-row justify-between items-center">
         <Text className="text-lg font-semibold text-black dark:text-white">
           Your Last Order
         </Text>
@@ -16,7 +16,7 @@ const LastOrder = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View className="bg-card dark:bg-card-dark rounded-xl shadow-sm p-4 flex flex-1 flex-row gap-4 items-center w-full">
+      <View className="bg-card dark:bg-card-dark rounded-xl shadow-sm p-3 flex flex-1 flex-row gap-4 items-center w-full">
         <View className="w-1/4">
           <Image source={images.burger} className="w-28 h-28 rounded-md" />
         </View>
