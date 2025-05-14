@@ -1,6 +1,8 @@
 import { images } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const deals = [
   {
@@ -11,7 +13,7 @@ const deals = [
     originalPrice: 32.99,
     price: 26.39,
     discount: "20% OFF",
-    endDate: "2025-05-12T14:30:00Z",
+    endDate: "2025-05-16T14:30:00Z",
     image: images.burger,
   },
   {
@@ -20,7 +22,7 @@ const deals = [
     desc: "Buy any large pizza, get 1 free",
     brand: "Domino's",
     price: 19.99,
-    endDate: "2025-05-12T14:30:00Z",
+    endDate: "2025-05-18T14:30:00Z",
     image: images.pizza,
   },
 ];
@@ -67,7 +69,10 @@ const DealBadge = ({ deal }: { deal: (typeof deals)[0] }) => {
   if (expired) return null;
 
   return (
-    <View className={`absolute top-3 left-3 z-10 px-2.5 py-1.5 rounded-xl`}>
+    <View
+      className={`absolute top-2 flex flex-row gap-2 items-center left-3 z-10 px-2.5 py-1.5 bg-foreground`}
+    >
+      <AntDesign name="clockcircle" size={11} color="white" />
       <Text className="text-white text-xs font-bold">
         Ends in {hours}h {minutes}m {seconds}s
       </Text>
@@ -78,7 +83,7 @@ const DealBadge = ({ deal }: { deal: (typeof deals)[0] }) => {
 const DealsAndCombos = () => {
   return (
     <View className="mt-4 mb-2">
-      <View className="flex-row justify-between items-center mb-3">
+      <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-bold text-black dark:text-white">
           Deals & Combos
         </Text>
@@ -93,16 +98,23 @@ const DealsAndCombos = () => {
         {deals.map((deal) => (
           <TouchableOpacity
             key={deal.id}
-            className="w-64 bg-card dark:bg-card-dark rounded-2xl mr-4 mb-2 shadow-sm overflow-hidden"
+            className="w-74 bg-card dark:bg-card-dark rounded-lg mr-4 mb-2 shadow-sm overflow-hidden"
           >
             <DealBadge deal={deal} />
 
-            <View className="h-32 bg-gray-200 dark:bg-gray-700 items-center justify-center">
+            <View className="relative h-32 bg-gray-200 dark:bg-gray-700 items-center justify-center">
               <Image
                 source={deal.image}
                 className="w-full h-full"
                 resizeMode="cover"
               />
+              <TouchableOpacity
+                className="absolute bottom-2 right-1 bg-foreground p-2 rounded-full shadow-xl"
+                style={{ elevation: 3 }}
+                onPress={() => {}}
+              >
+                <MaterialIcons name="add" size={24} color="white" />
+              </TouchableOpacity>
             </View>
 
             <View className="p-4">
@@ -114,30 +126,30 @@ const DealsAndCombos = () => {
                   {deal.title}
                 </Text>
                 {deal.discount && (
-                  <View className="bg-yellow-100 dark:bg-yellow-900 rounded-lg px-2 py-1 ml-2">
-                    <Text className="text-[#df4124] font-bold text-xs">
+                  <View className="bg-primary/30 rounded-full p-1 px-2">
+                    <Text className="text-primary font-bold text-xs">
                       {deal.discount}
                     </Text>
                   </View>
                 )}
               </View>
 
-              <Text className="text-gray-600 dark:text-gray-300 text-sm mt-1 mb-2">
+              <Text className="text-foreground dark:text-foreground-muted-dark text-md mt-1 mb-2">
                 {deal.desc}
               </Text>
 
               <View className="flex-row items-center justify-between">
-                <Text className="text-gray-500 dark:text-gray-400 text-sm">
+                <Text className="text-black dark:text-white text-md font-semibold">
                   {deal.brand}
                 </Text>
 
                 <View className="flex-row items-center">
                   {deal.originalPrice && (
-                    <Text className="text-gray-400 text-sm line-through mr-2">
+                    <Text className="text-foreground dark:text-foreground-muted-dark text-sm line-through mr-2">
                       ${deal.originalPrice.toFixed(2)}
                     </Text>
                   )}
-                  <Text className="text-[#df4124] font-bold text-lg">
+                  <Text className="text-[#df4124] font-bold text-md">
                     ${deal.price.toFixed(2)}
                   </Text>
                 </View>
