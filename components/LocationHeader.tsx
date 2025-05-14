@@ -23,17 +23,30 @@ export default function LocationHeader() {
           <View className="flex flex-row items-center gap-1">
             <MaterialIcons
               name="location-pin"
-              size={18}
+              size={36}
               color={colorScheme === "dark" ? "#fff" : "#000"}
             />
-            <Text className="text-black dark:text-white font-thin text-xl">
-              123, Main St, Nairobi
-            </Text>
-            <Entypo
-              name="chevron-small-down"
-              size={30}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
-            />
+            <View className="flex flex-col">
+              <Text
+                className="text-black dark:text-white font-semibold text-lg"
+                style={{ lineHeight: 20 }}
+              >
+                Deliver to
+              </Text>
+              <View className="flex flex-row item items-center">
+                <Text
+                  className="text-foreground dark:text-foreground-muted-dark font-thin text-md"
+                  style={{ lineHeight: 16 }}
+                >
+                  123, Main St, Nairobi
+                </Text>
+                <Entypo
+                  name="chevron-small-down"
+                  size={28}
+                  color={colorScheme === "dark" ? "#fff" : "#000"}
+                />
+              </View>
+            </View>
           </View>
         </TouchableOpacity>
         <View className="flex flex-row items-center gap-2">
