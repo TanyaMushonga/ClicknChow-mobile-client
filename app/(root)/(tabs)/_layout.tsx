@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import LocationHeader from "@/components/LocationHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Search from "@/components/search";
+ 
 
 const TabsLayout = () => {
   const colorScheme = useColorScheme();
@@ -134,7 +134,7 @@ const TabsLayout = () => {
         options={{
           title: "home",
           header: () => (
-            <SafeAreaView edges={["top"]} style={{ height: 80 }}>
+            <SafeAreaView edges={["top"]} style={{ height: 95 }}>
               <LocationHeader />
             </SafeAreaView>
           ),
@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cartButton: {
-    top: -20,
     width: 60,
     height: 60,
     borderRadius: 30,
