@@ -18,7 +18,7 @@ const BottomSheetLayout = forwardRef<
     children: ReactNode;
     visible: boolean;
     onClose: () => void;
-    point?: string;
+    point?: string | null;
   }
 >(({ children, visible, onClose, point }, ref) => {
   const colorScheme = useColorScheme();
