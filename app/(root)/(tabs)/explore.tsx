@@ -9,7 +9,7 @@ import React, { useRef, useState } from "react";
 import Search from "@/components/search";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ExploreFilters from "@/components/ExploreFilters";
-import Merchants from "@/components/Merchants";
+import Merchants from "@/components/merchant/MerchantsList";
 import FilterSheet from "@/components/sheets/Filter-sheet";
 import BottomSheetLayout from "@/components/BottomSheetLayout";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
@@ -68,7 +68,7 @@ const Explore = () => {
         onClose={handleTermsClose}
         point={"60%"}
       >
-        <DisclaimerSheet />
+        <DisclaimerSheet onClose={handleTermsClose} />
       </BottomSheetLayout>
     </View>
   );
