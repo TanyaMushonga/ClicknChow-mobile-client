@@ -1,61 +1,87 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, ScrollView } from "react-native";
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import { images } from "@/constants";
 
+const lastOrders = [
+  {
+    id: "1",
+    name: "Double Whopper",
+    restaurant: "Burger King",
+    image: images.burger,
+    price: 12.99,
+    date: "May 2, 2025",
+  },
+  {
+    id: "2",
+    name: "Chicken Wings",
+    restaurant: "KFC",
+    image: images.chicken,
+    price: 9.99,
+    date: "Apr 28, 2025",
+  },
+  {
+    id: "3",
+    name: "Margherita Pizza",
+    restaurant: "Pizza Hut",
+    image: images.pizza,
+    price: 14.5,
+    date: "Apr 25, 2025",
+  },
+  {
+    id: "4",
+    name: "Sushi Platter",
+    restaurant: "Sushi World",
+    image: images.sushi,
+    price: 18.75,
+    date: "Apr 20, 2025",
+  },
+];
+
 const LastOrder = () => {
   return (
-    <>
-      <View className="flex-row justify-between items-center">
+    <View className="mb-4">
+      <View className="flex-row justify-between items-center mb-3">
         <Text className="text-lg font-semibold text-black dark:text-white">
-          Your Last Order
+          Your Last Orders
         </Text>
         <TouchableOpacity>
-          <Text className="text-md text-primary dark:text-primary-dark font-semibold">
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark font-semibold">
             View All
           </Text>
         </TouchableOpacity>
       </View>
-      <View className="bg-card dark:bg-card-dark rounded-xl shadow-sm p-3 flex flex-1 flex-row gap-4 items-center w-full">
-        <View className="w-1/4">
-          <Image source={images.burger} className="w-28 h-28 rounded-md" />
-        </View>
-        <View className="flex flex-col w-3/4 pe-3">
-          <View className="rounded-xl flex-row justify-between items-center bg-green-300">
-            <View className="flex flex-col">
-              <Text className="text-xl font-semibold text-black dark:text-white">
-                Burger King
-              </Text>
-              <Text className="text-md text-black dark:text-white mt-1">
-                1x Double Whopper, 1x Fries
-              </Text>
-            </View>
 
-            <View className="items-end">
-              <Text className="text-md text-black dark:text-white">
-                May 2, 2025
-              </Text>
-              <Text className="text-lg font-bold text-black dark:text-white mt-1">
-                $12.99
-              </Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {lastOrders.map((order) => (
+          <TouchableOpacity
+            key={order.id}
+            className="mr-3 w-40"
+            activeOpacity={0.8}
+          >
+            <View className="relative">
+              <Image
+                source={order.image}
+                className="w-full h-24 rounded-md mb-2"
+                resizeMode="cover"
+              />
             </View>
-          </View>
-          <View className="flex-row mt-4">
-            <TouchableOpacity className="flex-1 bg-primary py-2 rounded-full me-4">
-              <Text className="text-center text-white font-semibold">
-                Reorder
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity className="flex-1 border border-gray-300 dark:border-white py-2 rounded-full">
-              <Text className="text-center text-black dark:text-white font-semibold">
-                Rate
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </>
+            <Text
+              className="text-lg font-semibold text-black dark:text-white"
+              numberOfLines={1}
+            >
+              {order.name}
+            </Text>
+            <Text
+              className="text-sm text-foreground dark:text-foreground-muted-dark"
+              numberOfLines={1}
+            >
+              {order.restaurant}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
-
 export default LastOrder;
