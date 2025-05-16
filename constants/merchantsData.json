@@ -1,0 +1,213 @@
+[
+  {
+    "id": "1",
+    "name": "Burger Palace",
+    "category": "American • Burgers",
+    "rating": 4.8,
+    "numberOfRatings": 428,
+    "orders": 1245,
+    "deliveryTime": "15-20 min",
+    "pickupTime": "10-15 min",
+    "distance": "0.5 km",
+    "status": "open",
+    "openingHours": {
+      "monday": { "open": "08:00", "close": "22:00" },
+      "tuesday": { "open": "08:00", "close": "22:00" },
+      "wednesday": { "open": "08:00", "close": "22:00" },
+      "thursday": { "open": "08:00", "close": "22:00" },
+      "friday": { "open": "08:00", "close": "22:00" },
+      "saturday": { "open": "09:00", "close": "23:00" },
+      "sunday": { "open": "10:00", "close": "22:00" }
+    },
+    "logo": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger.jpg",
+    "coverImage": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger2.jpg",
+    "isFavorite": false,
+    "isSponsored": true,
+    "deliveryFeeUSD": 4.88,
+    "deliveryFeeZIG": 120,
+    "minOrderUSD": 10,
+    "minOrderZIG": 250,
+    "coordinates": { "latitude": -17.824858, "longitude": 31.053028 },
+    "about": {
+      "description": "Home of the juiciest burgers since 2015. 100% organic beef.",
+      "dateJoined": "2020-05-15",
+      "phone": "+263772123456",
+      "email": "info@burgerpalace.com",
+      "website": "www.burgerpalace.com",
+      "socialMedia": {
+        "facebook": "facebook.com/burgerpalace",
+        "instagram": "instagram.com/burgerpalace"
+      }
+    },
+    "menu": {
+      "categories": [
+        {
+          "id": "cat1",
+          "name": "Burgers",
+          "products": [
+            {
+              "id": "b1",
+              "name": "Classic Burger",
+              "description": "Beef patty with lettuce, tomato, and special sauce",
+              "category": "Burgers",
+              "priceUSD": 8.99,
+              "priceZIG": 225,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 15,
+              "variants": [
+                {
+                  "id": "b1v1",
+                  "name": "Single",
+                  "priceUSD": 8.99,
+                  "priceZIG": 225
+                },
+                {
+                  "id": "b1v2",
+                  "name": "Double",
+                  "priceUSD": 11.99,
+                  "priceZIG": 300
+                }
+              ],
+              "addons": [
+                {
+                  "id": "b1a1",
+                  "name": "Cheese",
+                  "priceUSD": 1.5,
+                  "priceZIG": 38
+                },
+                {
+                  "id": "b1a2",
+                  "name": "Bacon",
+                  "priceUSD": 2.0,
+                  "priceZIG": 50
+                }
+              ],
+              "allergies": [
+                { "id": "b1al1", "name": "Gluten", "contains": "Wheat bun" },
+                { "id": "b1al2", "name": "Dairy", "contains": "Cheese" }
+              ],
+              "metrics": {
+                "popularity": 95,
+                "calories": 650,
+                "spiceLevel": 2
+              }
+            },
+            {
+              "id": "b2",
+              "name": "Chicken Zinger Burger",
+              "description": "Spicy fried chicken fillet with lettuce and mayo",
+              "category": "Burgers",
+              "priceUSD": 7.99,
+              "priceZIG": 200,
+              "isFeatured": false,
+              "availableFor": ["delivery"],
+              "preparationTime": 12,
+              "variants": [
+                {
+                  "id": "b2v1",
+                  "name": "Regular",
+                  "priceUSD": 7.99,
+                  "priceZIG": 200
+                },
+                {
+                  "id": "b2v2",
+                  "name": "Spicy",
+                  "priceUSD": 8.49,
+                  "priceZIG": 215
+                }
+              ],
+              "addons": [
+                {
+                  "id": "b2a1",
+                  "name": "Extra Mayo",
+                  "priceUSD": 0.5,
+                  "priceZIG": 13
+                },
+                {
+                  "id": "b2a2",
+                  "name": "Cheddar",
+                  "priceUSD": 1.0,
+                  "priceZIG": 25
+                }
+              ],
+              "allergies": [
+                { "id": "b2al1", "name": "Gluten", "contains": "Bun" },
+                { "id": "b2al2", "name": "Eggs", "contains": "Mayo" }
+              ],
+              "metrics": {
+                "popularity": 88,
+                "calories": 600,
+                "spiceLevel": 4
+              }
+            },
+            {
+              "id": "b3",
+              "name": "Veggie Burger",
+              "description": "Grilled veggie patty with lettuce, tomato, and vegan mayo",
+              "category": "Burgers",
+              "priceUSD": 6.99,
+              "priceZIG": 175,
+              "isFeatured": true,
+              "availableFor": ["pickup"],
+              "preparationTime": 10,
+              "variants": [
+                {
+                  "id": "b3v1",
+                  "name": "Standard",
+                  "priceUSD": 6.99,
+                  "priceZIG": 175
+                },
+                {
+                  "id": "b3v2",
+                  "name": "With Avocado",
+                  "priceUSD": 8.49,
+                  "priceZIG": 215
+                }
+              ],
+              "addons": [
+                {
+                  "id": "b3a1",
+                  "name": "Avocado",
+                  "priceUSD": 1.5,
+                  "priceZIG": 38
+                },
+                {
+                  "id": "b3a2",
+                  "name": "Vegan Cheese",
+                  "priceUSD": 1.75,
+                  "priceZIG": 45
+                }
+              ],
+              "allergies": [
+                { "id": "b3al1", "name": "Soy", "contains": "Soy patty" },
+                {
+                  "id": "b3al2",
+                  "name": "Gluten",
+                  "contains": "Whole wheat bun"
+                }
+              ],
+              "metrics": {
+                "popularity": 90,
+                "calories": 550,
+                "spiceLevel": 1,
+                "isVegetarian": true,
+                "isVegan": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "reviews": [
+      {
+        "id": "r1",
+        "userId": "user123",
+        "userName": "John D.",
+        "rating": 5,
+        "comment": "Best burgers in town!",
+        "date": "2023-05-15"
+      }
+    ]
+  }
+]
