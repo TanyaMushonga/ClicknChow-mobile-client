@@ -80,7 +80,7 @@ const TrendingNearYou = () => {
           Trending Near You
         </Text>
         <TouchableOpacity>
-          <Text className="text-md text-primary dark:text-primary-dark font-semibold">
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-darkfont-semibold">
             See All
           </Text>
         </TouchableOpacity>
@@ -102,13 +102,6 @@ const TrendingNearYou = () => {
                   className="w-full h-full"
                   resizeMode="cover"
                 />
-                <TouchableOpacity
-                  className="absolute bottom-1 right-1 bg-foreground p-2 rounded-full shadow-xl"
-                  style={{ elevation: 3 }}
-                  onPress={() => {}}
-                >
-                  <MaterialIcons name="add" size={24} color="white" />
-                </TouchableOpacity>
               </View>
 
               <View className="flex-1 p-2">
