@@ -9,8 +9,12 @@ const _layout = () => {
         <Stack.Screen name="notifications" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="address" options={{ headerShown: false }} />
-        <Stack.Screen name="search" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="search"
+          options={{ headerShown: false, presentation: "modal" }}
+        />
         <Stack.Screen name="storemap" options={{ headerShown: false }} />
+        <Stack.Screen name="merchant" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );
