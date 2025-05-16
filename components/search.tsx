@@ -16,7 +16,7 @@ const Search = () => {
   return (
     <TouchableOpacity
       onPress={() => router.push("/search")}
-      className="my-3"
+      className="my-3 w-[90%]"
       style={[
         { padding: 10, borderRadius: 30 },
         colorScheme === "dark"
