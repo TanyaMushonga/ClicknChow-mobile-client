@@ -23,7 +23,7 @@ import {
 } from "@/types";
 import { deliveryTimes } from "@/constants";
 
-const FilterSheet = ({ onClose }: { onClose: () => void }) => {
+const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
   const { colorScheme } = useColorScheme();
   const [activeCategory, setActiveCategory] = useState("All");
   const [filters, setFilters] = useState<Filters>({
@@ -240,7 +240,7 @@ const FilterSheet = ({ onClose }: { onClose: () => void }) => {
       </View>
 
       <TouchableOpacity
-        className="bg-primary dark:bg-primary-dark py-3 rounded-lg items-center"
+        className="py-3 rounded-lg items-center bg-foreground"
         activeOpacity={0.8}
         onPress={() => onClose()}
       >
@@ -248,6 +248,6 @@ const FilterSheet = ({ onClose }: { onClose: () => void }) => {
       </TouchableOpacity>
     </View>
   );
-};
+});
 
 export default FilterSheet;
