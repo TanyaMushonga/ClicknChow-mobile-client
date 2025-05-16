@@ -5,17 +5,16 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     colors: {
-      secondary: "#9333EA",
       accent: "#FBBF24",
       neutral: "#374151",
       white: "#FFFFFF",
-      foreground: "#000",
       info: "#3ABFF8",
       success: "#36D399",
       warning: "#FBBD23",
       error: "#F87272",
-
+      
       // Custom colors
+      foreground: "#000",
       primary: "#ff5a3c",
       "primary-dark": "#df4124",
       "foreground-muted-dark": "#dbdad8",
@@ -24,6 +23,7 @@ module.exports = {
       "background-dark": "#171717",
       card: "#f9f9f7",
       "card-dark": "#252525",
+      border: "#686867",
     },
   },
   plugins: [],
