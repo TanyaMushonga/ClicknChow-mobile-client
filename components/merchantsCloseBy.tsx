@@ -81,11 +81,11 @@ const MerchantsCloseBy = () => {
     <View className="mt-4">
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-bold text-black dark:text-white">
-           Merchants close by
+          Merchants close by
         </Text>
         <TouchableOpacity>
-          <Text className="text-md text-primary dark:text-primary-dark font-semibold">
-            See All
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark font-semibold">
+            View All
           </Text>
         </TouchableOpacity>
       </View>
