@@ -1,4 +1,11 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  useColorScheme,
+} from "react-native";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -30,6 +37,7 @@ const essentials = [
 ];
 
 const GroceriesAndEssentials = () => {
+  const colorScheme = useColorScheme();
   return (
     <View className="py-2">
       <View className="flex-row justify-between items-center mb-4">
@@ -37,7 +45,7 @@ const GroceriesAndEssentials = () => {
           Grocery Essentials
         </Text>
         <TouchableOpacity>
-          <Text className="text-md text-primary dark:text-primary-dark font-semibold">
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark font-semibold">
             View All
           </Text>
         </TouchableOpacity>
@@ -63,12 +71,17 @@ const GroceriesAndEssentials = () => {
                 {item.price}
               </Text>
             </View>
+
             <TouchableOpacity
-              className="absolute bottom-16 right-1 bg-foreground p-2 rounded-full shadow-xl"
+              className="absolute bottom-16 right-1 bg-foreground dark:bg-white p-2 rounded-full shadow-2xl"
               style={{ elevation: 3 }}
               onPress={() => {}}
             >
-              <MaterialIcons name="add" size={24} color="white" />
+              <MaterialIcons
+                name="add-shopping-cart"
+                color={colorScheme === "dark" ? "black" : "white"}
+                size={24}
+              />
             </TouchableOpacity>
           </View>
         )}
