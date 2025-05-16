@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
+  useColorScheme,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
@@ -48,8 +49,8 @@ const RecommendedForYou = () => {
     [key: string]: number;
   }>({});
   const flatListRefs = useRef<{ [key: string]: FlatList | null }>({});
+  const colorScheme = useColorScheme();
 
-  // Initialize current indices on mount
   useEffect(() => {
     const indices: { [key: string]: number } = {};
     recommendedItems.forEach((item) => {
@@ -114,9 +115,7 @@ const RecommendedForYou = () => {
                   height: 8,
                   width: currentIndices[item.id] === index ? 12 : 6,
                   backgroundColor:
-                    currentIndices[item.id] === index
-                      ? "#ff5a3c"
-                      : "#ffffff",
+                    currentIndices[item.id] === index ? "#ff5a3c" : "#ffffff",
                   marginHorizontal: 4,
                   borderRadius: 4,
                 }}
@@ -147,10 +146,14 @@ const RecommendedForYou = () => {
 
           <TouchableOpacity
             activeOpacity={0.8}
-            className="mt-2 bg-primary dark:bg-primary-dark py-2 rounded-md flex flex-row justify-center items-center"
+            className="mt-2 border border-border py-2 rounded-md flex flex-row justify-center items-center"
           >
-            <Ionicons name="add" size={16} color="white" />
-            <Text style={{ color: "white", marginLeft: 6 }}>Add to Cart</Text>
+            <Ionicons
+              name="add"
+              size={16}
+              color={colorScheme === "dark" ? "#fff" : "#000"}
+            />
+            <Text className="text-black dark:text-white ml-3">Add to Cart</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -164,7 +167,7 @@ const RecommendedForYou = () => {
           Recommended for you
         </Text>
         <TouchableOpacity>
-          <Text className="text-md text-primary dark:text-primary-dark font-semibold">
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark font-semibold">
             See All
           </Text>
         </TouchableOpacity>
