@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import React, { useRef, useState } from "react";
 import Banner from "@/components/banner";
-import Filters from "@/components/filters";
 import LastOrder from "@/components/last-order";
 import TrendingNearYou from "@/components/treding-near-you";
 import Search from "@/components/search";
@@ -20,6 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import RecommendedForYou from "@/components/RecommendedForYou";
 import MerchantsCloseBy from "@/components/merchantsCloseBy";
+import FeaturedToday from "@/components/FeaturedToday";
 
 const Home = () => {
   const router = useRouter();
@@ -52,12 +52,11 @@ const Home = () => {
       >
         <View className="flex-col gap-4">
           <Search />
-          <Banner />
-          <Filters />
+          <FeaturedToday />
           <LastOrder />
           <RecommendedForYou />
           <TrendingNearYou />
-         <MerchantsCloseBy/>
+          <MerchantsCloseBy />
           <GroceriesAndEssentials />
           <DealsAndCombos />
         </View>
