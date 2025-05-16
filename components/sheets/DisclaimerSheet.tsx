@@ -2,7 +2,7 @@ import { useBottomSheetStore } from "@/store";
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Switch } from "react-native";
 
-const DisclaimerSheet = () => {
+const DisclaimerSheet = ({ onClose }: { onClose: () => void }) => {
   const [optedOut, setOptedOut] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const { hideBottomSheet } = useBottomSheetStore();
@@ -46,13 +46,11 @@ const DisclaimerSheet = () => {
       </View>
 
       <TouchableOpacity
-        className={`py-3 rounded-lg items-center ${
-          confirmed ? "bg-green-500" : "bg-primary dark:bg-primary-dark"
-        }`}
+        className="py-3 rounded-lg items-center bg-foreground"
         activeOpacity={0.8}
         onPress={() => {
           setConfirmed(true);
-          setTimeout(hideBottomSheet, 1000);
+          onClose();
         }}
       >
         <Text className="text-white font-bold text-lg">
