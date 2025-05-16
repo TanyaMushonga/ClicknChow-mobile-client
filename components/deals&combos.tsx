@@ -1,6 +1,13 @@
 import { images } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  useColorScheme,
+} from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -88,7 +95,7 @@ const DealsAndCombos = () => {
           Deals & Combos
         </Text>
         <TouchableOpacity>
-          <Text className="text-md text-primary dark:text-primary-dark font-semibold">
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark font-semibold">
             View All
           </Text>
         </TouchableOpacity>
@@ -108,13 +115,6 @@ const DealsAndCombos = () => {
                 className="w-full h-full"
                 resizeMode="cover"
               />
-              <TouchableOpacity
-                className="absolute bottom-2 right-1 bg-foreground p-2 rounded-full shadow-xl"
-                style={{ elevation: 3 }}
-                onPress={() => {}}
-              >
-                <MaterialIcons name="add" size={24} color="white" />
-              </TouchableOpacity>
             </View>
 
             <View className="p-4">
@@ -149,7 +149,7 @@ const DealsAndCombos = () => {
                       ${deal.originalPrice.toFixed(2)}
                     </Text>
                   )}
-                  <Text className="text-[#df4124] font-bold text-md">
+                  <Text className="text-black dark:text-white font-bold text-md">
                     ${deal.price.toFixed(2)}
                   </Text>
                 </View>
