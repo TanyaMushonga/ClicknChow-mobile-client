@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import LocationHeader from "@/components/LocationHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
- 
 
 const TabsLayout = () => {
   const colorScheme = useColorScheme();
@@ -65,7 +64,7 @@ const TabsLayout = () => {
                   style={[
                     styles.cartButton,
                     {
-                      backgroundColor: "#df4124",
+                      backgroundColor: "black",
                       shadowColor: colorScheme === "dark" ? "#fff" : "#000",
                     },
                   ]}
@@ -74,7 +73,17 @@ const TabsLayout = () => {
                     onPress();
                   }}
                 >
-                  <Ionicons name={iconName} size={28} color="#fff" />
+                  <Ionicons
+                    name={iconName}
+                    size={28}
+                    color={
+                      isFocused
+                        ? "#fff"
+                        : colorScheme === "dark"
+                        ? "#a0a0a0"
+                        : "#fff"
+                    }
+                  />
                   {cartCount > 0 && (
                     <View style={styles.badge}>
                       <Text style={styles.badgeText}>
@@ -134,7 +143,11 @@ const TabsLayout = () => {
         options={{
           title: "home",
           header: () => (
-            <SafeAreaView edges={["top"]} style={{ height: 95 }}>
+            <SafeAreaView
+              edges={["top"]}
+              style={{ height: 95 }}
+              className="border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
+            >
               <LocationHeader />
             </SafeAreaView>
           ),
@@ -143,7 +156,21 @@ const TabsLayout = () => {
       />
       <Tabs.Screen
         name="explore"
-        options={{ title: "Explore", headerShown: false }}
+        options={{
+          title: "Explore",
+          header: () => (
+            <SafeAreaView
+              edges={["top"]}
+              style={{ height: 75 }}
+              className="px-4 pt-3 border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
+            >
+              <Text className="text-black dark:text-white font-bold text-2xl">
+                Explore stores
+              </Text>
+            </SafeAreaView>
+          ),
+          headerShown: true,
+        }}
       />
       <Tabs.Screen
         name="cart"
