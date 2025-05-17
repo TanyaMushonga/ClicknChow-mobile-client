@@ -1,4 +1,4 @@
-import { StoreHours } from "@/types";
+import { OpeningHours, StoreHours } from "@/types";
 
 export const isStoreOpen = (
   openingHours: { [day: string]: { open: string; close: string } } | StoreHours
@@ -13,7 +13,6 @@ export const isStoreOpen = (
     "saturday",
   ];
 
-  // Initialize currentDate as a Date object
   const currentDate = new Date();
 
   const currentDay = daysOfWeek[currentDate.getDay()];
@@ -22,17 +21,31 @@ export const isStoreOpen = (
     .toString()
     .padStart(2, "0")}:${currentDate.getMinutes().toString().padStart(2, "0")}`;
 
-const todayHours = openingHours[currentDay as keyof StoreHours];
-
+  const todayHours = openingHours[currentDay as keyof StoreHours];
   if (!todayHours) {
-    return false; // Return false if the store is closed
+    return false;
   }
-
   const { open, close } = todayHours;
-
   if (currentTime >= open && currentTime <= close) {
-    return true; // Return true if the store is open
+    return true;
   }
+  return false;
+};
 
-  return false; // Return false if the store is closed
+export const getOpeningHoursForToday = (openingHours: OpeningHours): string => {
+  const daysOfWeek = [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+  ];
+  const today = new Date().getDay();
+
+  const todayKey = daysOfWeek[today];
+  const todayHours = openingHours[todayKey];
+
+  return `${todayHours.open}-${todayHours.close}`;
 };
