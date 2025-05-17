@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    position: "relative",
   },
   cartButton: {
     width: 60,
@@ -222,6 +223,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    top: -10,
   },
   badge: {
     position: "absolute",

@@ -1,6 +1,6 @@
 type BottomSheetContent = "filters" | "menu" | "profile" | null;
 
-interface BottomSheetState {
+export interface BottomSheetState {
   isVisible: boolean;
   content: BottomSheetContent;
   showBottomSheet: (content: BottomSheetContent) => void;

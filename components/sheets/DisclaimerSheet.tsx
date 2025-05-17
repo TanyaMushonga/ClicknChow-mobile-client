@@ -9,24 +9,20 @@ const DisclaimerSheet = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <View>
-      <Text className="text-xl font-bold text-black dark:text-white mb-4">
-        About Sponsored Content
-      </Text>
-
       <View className="flex flex-col gap-4 mb-6">
-        <Text className="text-black dark:text-white">
+        <Text className="text-black dark:text-white text-lg font-medium">
           ClicknChow is paid by merchants, brands, and partners to advertise and
           promote their products on our app. These sponsored listings are always
           marked with a "Sponsored" or "Ad" tag for transparency.
         </Text>
 
-        <Text className="text-black dark:text-white">
+        <Text className="text-black dark:text-white text-lg font-medium">
           To personalize your experience, ClicknChow uses your location, profile
           information, order history, and search behavior to show relevant
           sponsored content and recommendations.
         </Text>
 
-        <Text className="text-black dark:text-white">
+        <Text className="text-black dark:text-white text-lg font-medium">
           You may see fewer personalized ads if you opt out below, but you'll
           still see general sponsored content based on your approximate
           location.
@@ -34,7 +30,7 @@ const DisclaimerSheet = ({ onClose }: { onClose: () => void }) => {
       </View>
 
       <View className="flex-row items-center justify-between mb-6">
-        <Text className="text-black dark:text-white">
+        <Text className="text-black dark:text-white text-lg font-medium">
           Opt out of personalized sponsored content
         </Text>
         <Switch

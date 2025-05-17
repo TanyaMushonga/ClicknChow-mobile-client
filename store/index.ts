@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { BottomSheetState } from "./types";
 
 export const useBottomSheetStore = create<BottomSheetState>((set) => ({
   isVisible: false,

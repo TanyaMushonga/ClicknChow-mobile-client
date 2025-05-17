@@ -22,16 +22,22 @@ const Explore = () => {
   const colorScheme = useColorScheme();
 
   const handleFilterClose = () => {
-    filterBottomSheetRef.current?.close();
-    setFilterSheetVisible(false);
+    if (filterSheetVisible) {
+      filterBottomSheetRef.current?.close();
+      setFilterSheetVisible(false);
+      console.log("filter sheet");
+    }
   };
 
   const { isVisible, hideBottomSheet } = useBottomSheetStore();
   const termsBottomSheetRef = useRef<BottomSheetMethods | null>(null);
 
   const handleTermsClose = () => {
-    termsBottomSheetRef.current?.close();
-    hideBottomSheet();
+    if (isVisible) {
+      termsBottomSheetRef.current?.close();
+      hideBottomSheet();
+      console.log("terms sheet");
+    }
   };
 
   return (
@@ -59,6 +65,7 @@ const Explore = () => {
         ref={filterBottomSheetRef}
         visible={filterSheetVisible}
         onClose={handleFilterClose}
+        title={"Filters"}
       >
         <FilterSheet onClose={handleFilterClose} />
       </BottomSheetLayout>
@@ -67,6 +74,7 @@ const Explore = () => {
         visible={isVisible}
         onClose={handleTermsClose}
         point={"60%"}
+        title={"Recommendations and Promotions"}
       >
         <DisclaimerSheet onClose={handleTermsClose} />
       </BottomSheetLayout>
