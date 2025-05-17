@@ -84,6 +84,10 @@ export interface StoreHours {
   sunday: { open: string; close: string };
 }
 
+export type OpeningHours = {
+  [day: string]: { open: string; close: string };
+};
+
 export interface MerchantsResponse {
   id: string;
   name: string;
