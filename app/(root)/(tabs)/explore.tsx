@@ -15,11 +15,13 @@ import BottomSheetLayout from "@/components/BottomSheetLayout";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useBottomSheetStore } from "@/store";
 import DisclaimerSheet from "@/components/sheets/DisclaimerSheet";
+import { useMerchantsStore } from "@/store/merchants";
 
 const Explore = () => {
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
   const filterBottomSheetRef = useRef<BottomSheetMethods | null>(null);
   const colorScheme = useColorScheme();
+  const merchants = useMerchantsStore((state) => state.merchants);
 
   const handleFilterClose = () => {
     if (filterSheetVisible) {
@@ -36,7 +38,6 @@ const Explore = () => {
     if (isVisible) {
       termsBottomSheetRef.current?.close();
       hideBottomSheet();
-      console.log("terms sheet");
     }
   };
 
@@ -58,7 +59,7 @@ const Explore = () => {
             </TouchableOpacity>
           </View>
           <ExploreFilters />
-          <Merchants />
+          <Merchants merchants={merchants} />
         </View>
       </ScrollView>
       <BottomSheetLayout
