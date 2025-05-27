@@ -6,16 +6,15 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import merchantsdata from "@/constants/merchantsData.json";
 
 import { useBottomSheetStore } from "@/store";
 import { useRouter } from "expo-router";
 import { MerchantsResponse } from "@/types";
 import { isStoreOpen } from "@/utils";
 
-const Merchants = () => {
+const Merchants = ({ merchants }: { merchants: MerchantsResponse[] }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const normalizeStatus = (status: string): "open" | "closed" | "busy" => {
     const validStatuses = ["open", "closed", "busy"];
@@ -26,11 +25,12 @@ const Merchants = () => {
 
   const normalizeAvailableFor = (
     availableFor: string[]
-  ): ("delivery" | "pickup")[] => {
-    const validOptions = ["delivery", "pickup"];
+  ): ("delivery" | "pickup" | "dine in")[] => {
+    const validOptions = ["delivery", "pickup", "dine in"];
     return availableFor.filter((option) => validOptions.includes(option)) as (
       | "delivery"
       | "pickup"
+      | "dine in"
     )[];
   };
 
@@ -43,7 +43,7 @@ const Merchants = () => {
       : undefined;
   };
 
-  const normalizedMerchantsData = merchantsdata.map((merchant) => ({
+  const normalizedMerchantsData = merchants.map((merchant) => ({
     ...merchant,
     status: normalizeStatus(merchant.status),
     menu: {
@@ -54,7 +54,7 @@ const Merchants = () => {
           availableFor: normalizeAvailableFor(product.availableFor),
           metrics: {
             ...product.metrics,
-            spiceLevel: normalizeSpiceLevel(product.metrics.spiceLevel),
+            spiceLevel: normalizeSpiceLevel(product.metrics?.spiceLevel ?? 0),
           },
         })),
       })),
