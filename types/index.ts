@@ -46,19 +46,21 @@ interface Product {
   description: string;
   category: string;
   image?: string;
+  ratings: string;
   priceUSD: number;
   priceZIG: number;
   isFeatured: boolean;
-  availableFor: ("delivery" | "pickup")[];
-  preparationTime: number; // in minutes
+  badge: string;
+  availableFor: string[];
+  preparationTime: number;
   variants?: ProductVariant[];
   addons?: ProductAddon[];
   allergies?: ProductAllergy[];
-  frequentlyBoughtTogether?: string[]; // product IDs
+  frequentlyBoughtTogether?: string[];
   metrics?: {
     popularity?: number;
     calories?: number;
-    spiceLevel?: 1 | 2 | 3 | 4 | 5;
+    spiceLevel?: number;
     isVegetarian?: boolean;
     isVegan?: boolean;
   };
@@ -98,7 +100,7 @@ export interface MerchantsResponse {
   deliveryTime: string;
   pickupTime: string;
   distance: string;
-  status: "open" | "closed" | "busy";
+  status: string;
   openingHours: StoreHours;
   logo: string;
   coverImage: string;
@@ -132,4 +134,22 @@ export interface MerchantsResponse {
     }[];
   };
   reviews?: Review[] | null;
+}
+
+export interface Menu {
+  categories: {
+    id: string;
+    name: string;
+    products: Product[];
+  }[];
+}
+
+export interface FeaturedProductsType {
+  menu: {
+    categories: {
+      id: string;
+      name: string;
+      products: Product[];
+    }[];
+  };
 }
