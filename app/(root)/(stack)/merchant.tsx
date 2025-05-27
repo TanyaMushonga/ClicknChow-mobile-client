@@ -21,6 +21,7 @@ import Fontisto from "@expo/vector-icons/Fontisto";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import DeliveryModeSelector from "@/components/merchant/DeliveryModeSelector";
 import { TabContainer } from "@/components/merchant/TabContainer";
+import FeaturedProducts from "@/components/merchant/featuredProducts";
 
 const Merchant = () => {
   const { merchant } = useLocalSearchParams();
@@ -184,7 +185,7 @@ const Merchant = () => {
           </View>
           <TabContainer tabs={["Menu", "About", "Reviews"]}>
             <View>
-              <Text>Menu</Text>
+              <FeaturedProducts />
             </View>
             <View>
               <Text>about</Text>
