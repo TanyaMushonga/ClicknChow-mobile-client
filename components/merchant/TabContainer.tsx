@@ -48,7 +48,7 @@ export const TabContainer = ({ tabs, children }: TabContainerProps) => {
         entering={FadeIn.duration(300)}
         exiting={FadeOut.duration(200)}
         key={tabs[activeTab]}
-        className="flex-1 p-2"
+        className="flex-1"
       >
         {React.Children.toArray(children)[activeTab]}
       </Animated.View>
