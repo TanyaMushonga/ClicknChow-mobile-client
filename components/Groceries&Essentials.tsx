@@ -7,7 +7,7 @@ import {
   useColorScheme,
 } from "react-native";
 import React from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 const essentials = [
   {
@@ -77,10 +77,10 @@ const GroceriesAndEssentials = () => {
               style={{ elevation: 3 }}
               onPress={() => {}}
             >
-              <MaterialIcons
-                name="add-shopping-cart"
-                color={colorScheme === "dark" ? "black" : "white"}
+              <Ionicons
+                name="bag-add-outline"
                 size={24}
+                color={colorScheme === "dark" ? "black" : "white"}
               />
             </TouchableOpacity>
           </View>
