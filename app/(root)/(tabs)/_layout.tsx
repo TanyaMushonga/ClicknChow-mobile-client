@@ -145,7 +145,7 @@ const TabsLayout = () => {
           header: () => (
             <SafeAreaView
               edges={["top"]}
-              style={{ height: 70 }}
+              style={{ height: 90 }}
               className="border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
             >
               <LocationHeader />
@@ -161,7 +161,7 @@ const TabsLayout = () => {
           header: () => (
             <SafeAreaView
               edges={["top"]}
-              style={{ height: 50 }}
+              style={{ height: 70 }}
               className="px-4 pt-3 border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
             >
               <Text className="text-black dark:text-white font-bold text-2xl">
