@@ -19,16 +19,17 @@ import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import DeliveryModeSelector from "@/components/merchant/DeliveryModeSelector";
 import { TabContainer } from "@/components/merchant/TabContainer";
 import FeaturedProducts from "@/components/merchant/featuredProducts";
+import ProductMenu from "@/components/merchant/ProductsMenu";
+import MoreToExplore from "@/components/merchant/MoreToExplore";
 
 const Merchant = () => {
   const { merchant } = useLocalSearchParams();
   const merchantData: MerchantsResponse = merchant
     ? JSON.parse(merchant as string)
     : null;
-  const [activeOption, setActiveOption] = useState("Pickup");
+  const [activeOption, setActiveOption] = useState("Delivery");
   const colorScheme = useColorScheme();
 
   const options = [
@@ -184,8 +185,10 @@ const Merchant = () => {
             ))}
           </View>
           <TabContainer tabs={["Menu", "About", "Reviews"]}>
-            <View>
-              <FeaturedProducts />
+            <View className="flex flex-col gap-8">
+              <FeaturedProducts featuredProducts={{ menu: merchantData.menu }} />
+              <ProductMenu menu={merchantData.menu} />
+              <MoreToExplore merchantId={merchantData.id} />
             </View>
             <View>
               <Text>about</Text>
