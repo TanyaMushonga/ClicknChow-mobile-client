@@ -4,7 +4,6 @@ import food3 from "../assets/images/onboarding/food3.jpg";
 import placeholder from "../assets/placeholder.png";
 import burger from "../assets/burger.jpg";
 import burger1 from "../assets/burger1.jpg";
-import burgerbgremoved from "../assets/burger1-removebg.png";
 import burger2 from "../assets/burger2.jpg";
 import pasta from "../assets/pasta.jpg";
 import pasta1 from "../assets/pasta1.jpg";
@@ -41,7 +40,6 @@ export const images = {
   pizza2,
   burger1,
   burger2,
-  burgerbgremoved,
 };
 
 export const onboarding = [
