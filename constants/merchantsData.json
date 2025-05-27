@@ -48,8 +48,11 @@
             {
               "id": "b1",
               "name": "Classic Burger",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger.jpg",
               "description": "Beef patty with lettuce, tomato, and special sauce",
               "category": "Burgers",
+              "ratings": "96% (421)",
+              "badge": "New",
               "priceUSD": 8.99,
               "priceZIG": 225,
               "isFeatured": true,
@@ -96,8 +99,11 @@
             {
               "id": "b2",
               "name": "Chicken Zinger Burger",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger2.jpg",
               "description": "Spicy fried chicken fillet with lettuce and mayo",
               "category": "Burgers",
+              "ratings": "89% (350)",
+              "badge": "Popular",
               "priceUSD": 7.99,
               "priceZIG": 200,
               "isFeatured": false,
@@ -144,8 +150,11 @@
             {
               "id": "b3",
               "name": "Veggie Burger",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger1.jpg",
               "description": "Grilled veggie patty with lettuce, tomato, and vegan mayo",
               "category": "Burgers",
+              "ratings": "92% (200)",
+              "badge": "Vegan",
               "priceUSD": 6.99,
               "priceZIG": 175,
               "isFeatured": true,
@@ -196,6 +205,214 @@
               }
             }
           ]
+        },
+        {
+          "id": "cat2",
+          "name": "Sides",
+          "products": [
+            {
+              "id": "s1",
+              "name": "French Fries",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/fries.jpg",
+              "description": "Crispy golden fries with a pinch of salt",
+              "category": "Sides",
+              "ratings": "94% (380)",
+              "badge": "",
+              "priceUSD": 3.99,
+              "priceZIG": 100,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 8,
+              "variants": [
+                {
+                  "id": "s1v1",
+                  "name": "Regular",
+                  "priceUSD": 3.99,
+                  "priceZIG": 100
+                },
+                {
+                  "id": "s1v2",
+                  "name": "Large",
+                  "priceUSD": 5.99,
+                  "priceZIG": 150
+                }
+              ],
+              "addons": [
+                {
+                  "id": "s1a1",
+                  "name": "Cheese Sauce",
+                  "priceUSD": 1.0,
+                  "priceZIG": 25
+                },
+                {
+                  "id": "s1a2",
+                  "name": "Bacon Bits",
+                  "priceUSD": 1.5,
+                  "priceZIG": 38
+                }
+              ],
+              "allergies": [
+                {
+                  "id": "s1al1",
+                  "name": "Gluten",
+                  "contains": "May contain traces"
+                }
+              ],
+              "metrics": {
+                "popularity": 92,
+                "calories": 365,
+                "spiceLevel": 0
+              }
+            },
+            {
+              "id": "s2",
+              "name": "Onion Rings",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/onion-rings.jpg",
+              "description": "Crispy battered onion rings with dipping sauce",
+              "category": "Sides",
+              "ratings": "91% (210)",
+              "badge": "",
+              "priceUSD": 4.49,
+              "priceZIG": 115,
+              "isFeatured": false,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 10,
+              "variants": [
+                {
+                  "id": "s2v1",
+                  "name": "6 Pieces",
+                  "priceUSD": 4.49,
+                  "priceZIG": 115
+                },
+                {
+                  "id": "s2v2",
+                  "name": "12 Pieces",
+                  "priceUSD": 7.99,
+                  "priceZIG": 200
+                }
+              ],
+              "addons": [
+                {
+                  "id": "s2a1",
+                  "name": "Extra Sauce",
+                  "priceUSD": 0.75,
+                  "priceZIG": 20
+                }
+              ],
+              "allergies": [
+                { "id": "s2al1", "name": "Gluten", "contains": "Batter" },
+                { "id": "s2al2", "name": "Dairy", "contains": "Dipping sauce" }
+              ],
+              "metrics": {
+                "popularity": 87,
+                "calories": 420,
+                "spiceLevel": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "cat3",
+          "name": "Drinks",
+          "products": [
+            {
+              "id": "d1",
+              "name": "Soda",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/soda.jpg",
+              "description": "Refreshing carbonated beverage",
+              "category": "Drinks",
+              "ratings": "98% (450)",
+              "badge": "Buy 1 Get 1 Free",
+              "priceUSD": 2.49,
+              "priceZIG": 65,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 2,
+              "variants": [
+                {
+                  "id": "d1v1",
+                  "name": "Coke",
+                  "priceUSD": 2.49,
+                  "priceZIG": 65
+                },
+                {
+                  "id": "d1v2",
+                  "name": "Sprite",
+                  "priceUSD": 2.49,
+                  "priceZIG": 65
+                },
+                {
+                  "id": "d1v3",
+                  "name": "Fanta",
+                  "priceUSD": 2.49,
+                  "priceZIG": 65
+                }
+              ],
+              "addons": [],
+              "allergies": [],
+              "metrics": {
+                "popularity": 96,
+                "calories": 150,
+                "spiceLevel": 0
+              }
+            },
+            {
+              "id": "d2",
+              "name": "Milkshake",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/milkshake.jpg",
+              "description": "Creamy hand-spun milkshake",
+              "category": "Drinks",
+              "ratings": "95% (320)",
+              "badge": "New Flavor",
+              "priceUSD": 4.99,
+              "priceZIG": 125,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 5,
+              "variants": [
+                {
+                  "id": "d2v1",
+                  "name": "Vanilla",
+                  "priceUSD": 4.99,
+                  "priceZIG": 125
+                },
+                {
+                  "id": "d2v2",
+                  "name": "Chocolate",
+                  "priceUSD": 4.99,
+                  "priceZIG": 125
+                },
+                {
+                  "id": "d2v3",
+                  "name": "Strawberry",
+                  "priceUSD": 4.99,
+                  "priceZIG": 125
+                }
+              ],
+              "addons": [
+                {
+                  "id": "d2a1",
+                  "name": "Whipped Cream",
+                  "priceUSD": 0.75,
+                  "priceZIG": 20
+                },
+                {
+                  "id": "d2a2",
+                  "name": "Cherry",
+                  "priceUSD": 0.5,
+                  "priceZIG": 13
+                }
+              ],
+              "allergies": [
+                { "id": "d2al1", "name": "Dairy", "contains": "Milk" }
+              ],
+              "metrics": {
+                "popularity": 93,
+                "calories": 350,
+                "spiceLevel": 0
+              }
+            }
+          ]
         }
       ]
     },
@@ -207,6 +424,278 @@
         "rating": 5,
         "comment": "Best burgers in town!",
         "date": "2023-05-15"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Taco Fiesta",
+    "category": "Mexican • Tacos",
+    "rating": 4.5,
+    "numberOfRatings": 275,
+    "orders": 850,
+    "deliveryTime": "20-25 min",
+    "pickupTime": "15-20 min",
+    "distance": "1.0 km",
+    "status": "open",
+    "openingHours": {
+      "monday": { "open": "11:00", "close": "21:00" },
+      "tuesday": { "open": "11:00", "close": "21:00" },
+      "wednesday": { "open": "11:00", "close": "21:00" },
+      "thursday": { "open": "11:00", "close": "22:00" },
+      "friday": { "open": "11:00", "close": "23:00" },
+      "saturday": { "open": "11:00", "close": "23:00" },
+      "sunday": { "open": "12:00", "close": "21:00" }
+    },
+    "logo": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
+    "coverImage": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
+    "isFavorite": true,
+    "isSponsored": false,
+    "deliveryFeeUSD": 5.00,
+    "deliveryFeeZIG": 125,
+    "minOrderUSD": 12,
+    "minOrderZIG": 300,
+    "coordinates": { "latitude": -17.823456, "longitude": 31.054321 },
+    "about": {
+      "description": "Authentic Mexican street food with bold flavors and fresh ingredients since 2019.",
+      "dateJoined": "2021-08-10",
+      "phone": "+263775678901",
+      "email": "hola@tacofiesta.com",
+      "website": "www.tacofiesta.com",
+      "socialMedia": {
+        "facebook": "facebook.com/tacofiesta",
+        "instagram": "instagram.com/tacofiesta"
+      }
+    },
+    "menu": {
+      "categories": [
+        {
+          "id": "cat1",
+          "name": "Tacos",
+          "products": [
+            {
+              "id": "t1",
+              "name": "Carne Asada Tacos",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
+              "description": "Grilled steak tacos with onions, cilantro and homemade salsa",
+              "category": "Tacos",
+              "ratings": "94% (320)",
+              "badge": "Chef's Choice",
+              "priceUSD": 10.99,
+              "priceZIG": 275,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 15,
+              "variants": [
+                {
+                  "id": "t1v1",
+                  "name": "2 Tacos",
+                  "priceUSD": 10.99,
+                  "priceZIG": 275
+                },
+                {
+                  "id": "t1v2",
+                  "name": "3 Tacos",
+                  "priceUSD": 14.99,
+                  "priceZIG": 375
+                }
+              ],
+              "addons": [
+                {
+                  "id": "t1a1",
+                  "name": "Guacamole",
+                  "priceUSD": 1.50,
+                  "priceZIG": 38
+                },
+                {
+                  "id": "t1a2",
+                  "name": "Extra Spicy Salsa",
+                  "priceUSD": 0.75,
+                  "priceZIG": 20
+                }
+              ],
+              "allergies": [
+                { "id": "t1al1", "name": "Gluten", "contains": "Corn tortillas" },
+                { "id": "t1al2", "name": "Dairy", "contains": "Optional cheese" }
+              ],
+              "metrics": {
+                "popularity": 92,
+                "calories": 480,
+                "spiceLevel": 3
+              }
+            },
+            {
+              "id": "t2",
+              "name": "Veggie Tacos",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/chips-and-guacamole.jpg",
+              "description": "Grilled vegetables with black beans, avocado and chipotle sauce",
+              "category": "Tacos",
+              "ratings": "90% (180)",
+              "badge": "Vegetarian",
+              "priceUSD": 9.99,
+              "priceZIG": 250,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 12,
+              "variants": [
+                {
+                  "id": "t2v1",
+                  "name": "2 Tacos",
+                  "priceUSD": 9.99,
+                  "priceZIG": 250
+                },
+                {
+                  "id": "t2v2",
+                  "name": "3 Tacos",
+                  "priceUSD": 13.99,
+                  "priceZIG": 350
+                }
+              ],
+              "addons": [
+                {
+                  "id": "t2a1",
+                  "name": "Vegan Cheese",
+                  "priceUSD": 1.25,
+                  "priceZIG": 32
+                }
+              ],
+              "allergies": [
+                { "id": "t2al1", "name": "Gluten", "contains": "Corn tortillas" }
+              ],
+              "metrics": {
+                "popularity": 85,
+                "calories": 420,
+                "spiceLevel": 2,
+                "isVegetarian": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "cat2",
+          "name": "Burritos",
+          "products": [
+            {
+              "id": "b1",
+              "name": "Mission Burrito",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/burrito1.jpg",
+              "description": "Large flour tortilla stuffed with rice, beans, meat, salsa and cheese",
+              "category": "Burritos",
+              "ratings": "93% (240)",
+              "badge": "Popular",
+              "priceUSD": 12.99,
+              "priceZIG": 325,
+              "isFeatured": false,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 18,
+              "variants": [
+                {
+                  "id": "b1v1",
+                  "name": "Chicken",
+                  "priceUSD": 12.99,
+                  "priceZIG": 325
+                },
+                {
+                  "id": "b1v2",
+                  "name": "Beef",
+                  "priceUSD": 13.99,
+                  "priceZIG": 350
+                }
+              ],
+              "addons": [
+                {
+                  "id": "b1a1",
+                  "name": "Sour Cream",
+                  "priceUSD": 0.75,
+                  "priceZIG": 20
+                },
+                {
+                  "id": "b1a2",
+                  "name": "Queso",
+                  "priceUSD": 1.25,
+                  "priceZIG": 32
+                }
+              ],
+              "allergies": [
+                { "id": "b1al1", "name": "Gluten", "contains": "Flour tortilla" },
+                { "id": "b1al2", "name": "Dairy", "contains": "Cheese" }
+              ],
+              "metrics": {
+                "popularity": 89,
+                "calories": 850,
+                "spiceLevel": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "cat3",
+          "name": "Sides & Extras",
+          "products": [
+            {
+              "id": "s1",
+              "name": "Chips & Guacamole",
+              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
+              "description": "Homemade tortilla chips with fresh guacamole",
+              "category": "Sides & Extras",
+              "ratings": "96% (190)",
+              "badge": "Best Seller",
+              "priceUSD": 5.99,
+              "priceZIG": 150,
+              "isFeatured": true,
+              "availableFor": ["delivery", "pickup"],
+              "preparationTime": 5,
+              "variants": [
+                {
+                  "id": "s1v1",
+                  "name": "Regular",
+                  "priceUSD": 5.99,
+                  "priceZIG": 150
+                },
+                {
+                  "id": "s1v2",
+                  "name": "Large",
+                  "priceUSD": 8.99,
+                  "priceZIG": 225
+                }
+              ],
+              "addons": [
+                {
+                  "id": "s1a1",
+                  "name": "Extra Salsa",
+                  "priceUSD": 0.50,
+                  "priceZIG": 13
+                }
+              ],
+              "allergies": [
+                { "id": "s1al1", "name": "Gluten", "contains": "Corn chips" }
+              ],
+              "metrics": {
+                "popularity": 95,
+                "calories": 520,
+                "spiceLevel": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "reviews": [
+      {
+        "id": "r1",
+        "userId": "user456",
+        "userName": "Maria S.",
+        "rating": 5,
+        "comment": "Authentic flavors that remind me of Mexico City!",
+        "date": "2023-06-15"
+      },
+      {
+        "id": "r2",
+        "userId": "user789",
+        "userName": "Carlos M.",
+        "rating": 4,
+        "comment": "Great tacos, generous portions. Will definitely order again.",
+        "date": "2023-07-02"
       }
     ]
   }
