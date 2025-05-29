@@ -9,6 +9,7 @@ import {
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FeaturedProductsType } from "@/types";
+import { useRouter } from "expo-router";
 
 const FeaturedProducts = ({
   featuredProducts,
@@ -16,6 +17,7 @@ const FeaturedProducts = ({
   featuredProducts: FeaturedProductsType;
 }) => {
   const colorScheme = useColorScheme();
+  const router = useRouter();
 
   const hasFeaturedProducts = featuredProducts.menu.categories.some(
     (category) => category.products.some((product) => product.isFeatured)
@@ -39,6 +41,14 @@ const FeaturedProducts = ({
             .filter((product) => product.isFeatured)
             .map((product) => (
               <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/product",
+                    params: {
+                      product: JSON.stringify(product),
+                    },
+                  })
+                }
                 key={product.id}
                 activeOpacity={0.9}
                 className="bg-card dark:bg-card-dark mr-4 overflow-hidden rounded-lg w-[160px]"
