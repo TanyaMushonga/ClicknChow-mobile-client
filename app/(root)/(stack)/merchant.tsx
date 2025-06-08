@@ -9,7 +9,13 @@ import {
   Platform,
   StyleSheet,
 } from "react-native";
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Menu, MerchantsResponse, OpeningHours, Product } from "@/types";
@@ -27,151 +33,105 @@ import FeaturedProducts from "@/components/merchant/featuredProducts";
 import ProductMenu from "@/components/merchant/ProductsMenu";
 import MoreToExplore from "@/components/merchant/MoreToExplore";
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import MerchantSkeleton from "@/components/merchant/merchantSkeleton";
 
 const HEADER_MAX_HEIGHT = 150;
 const HEADER_MIN_HEIGHT = Platform.OS === "ios" ? 90 : 70;
 
 const Merchant = () => {
   const { merchant } = useLocalSearchParams();
-  const merchantData: MerchantsResponse = merchant
-    ? JSON.parse(merchant as string)
-    : null;
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+
+  const merchantData: MerchantsResponse | null = useMemo(
+    () => (merchant ? JSON.parse(merchant as string) : null),
+    [merchant]
+  );
+
   const [activeOption, setActiveOption] = useState("Delivery");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const colorScheme = useColorScheme();
   const [filteredMenu, setFilteredMenu] = useState<Menu | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const scrollY = useRef(new RNAnimated.Value(0)).current;
   const scrollViewRef = useRef<ScrollView>(null);
-    const menu = useMemo(() => merchantData?.menu, [merchantData]);
 
-   useEffect(() => {
-    if (!menu) return;
-  
-    setIsLoading(true);
-  
-    const filterProducts = (products: Product[]) => {
+  const menu = useMemo(() => merchantData?.menu || null, [merchantData]);
+
+  const filterProducts = useCallback(
+    (products: Product[]) => {
+      if (!products) return [];
       return products.filter((product) => {
+        if (!product.availableFor) return false;
         switch (activeOption) {
           case "Delivery":
-            return product.availableFor.some((option) => option === "delivery");
+            return product.availableFor.includes("delivery");
           case "Pickup":
-            return product.availableFor.some((option) => option === "pickup");
+            return product.availableFor.includes("pickup");
           case "Dine in":
-            return product.availableFor.some((option) => option === "dine in");
+            return product.availableFor.includes("dine in");
           default:
             return true;
         }
       });
-    };
-  
+    },
+    [activeOption]
+  );
+
+  useEffect(() => {
+    if (!menu) {
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+
     const filtered = {
       ...menu,
       categories: menu.categories
-        .map((category) => ({
-          ...category,
-          products: filterProducts(category.products),
-        }))
-        .filter((category) => category.products.length > 0),
+        ? menu.categories
+            .map((category) => ({
+              ...category,
+              products: filterProducts(category.products || []),
+            }))
+            .filter((category) => category.products.length > 0)
+        : [],
     };
-  
+
     setFilteredMenu(filtered);
-  
+
     const timer = setTimeout(() => setIsLoading(false), 500);
     return () => clearTimeout(timer);
-  }, [menu, activeOption]);
+  }, [menu, activeOption, filterProducts]);
 
-  const options = [
-    {
-      id: 1,
-      label: "Delivery",
-      icon: <FontAwesome6 name="truck-fast" size={18} color="black" />,
-    },
-    {
-      id: 2,
-      label: "Pickup",
-      icon: <Fontisto name="shopping-bag-1" size={18} color="black" />,
-    },
-    {
-      id: 3,
-      label: "Dine in",
-      icon: (
-        <MaterialCommunityIcons
-          name="silverware-fork-knife"
-          size={18}
-          color="black"
-        />
-      ),
-    },
-  ];
-
-  const router = useRouter();
+  const options = useMemo(
+    () => [
+      {
+        id: 1,
+        label: "Delivery",
+        icon: <FontAwesome6 name="truck-fast" size={18} color="black" />,
+      },
+      {
+        id: 2,
+        label: "Pickup",
+        icon: <Fontisto name="shopping-bag-1" size={18} color="black" />,
+      },
+      {
+        id: 3,
+        label: "Dine in",
+        icon: (
+          <MaterialCommunityIcons
+            name="silverware-fork-knife"
+            size={18}
+            color="black"
+          />
+        ),
+      },
+    ],
+    []
+  );
 
   if (!merchantData || isLoading) {
-    return (
-      <View className="flex-1 bg-background dark:bg-background-dark p-4">
-        <StatusBar translucent backgroundColor="transparent" />
-        <SkeletonPlaceholder
-          backgroundColor={colorScheme === "dark" ? "#1e293b" : "#f1f5f9"}
-          highlightColor={colorScheme === "dark" ? "#334155" : "#e2e8f0"}
-        >
-          <View style={{ flexDirection: "column", gap: 16 }}>
-            {/* Header Skeleton */}
-            <View style={{ height: HEADER_MAX_HEIGHT, borderRadius: 8 }} />
-
-            {/* Title Skeleton */}
-            <View style={{ width: "70%", height: 32, borderRadius: 4 }} />
-
-            {/* Rating Skeleton */}
-            <View style={{ width: "50%", height: 20, borderRadius: 4 }} />
-
-            {/* Order Options Skeleton */}
-            <View style={{ flexDirection: "row", gap: 8 }}>
-              <View style={{ width: 100, height: 40, borderRadius: 20 }} />
-              <View style={{ width: 100, height: 40, borderRadius: 20 }} />
-              <View style={{ width: 100, height: 40, borderRadius: 20 }} />
-            </View>
-
-            {/* Menu Items Skeleton */}
-            {[...Array(5)].map((_, i) => (
-              <View
-                key={i}
-                style={{ flexDirection: "row", gap: 12, marginTop: 16 }}
-              >
-                <View style={{ width: 100, height: 100, borderRadius: 8 }} />
-                <View style={{ flex: 1 }}>
-                  <View style={{ width: "70%", height: 20, borderRadius: 4 }} />
-                  <View
-                    style={{
-                      width: "40%",
-                      height: 16,
-                      borderRadius: 4,
-                      marginTop: 8,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: "90%",
-                      height: 14,
-                      borderRadius: 4,
-                      marginTop: 8,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: "90%",
-                      height: 14,
-                      borderRadius: 4,
-                      marginTop: 4,
-                    }}
-                  />
-                </View>
-              </View>
-            ))}
-          </View>
-        </SkeletonPlaceholder>
-      </View>
-    );
+    return <MerchantSkeleton />;
   }
 
   return (
@@ -181,64 +141,10 @@ const Merchant = () => {
         backgroundColor="rgba(0, 0, 0, 0.3)"
         barStyle="light-content"
       />
-      <RNAnimated.View style={[]}>
-        <View className="flex-row items-center justify-between px-4">
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons
-              name="arrow-back"
-              size={24}
-              color={colorScheme === "dark" ? "white" : "black"}
-            />
-          </TouchableOpacity>
-          <Text className="text-lg font-bold text-black dark:text-white">
-            {merchantData.name}
-          </Text>
-          <TouchableOpacity>
-            <Ionicons
-              name="search"
-              size={24}
-              color={colorScheme === "dark" ? "white" : "black"}
-            />
-          </TouchableOpacity>
-        </View>
-      </RNAnimated.View>
-
-      <RNAnimated.View style={[styles.categoryTabs]}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryTabsContent}
-        >
-          {filteredMenu?.categories.map((category) => (
-            <TouchableOpacity
-              key={category.id}
-              className={`px-4 py-2 rounded-full ${
-                activeCategory === category.id
-                  ? "bg-primary"
-                  : "bg-neutral/10 dark:bg-neutral/20"
-              }`}
-            >
-              <Text
-                className={`font-medium ${
-                  activeCategory === category.id
-                    ? "text-white"
-                    : "text-black dark:text-white"
-                }`}
-              >
-                {category.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </RNAnimated.View>
 
       <ScrollView
         ref={scrollViewRef}
         scrollEventThrottle={16}
-        onScroll={RNAnimated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
         contentInsetAdjustmentBehavior="automatic"
         stickyHeaderIndices={[]}
       >
@@ -391,7 +297,6 @@ const Merchant = () => {
                 <>
                   <FeaturedProducts featuredProducts={{ menu: filteredMenu }} />
                   <ProductMenu menu={filteredMenu} />
-                  <MoreToExplore merchantId={merchantData.id} />
                 </>
               )}
               <MoreToExplore merchantId={merchantData.id} />
