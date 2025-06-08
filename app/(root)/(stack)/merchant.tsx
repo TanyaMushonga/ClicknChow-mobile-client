@@ -32,7 +32,6 @@ import { TabContainer } from "@/components/merchant/TabContainer";
 import FeaturedProducts from "@/components/merchant/featuredProducts";
 import ProductMenu from "@/components/merchant/ProductsMenu";
 import MoreToExplore from "@/components/merchant/MoreToExplore";
-import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import MerchantSkeleton from "@/components/merchant/merchantSkeleton";
 
 const HEADER_MAX_HEIGHT = 150;
@@ -49,7 +48,6 @@ const Merchant = () => {
   );
 
   const [activeOption, setActiveOption] = useState("Delivery");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [filteredMenu, setFilteredMenu] = useState<Menu | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const scrollY = useRef(new RNAnimated.Value(0)).current;
@@ -159,7 +157,7 @@ const Merchant = () => {
             <TouchableOpacity
               style={styles.overlayButton}
               onPress={() => {
-                console.log("Back button pressed");
+              
                 router.back();
               }}
             >
@@ -302,7 +300,7 @@ const Merchant = () => {
               <MoreToExplore merchantId={merchantData.id} />
             </View>
             <View>
-              <Text>about</Text>
+              <Text>about yes</Text>
             </View>
             <View>
               <Text>reviews</Text>
