@@ -13,6 +13,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useRouter } from "expo-router";
+import { ChevronDown, ChevronUp } from "lucide-react-native";
 
 const ProductDetailScreen = () => {
   const [product] = useState(dummyProduct);
@@ -24,6 +25,27 @@ const ProductDetailScreen = () => {
     portionSize: product.customizationOptions.portionSize.options[0].id,
     specialInstructions: "",
   });
+  const [expandedSections, setExpandedSections] = useState({
+    ingredients: false,
+    nutrition: false,
+    instructions: false,
+  });
+
+  interface ExpandedSections {
+    ingredients: boolean;
+    nutrition: boolean;
+    instructions: boolean;
+  }
+
+  type Section = keyof ExpandedSections;
+
+  const toggleSection = (section: Section) => {
+    setExpandedSections((prev: ExpandedSections) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   const router = useRouter();
 
   const getAddOnsPrice = () => {
@@ -87,7 +109,7 @@ const ProductDetailScreen = () => {
 
           <View className="flex-row items-center mb-3">
             <Ionicons name="star" size={16} color="#facc15" />
-            <Text className="ml-1 text-gray-700">
+            <Text className="ml-1 text-black dark:text-white text-lg">
               {product.rating} ({product.reviewCount}+ reviews)
             </Text>
             {product.stock < 10 && (
@@ -99,9 +121,11 @@ const ProductDetailScreen = () => {
             )}
           </View>
 
-          <Text className="text-gray-600 mb-6">{product.description}</Text>
+          <Text className="text-foreground-muted dark:text-foreground-muted-dark mb-6 text-lg">
+            {product.description}
+          </Text>
 
-          <Text className="text-lg font-bold text-gray-900 mb-4">
+          <Text className="text-xl font-bold text-black dark:text-white mb-4">
             Customize Your Order
           </Text>
 
@@ -112,29 +136,36 @@ const ProductDetailScreen = () => {
             {product.customizationOptions.sauces.options.map((sauce) => (
               <TouchableOpacity
                 key={sauce.id}
-                className="flex-row items-center py-2"
+                className={`flex-row items-center py-2 border ${
+                  selectedOptions.sauce === sauce.id
+                    ? "border-primary"
+                    : "border-border/20"
+                } p-3 mb-4 rounded-lg`}
                 onPress={() =>
                   setSelectedOptions({ ...selectedOptions, sauce: sauce.id })
                 }
               >
                 <View
-                  className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
-                    selectedOptions.sauce === sauce.id
-                      ? "border-green-500"
-                      : "border-gray-300"
-                  }`}
+                  className="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
+                  style={{
+                    borderColor:
+                      selectedOptions.sauce === sauce.id
+                        ? "#ff5a3c"
+                        : "#d1d5db",
+                    backgroundColor:
+                      selectedOptions.sauce === sauce.id
+                        ? "#ff5a3c"
+                        : "transparent",
+                  }}
                 >
                   {selectedOptions.sauce === sauce.id && (
-                    <View className="w-3 h-3 rounded-full bg-green-500" />
+                    <View className="w-2 h-2 rounded-full bg-white" />
                   )}
                 </View>
-                {/* Sauce Name */}
                 <Text className="text-gray-700">{sauce.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
-
-          {/* Add-Ons */}
           <View className="mb-6">
             <Text className="font-medium text-gray-800 mb-2">
               {product.customizationOptions.addOns.title}
@@ -142,7 +173,11 @@ const ProductDetailScreen = () => {
             {product.customizationOptions.addOns.options.map((addOn) => (
               <TouchableOpacity
                 key={addOn.id}
-                className="flex-row justify-between items-center py-2"
+                className={`flex-row justify-between items-center border p-3 mb-4 rounded-lg ${
+                  selectedOptions.addOns.includes(addOn.id)
+                    ? "border-primary"
+                    : "border-border/20"
+                }`}
                 onPress={() => {
                   const newAddOns = selectedOptions.addOns.includes(addOn.id)
                     ? selectedOptions.addOns.filter((id) => id !== addOn.id)
@@ -152,57 +187,68 @@ const ProductDetailScreen = () => {
               >
                 <View className="flex-row items-center">
                   <View
-                    className={`w-5 h-5 border-2 rounded mr-3 
-                  ${
-                    selectedOptions.addOns.includes(addOn.id)
-                      ? "border-green-500 bg-green-500"
-                      : "border-gray-300"
-                  }`}
-                  />
+                    className={`w-5 h-5 rounded mr-3 flex items-center justify-center
+                    ${
+                      selectedOptions.addOns.includes(addOn.id)
+                        ? "bg-primary"
+                        : "border-2 border-border"
+                    }`}
+                  >
+                    {selectedOptions.addOns.includes(addOn.id) && (
+                      <AntDesign name="check" size={14} color="white" />
+                    )}
+                  </View>
                   <Text className="text-gray-700">{addOn.name}</Text>
                 </View>
-                <Text className="text-gray-500">
+                <Text className="dark:text-foreground font-medium text-lg">
                   + ${addOn.price.toFixed(2)}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Remove Ingredients */}
           <View className="mb-6">
             <Text className="font-medium text-gray-800 mb-2">
               {product.customizationOptions.removables.title}
             </Text>
-            {product.customizationOptions.removables.options.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                className="flex-row items-center py-2"
-                onPress={() => {
-                  const newRemovals = selectedOptions.removables.includes(
-                    item.id
-                  )
-                    ? selectedOptions.removables.filter((id) => id !== item.id)
-                    : [...selectedOptions.removables, item.id];
-                  setSelectedOptions({
-                    ...selectedOptions,
-                    removables: newRemovals,
-                  });
-                }}
-              >
-                <View
-                  className={`w-5 h-5 border-2 rounded mr-3 
-                ${
-                  selectedOptions.removables.includes(item.id)
-                    ? "border-green-500 bg-green-500"
-                    : "border-gray-300"
-                }`}
-                />
-                <Text className="text-gray-700">{item.name}</Text>
-              </TouchableOpacity>
-            ))}
+            <ScrollView horizontal>
+              {product.customizationOptions.removables.options.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  className={`flex-row items-center mr-4 px-3 py-2 rounded-full border ${
+                    selectedOptions.removables.includes(item.id)
+                      ? "bg-neutral/10 border-border/90"
+                      : "border-border/30"
+                  }`}
+                  onPress={() => {
+                    const newRemovals = selectedOptions.removables.includes(
+                      item.id
+                    )
+                      ? selectedOptions.removables.filter(
+                          (id) => id !== item.id
+                        )
+                      : [...selectedOptions.removables, item.id];
+                    setSelectedOptions({
+                      ...selectedOptions,
+                      removables: newRemovals,
+                    });
+                  }}
+                >
+                  <Text
+                    className={`${
+                      selectedOptions.removables.includes(item.id)
+                        ? "text-foreground dark:text-background"
+                        : "text-foreground-muted dark:text-foreground-muted-dark"
+                    }`}
+                  >
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
 
-          {/* Portion Size */}
+          {/* Portion Size (Radio Buttons) */}
           <View className="mb-6">
             <Text className="font-medium text-gray-800 mb-2">
               {product.customizationOptions.portionSize.title}
@@ -210,7 +256,11 @@ const ProductDetailScreen = () => {
             {product.customizationOptions.portionSize.options.map((size) => (
               <TouchableOpacity
                 key={size.id}
-                className="flex-row items-center py-2"
+                className={`flex-row items-center py-2 border ${
+                  selectedOptions.portionSize === size.id
+                    ? "border-primary"
+                    : "border-border/20"
+                } p-3 mb-4 rounded-lg`}
                 onPress={() =>
                   setSelectedOptions({
                     ...selectedOptions,
@@ -219,13 +269,22 @@ const ProductDetailScreen = () => {
                 }
               >
                 <View
-                  className={`w-5 h-5 rounded-full border-2 mr-3 
-                ${
-                  selectedOptions.portionSize === size.id
-                    ? "border-green-500 bg-green-500"
-                    : "border-gray-300"
-                }`}
-                />
+                  className="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
+                  style={{
+                    borderColor:
+                      selectedOptions.portionSize === size.id
+                        ? "#ff5a3c"
+                        : "#d1d5db",
+                    backgroundColor:
+                      selectedOptions.portionSize === size.id
+                        ? "#ff5a3c"
+                        : "transparent",
+                  }}
+                >
+                  {selectedOptions.portionSize === size.id && (
+                    <View className="w-2 h-2 rounded-full bg-white" />
+                  )}
+                </View>
                 <Text className="text-gray-700">
                   {size.name}{" "}
                   {size.price > 0 ? `(+$${size.price.toFixed(2)})` : ""}
@@ -234,32 +293,87 @@ const ProductDetailScreen = () => {
             ))}
           </View>
 
-          {/* Ingredients & Nutrition */}
-          <View className="mb-6">
-            <Text className="font-medium text-gray-800 mb-2">Ingredients</Text>
-            <Text className="text-gray-600 mb-4">
-              {product.ingredients.join(", ")}
-            </Text>
+          <View className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
+            <TouchableOpacity
+              className="flex-row justify-between items-center p-4 bg-gray-50"
+              onPress={() => toggleSection("ingredients")}
+            >
+              <Text className="font-medium text-gray-800">Ingredients</Text>
+              {expandedSections.ingredients ? (
+                <ChevronUp size={20} color="#6b7280" />
+              ) : (
+                <ChevronDown size={20} color="#6b7280" />
+              )}
+            </TouchableOpacity>
 
-            <Text className="font-medium text-gray-800 mb-2">
-              Nutritional Information
-            </Text>
-            <Text className="text-gray-600">
-              Calories: {product.nutritionalInfo.calories}kcal | Protein:{" "}
-              {product.nutritionalInfo.protein}
-            </Text>
+            {expandedSections.ingredients && (
+              <View className="p-4">
+                <Text className="text-gray-600">
+                  {product.ingredients.join(", ")}
+                </Text>
+              </View>
+            )}
           </View>
 
-          {/* Special Instructions */}
-          <View className="mb-8">
-            <Text className="font-medium text-gray-800 mb-2">
-              Special Instructions
-            </Text>
-            <View className="border border-gray-300 rounded-lg p-3">
-              <Text className="text-gray-400">
-                e.g., No salt, extra crispy, well done...
+          {/* Nutritional Information Section */}
+          <View className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
+            <TouchableOpacity
+              className="flex-row justify-between items-center p-4 bg-gray-50"
+              onPress={() => toggleSection("nutrition")}
+            >
+              <Text className="font-medium text-gray-800">
+                Nutritional Information
               </Text>
-            </View>
+              {expandedSections.nutrition ? (
+                <ChevronUp size={20} color="#6b7280" />
+              ) : (
+                <ChevronDown size={20} color="#6b7280" />
+              )}
+            </TouchableOpacity>
+
+            {expandedSections.nutrition && (
+              <View className="p-4">
+                <View className="flex-row justify-between mb-2">
+                  <Text className="text-gray-600">Calories</Text>
+                  <Text className="font-medium">
+                    {product.nutritionalInfo.calories}kcal
+                  </Text>
+                </View>
+                <View className="flex-row justify-between mb-2">
+                  <Text className="text-gray-600">Protein</Text>
+                  <Text className="font-medium">
+                    {product.nutritionalInfo.protein}g
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+
+          {/* Special Instructions Section */}
+          <View className="mb-8 border border-gray-200 rounded-lg overflow-hidden">
+            <TouchableOpacity
+              className="flex-row justify-between items-center p-4 bg-gray-50"
+              onPress={() => toggleSection("instructions")}
+            >
+              <Text className="font-medium text-gray-800">
+                Special Instructions
+              </Text>
+              {expandedSections.instructions ? (
+                <ChevronUp size={20} color="#6b7280" />
+              ) : (
+                <ChevronDown size={20} color="#6b7280" />
+              )}
+            </TouchableOpacity>
+
+            {expandedSections.instructions && (
+              <View className="p-4">
+                <View className="border border-gray-300 rounded-lg p-3">
+                  <Text className="text-gray-400">
+                    e.g., No salt, extra crispy, well done...
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
