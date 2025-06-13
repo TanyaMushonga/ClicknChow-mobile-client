@@ -33,6 +33,8 @@ import FeaturedProducts from "@/components/merchant/featuredProducts";
 import ProductMenu from "@/components/merchant/ProductsMenu";
 import MoreToExplore from "@/components/merchant/MoreToExplore";
 import MerchantSkeleton from "@/components/merchant/merchantSkeleton";
+import OrganizationAbout from "@/components/merchant/about";
+import ReviewsAndRatings from "@/components/merchant/reviews";
 
 const HEADER_MAX_HEIGHT = 150;
 const HEADER_MIN_HEIGHT = Platform.OS === "ios" ? 90 : 70;
@@ -157,7 +159,6 @@ const Merchant = () => {
             <TouchableOpacity
               style={styles.overlayButton}
               onPress={() => {
-              
                 router.back();
               }}
             >
@@ -249,7 +250,7 @@ const Merchant = () => {
             </View>
           </View>
 
-          <View className="flex-row items-center justify-start gap-1 my-4 mx-2 bg-neutral/10 rounded-full p-1 w-[75%]">
+          <View className="flex-row items-center justify-start gap-1 my-4 mx-2 bg-neutral/10 rounded-full p-1 w-[62%]">
             {options.map((option) => (
               <TouchableOpacity
                 onPress={() => {
@@ -300,10 +301,10 @@ const Merchant = () => {
               <MoreToExplore merchantId={merchantData.id} />
             </View>
             <View>
-              <Text>about yes</Text>
+              <OrganizationAbout organization={merchantData} />
             </View>
             <View>
-              <Text>reviews</Text>
+              <ReviewsAndRatings organization={merchantData} />
             </View>
           </TabContainer>
         </View>
