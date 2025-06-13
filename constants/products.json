@@ -1,0 +1,100 @@
+{
+  "products": [
+    {
+      "id": "t1",
+      "name": "Carne Asada Tacos",
+      "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
+      "description": "Grilled steak tacos with onions, cilantro and homemade salsa",
+      "category": "Tacos",
+      "ratings": "94% (320)",
+      "badge": "Chef's Choice",
+      "priceUSD": 10.99,
+      "priceZIG": 275,
+      "isFeatured": true,
+      "availableFor": ["delivery", "pickup"],
+      "preparationTime": 15,
+      "variants": [
+        {
+          "id": "t1v1",
+          "name": "2 Tacos",
+          "priceUSD": 10.99,
+          "priceZIG": 275
+        },
+        {
+          "id": "t1v2",
+          "name": "3 Tacos",
+          "priceUSD": 14.99,
+          "priceZIG": 375
+        }
+      ],
+      "addons": [
+        {
+          "id": "t1a1",
+          "name": "Guacamole",
+          "priceUSD": 1.5,
+          "priceZIG": 38
+        },
+        {
+          "id": "t1a2",
+          "name": "Extra Spicy Salsa",
+          "priceUSD": 0.75,
+          "priceZIG": 20
+        }
+      ],
+      "allergies": [
+        { "id": "t1al1", "name": "Gluten", "contains": "Corn tortillas" },
+        { "id": "t1al2", "name": "Dairy", "contains": "Optional cheese" }
+      ],
+      "metrics": {
+        "popularity": 92,
+        "calories": 480,
+        "spiceLevel": 3
+      }
+    },
+    {
+      "id": "t2",
+      "name": "Veggie Tacos",
+      "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/chips-and-guacamole.jpg",
+      "description": "Grilled vegetables with black beans, avocado and chipotle sauce",
+      "category": "Tacos",
+      "ratings": "90% (180)",
+      "badge": "Vegetarian",
+      "priceUSD": 9.99,
+      "priceZIG": 250,
+      "isFeatured": true,
+      "availableFor": ["delivery", "pickup"],
+      "preparationTime": 12,
+      "variants": [
+        {
+          "id": "t2v1",
+          "name": "2 Tacos",
+          "priceUSD": 9.99,
+          "priceZIG": 250
+        },
+        {
+          "id": "t2v2",
+          "name": "3 Tacos",
+          "priceUSD": 13.99,
+          "priceZIG": 350
+        }
+      ],
+      "addons": [
+        {
+          "id": "t2a1",
+          "name": "Vegan Cheese",
+          "priceUSD": 1.25,
+          "priceZIG": 32
+        }
+      ],
+      "allergies": [
+        { "id": "t2al1", "name": "Gluten", "contains": "Corn tortillas" }
+      ],
+      "metrics": {
+        "popularity": 85,
+        "calories": 420,
+        "spiceLevel": 2,
+        "isVegetarian": true
+      }
+    }
+  ]
+}
