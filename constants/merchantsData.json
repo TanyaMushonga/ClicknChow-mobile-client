@@ -676,7 +676,9 @@
         "userName": "John D.",
         "rating": 5,
         "comment": "Best burgers in town!",
-        "date": "2023-05-15"
+        "date": "2023-05-15",
+        "helpfulCount": 12,
+        "userImage": "https://clicknchow.s3.us-east-1.amazonaws.com/media/users/user123.jpg"
       }
     ]
   }
