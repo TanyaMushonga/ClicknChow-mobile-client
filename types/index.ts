@@ -46,17 +46,55 @@ export interface Product {
   description: string;
   category: string;
   image?: string;
+  imageUrls?: string[];
   ratings: string;
   priceUSD: number;
   priceZIG: number;
+  originalPrice?: number;
   isFeatured: boolean;
-  badge: string;
+  badge?: string;
   availableFor: string[];
   preparationTime: number;
-  variants?: ProductVariant[];
-  addons?: ProductAddon[];
-  allergies?: ProductAllergy[];
+  stock?: number;
+  reviewCount?: number;
   frequentlyBoughtTogether?: string[];
+  ingredients?: string[];
+  nutritionalInfo?: {
+    servingSize: string;
+    calories: {
+      value: number;
+      unit: string;
+    };
+    macronutrients: Array<{
+      name: string;
+      value: number;
+      unit: string;
+      dailyValue?: string;
+    }>;
+    micronutrients?: Array<{
+      name: string;
+      value: number;
+      unit: string;
+      dailyValue?: string;
+    }>;
+  };
+  customizationOptions?: Array<{
+    id: string;
+    title: string;
+    type: "single" | "multiple";
+    required: boolean;
+    options: Array<{
+      id: string;
+      name: string;
+      price: number;
+      description?: string;
+    }>;
+  }>;
+  allergies?: Array<{
+    id: string;
+    name: string;
+    contains: string;
+  }>;
   metrics?: {
     popularity?: number;
     calories?: number;
