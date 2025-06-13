@@ -111,7 +111,8 @@ interface Review {
   rating: number;
   comment: string;
   date: string;
-  images?: string[];
+  userImage?: string;
+  helpfulCount?: number;
 }
 
 export interface StoreHours {
