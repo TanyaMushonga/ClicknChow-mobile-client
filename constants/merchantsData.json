@@ -51,54 +51,86 @@
               "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger.jpg",
               "description": "Beef patty with lettuce, tomato, and special sauce",
               "category": "Burgers",
-              "ratings": "96% (421)",
+              "reviewCount": 421,
+              "ratings": "4.5",
               "badge": "New",
               "priceUSD": 8.99,
+              "stock": 3,
               "priceZIG": 225,
               "isFeatured": true,
               "availableFor": ["delivery", "pickup"],
               "preparationTime": 15,
-              "variants": [
+              "frequentlyBoughtTogether": ["s1", "d1"],
+              "ingredients": [
+                "Beef patty",
+                "Brioche bun",
+                "Lettuce",
+                "Tomato",
+                "Special sauce"
+              ],
+              "nutritionalInfo": {
+                "servingSize": "1 burger (320g)",
+                "calories": {
+                  "value": 720,
+                  "unit": "kcal"
+                },
+                "macronutrients": [
+                  {
+                    "name": "Protein",
+                    "value": 42,
+                    "unit": "g",
+                    "dailyValue": "84%"
+                  },
+                  {
+                    "name": "Carbohydrates",
+                    "value": 48,
+                    "unit": "g",
+                    "dailyValue": "16%"
+                  }
+                ]
+              },
+              "customizationOptions": [
                 {
-                  "id": "b1v1",
-                  "name": "Single",
-                  "priceUSD": 8.99,
-                  "priceZIG": 225
+                  "id": "opt_1",
+                  "title": "Cheese Selection",
+                  "type": "single",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "cheese_1",
+                      "name": "American",
+                      "price": 1.0
+                    },
+                    {
+                      "id": "cheese_2",
+                      "name": "Cheddar",
+                      "price": 1.0
+                    }
+                  ]
                 },
                 {
-                  "id": "b1v2",
-                  "name": "Double",
-                  "priceUSD": 11.99,
-                  "priceZIG": 300
+                  "id": "opt_2",
+                  "title": "Add Ons",
+                  "type": "multiple",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "addon_1",
+                      "name": "Bacon",
+                      "price": 2.0
+                    },
+                    {
+                      "id": "addon_2",
+                      "name": "Avocado",
+                      "price": 1.75
+                    }
+                  ]
                 }
-              ],
-              "addons": [
-                {
-                  "id": "b1a1",
-                  "name": "Cheese",
-                  "priceUSD": 1.5,
-                  "priceZIG": 38
-                },
-                {
-                  "id": "b1a2",
-                  "name": "Bacon",
-                  "priceUSD": 2.0,
-                  "priceZIG": 50
-                }
-              ],
-              "allergies": [
-                { "id": "b1al1", "name": "Gluten", "contains": "Wheat bun" },
-                { "id": "b1al2", "name": "Dairy", "contains": "Cheese" }
-              ],
-              "metrics": {
-                "popularity": 95,
-                "calories": 650,
-                "spiceLevel": 2
-              }
+              ]
             },
             {
               "id": "b2",
-              "name": "Chicken Zinger Burger",
+              "name": "Spicy Chicken Burger",
               "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/chicken+inn/burger2.jpg",
               "description": "Spicy fried chicken fillet with lettuce and mayo",
               "category": "Burgers",
@@ -109,43 +141,81 @@
               "isFeatured": false,
               "availableFor": ["delivery"],
               "preparationTime": 12,
-              "variants": [
+              "frequentlyBoughtTogether": ["s1", "d2"],
+              "ingredients": [
+                "Chicken patty",
+                "Brioche bun",
+                "Lettuce",
+                "Tomato",
+                "Special sauce",
+                "Spicy seasoning"
+              ],
+              "nutritionalInfo": {
+                "servingSize": "1 burger (350g)",
+                "calories": {
+                  "value": 650,
+                  "unit": "kcal"
+                },
+                "macronutrients": [
+                  {
+                    "name": "Protein",
+                    "value": 38,
+                    "unit": "g",
+                    "dailyValue": "76%"
+                  },
+                  {
+                    "name": "Carbohydrates",
+                    "value": 45,
+                    "unit": "g",
+                    "dailyValue": "15%"
+                  }
+                ]
+              },
+              "customizationOptions": [
                 {
-                  "id": "b2v1",
-                  "name": "Regular",
-                  "priceUSD": 7.99,
-                  "priceZIG": 200
+                  "id": "opt_1",
+                  "title": "Sauce Selection",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "sauce_1",
+                      "name": "Spicy Mayo",
+                      "price": 0,
+                      "description": "Our signature spicy sauce"
+                    },
+                    {
+                      "id": "sauce_2",
+                      "name": "BBQ",
+                      "price": 0,
+                      "description": "Sweet and smoky flavor"
+                    }
+                  ]
                 },
                 {
-                  "id": "b2v2",
-                  "name": "Spicy",
-                  "priceUSD": 8.49,
-                  "priceZIG": 215
+                  "id": "opt_2",
+                  "title": "Spice Level",
+                  "type": "single",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "spice_1",
+                      "name": "Mild",
+                      "price": 0
+                    },
+                    {
+                      "id": "spice_2",
+                      "name": "Medium",
+                      "price": 0
+                    },
+                    {
+                      "id": "spice_3",
+                      "name": "Hot",
+                      "price": 0
+                    }
+                  ]
                 }
-              ],
-              "addons": [
-                {
-                  "id": "b2a1",
-                  "name": "Extra Mayo",
-                  "priceUSD": 0.5,
-                  "priceZIG": 13
-                },
-                {
-                  "id": "b2a2",
-                  "name": "Cheddar",
-                  "priceUSD": 1.0,
-                  "priceZIG": 25
-                }
-              ],
-              "allergies": [
-                { "id": "b2al1", "name": "Gluten", "contains": "Bun" },
-                { "id": "b2al2", "name": "Eggs", "contains": "Mayo" }
-              ],
-              "metrics": {
-                "popularity": 88,
-                "calories": 600,
-                "spiceLevel": 4
-              }
+              ]
             },
             {
               "id": "b3",
@@ -160,45 +230,103 @@
               "isFeatured": true,
               "availableFor": ["pickup"],
               "preparationTime": 10,
-              "variants": [
-                {
-                  "id": "b3v1",
-                  "name": "Standard",
-                  "priceUSD": 6.99,
-                  "priceZIG": 175
-                },
-                {
-                  "id": "b3v2",
-                  "name": "With Avocado",
-                  "priceUSD": 8.49,
-                  "priceZIG": 215
-                }
+              "frequentlyBoughtTogether": ["s1", "d1"],
+              "ingredients": [
+                "Veggie patty (soy, vegetables)",
+                "Whole wheat bun",
+                "Lettuce",
+                "Tomato",
+                "Vegan mayo"
               ],
-              "addons": [
+              "nutritionalInfo": {
+                "servingSize": "1 burger (300g)",
+                "calories": {
+                  "value": 550,
+                  "unit": "kcal"
+                },
+                "macronutrients": [
+                  {
+                    "name": "Protein",
+                    "value": 22,
+                    "unit": "g",
+                    "dailyValue": "44%"
+                  },
+                  {
+                    "name": "Carbohydrates",
+                    "value": 65,
+                    "unit": "g",
+                    "dailyValue": "22%"
+                  },
+                  {
+                    "name": "Fat",
+                    "value": 18,
+                    "unit": "g",
+                    "dailyValue": "28%"
+                  }
+                ]
+              },
+              "customizationOptions": [
                 {
-                  "id": "b3a1",
-                  "name": "Avocado",
-                  "priceUSD": 1.5,
-                  "priceZIG": 38
+                  "id": "opt_1",
+                  "title": "Burger Style",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "style_1",
+                      "name": "Standard",
+                      "price": 6.99
+                    },
+                    {
+                      "id": "style_2",
+                      "name": "With Avocado",
+                      "price": 8.49
+                    }
+                  ]
                 },
                 {
-                  "id": "b3a2",
-                  "name": "Vegan Cheese",
-                  "priceUSD": 1.75,
-                  "priceZIG": 45
+                  "id": "opt_2",
+                  "title": "Add-ons",
+                  "type": "multiple",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "addon_1",
+                      "name": "Avocado",
+                      "price": 1.5
+                    },
+                    {
+                      "id": "addon_2",
+                      "name": "Vegan Cheese",
+                      "price": 1.75
+                    }
+                  ]
+                },
+                {
+                  "id": "opt_3",
+                  "title": "Remove Ingredients",
+                  "type": "multiple",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "remove_1",
+                      "name": "No Lettuce",
+                      "price": 0
+                    },
+                    {
+                      "id": "remove_2",
+                      "name": "No Tomato",
+                      "price": 0
+                    }
+                  ]
                 }
               ],
               "allergies": [
-                { "id": "b3al1", "name": "Soy", "contains": "Soy patty" },
-                {
-                  "id": "b3al2",
-                  "name": "Gluten",
-                  "contains": "Whole wheat bun"
-                }
+                { "id": "al1", "name": "Soy", "contains": "Veggie patty" },
+                { "id": "al2", "name": "Gluten", "contains": "Whole wheat bun" }
               ],
               "metrics": {
                 "popularity": 90,
-                "calories": 550,
                 "spiceLevel": 1,
                 "isVegetarian": true,
                 "isVegan": true
@@ -223,47 +351,47 @@
               "isFeatured": true,
               "availableFor": ["delivery", "pickup"],
               "preparationTime": 8,
-              "variants": [
+              "frequentlyBoughtTogether": ["b1", "b2", "d1"],
+              "customizationOptions": [
                 {
-                  "id": "s1v1",
-                  "name": "Regular",
-                  "priceUSD": 3.99,
-                  "priceZIG": 100
+                  "id": "opt_1",
+                  "title": "Size",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "size_1",
+                      "name": "Regular",
+                      "price": 3.99
+                    },
+                    {
+                      "id": "size_2",
+                      "name": "Large",
+                      "price": 5.99
+                    }
+                  ]
                 },
                 {
-                  "id": "s1v2",
-                  "name": "Large",
-                  "priceUSD": 5.99,
-                  "priceZIG": 150
+                  "id": "opt_2",
+                  "title": "Seasoning",
+                  "type": "single",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "season_1",
+                      "name": "Salt",
+                      "price": 0
+                    },
+                    {
+                      "id": "season_2",
+                      "name": "Cajun",
+                      "price": 0.5
+                    }
+                  ]
                 }
-              ],
-              "addons": [
-                {
-                  "id": "s1a1",
-                  "name": "Cheese Sauce",
-                  "priceUSD": 1.0,
-                  "priceZIG": 25
-                },
-                {
-                  "id": "s1a2",
-                  "name": "Bacon Bits",
-                  "priceUSD": 1.5,
-                  "priceZIG": 38
-                }
-              ],
-              "allergies": [
-                {
-                  "id": "s1al1",
-                  "name": "Gluten",
-                  "contains": "May contain traces"
-                }
-              ],
-              "metrics": {
-                "popularity": 92,
-                "calories": 365,
-                "spiceLevel": 0
-              }
+              ]
             },
+
             {
               "id": "s2",
               "name": "Onion Rings",
@@ -277,35 +405,88 @@
               "isFeatured": false,
               "availableFor": ["delivery", "pickup"],
               "preparationTime": 10,
-              "variants": [
+              "frequentlyBoughtTogether": ["b1", "b2", "d1"],
+              "ingredients": [
+                "Onions",
+                "Batter (wheat flour, spices)",
+                "Dipping sauce"
+              ],
+              "nutritionalInfo": {
+                "servingSize": "6 pieces (150g)",
+                "calories": {
+                  "value": 420,
+                  "unit": "kcal"
+                },
+                "macronutrients": [
+                  {
+                    "name": "Protein",
+                    "value": 5,
+                    "unit": "g",
+                    "dailyValue": "10%"
+                  },
+                  {
+                    "name": "Carbohydrates",
+                    "value": 56,
+                    "unit": "g",
+                    "dailyValue": "19%"
+                  },
+                  {
+                    "name": "Fat",
+                    "value": 22,
+                    "unit": "g",
+                    "dailyValue": "34%"
+                  }
+                ]
+              },
+              "customizationOptions": [
                 {
-                  "id": "s2v1",
-                  "name": "6 Pieces",
-                  "priceUSD": 4.49,
-                  "priceZIG": 115
+                  "id": "opt_1",
+                  "title": "Portion Size",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "size_1",
+                      "name": "6 Pieces",
+                      "price": 4.49
+                    },
+                    {
+                      "id": "size_2",
+                      "name": "12 Pieces",
+                      "price": 7.99
+                    }
+                  ]
                 },
                 {
-                  "id": "s2v2",
-                  "name": "12 Pieces",
-                  "priceUSD": 7.99,
-                  "priceZIG": 200
-                }
-              ],
-              "addons": [
-                {
-                  "id": "s2a1",
-                  "name": "Extra Sauce",
-                  "priceUSD": 0.75,
-                  "priceZIG": 20
+                  "id": "opt_2",
+                  "title": "Dipping Sauce",
+                  "type": "single",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "sauce_1",
+                      "name": "Ranch",
+                      "price": 0
+                    },
+                    {
+                      "id": "sauce_2",
+                      "name": "BBQ",
+                      "price": 0
+                    },
+                    {
+                      "id": "sauce_3",
+                      "name": "Extra Sauce",
+                      "price": 0.75
+                    }
+                  ]
                 }
               ],
               "allergies": [
-                { "id": "s2al1", "name": "Gluten", "contains": "Batter" },
-                { "id": "s2al2", "name": "Dairy", "contains": "Dipping sauce" }
+                { "id": "al1", "name": "Gluten", "contains": "Wheat batter" },
+                { "id": "al2", "name": "Dairy", "contains": "Dipping sauce" }
               ],
               "metrics": {
                 "popularity": 87,
-                "calories": 420,
                 "spiceLevel": 1
               }
             }
@@ -328,33 +509,45 @@
               "isFeatured": true,
               "availableFor": ["delivery", "pickup"],
               "preparationTime": 2,
-              "variants": [
+              "frequentlyBoughtTogether": ["b1", "s1"],
+              "customizationOptions": [
                 {
-                  "id": "d1v1",
-                  "name": "Coke",
-                  "priceUSD": 2.49,
-                  "priceZIG": 65
+                  "id": "opt_1",
+                  "title": "Flavor",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "flavor_1",
+                      "name": "Coke",
+                      "price": 2.49
+                    },
+                    {
+                      "id": "flavor_2",
+                      "name": "Sprite",
+                      "price": 2.49
+                    }
+                  ]
                 },
                 {
-                  "id": "d1v2",
-                  "name": "Sprite",
-                  "priceUSD": 2.49,
-                  "priceZIG": 65
-                },
-                {
-                  "id": "d1v3",
-                  "name": "Fanta",
-                  "priceUSD": 2.49,
-                  "priceZIG": 65
+                  "id": "opt_2",
+                  "title": "Size",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "size_1",
+                      "name": "Regular (12oz)",
+                      "price": 2.49
+                    },
+                    {
+                      "id": "size_2",
+                      "name": "Large (20oz)",
+                      "price": 3.49
+                    }
+                  ]
                 }
-              ],
-              "addons": [],
-              "allergies": [],
-              "metrics": {
-                "popularity": 96,
-                "calories": 150,
-                "spiceLevel": 0
-              }
+              ]
             },
             {
               "id": "d2",
@@ -369,46 +562,106 @@
               "isFeatured": true,
               "availableFor": ["delivery", "pickup"],
               "preparationTime": 5,
-              "variants": [
-                {
-                  "id": "d2v1",
-                  "name": "Vanilla",
-                  "priceUSD": 4.99,
-                  "priceZIG": 125
-                },
-                {
-                  "id": "d2v2",
-                  "name": "Chocolate",
-                  "priceUSD": 4.99,
-                  "priceZIG": 125
-                },
-                {
-                  "id": "d2v3",
-                  "name": "Strawberry",
-                  "priceUSD": 4.99,
-                  "priceZIG": 125
-                }
+              "frequentlyBoughtTogether": ["b1", "s1"],
+              "ingredients": [
+                "Milk",
+                "Ice cream",
+                "Flavor syrup",
+                "Whipped cream (optional)"
               ],
-              "addons": [
+              "nutritionalInfo": {
+                "servingSize": "16oz",
+                "calories": {
+                  "value": 350,
+                  "unit": "kcal"
+                },
+                "macronutrients": [
+                  {
+                    "name": "Protein",
+                    "value": 8,
+                    "unit": "g",
+                    "dailyValue": "16%"
+                  },
+                  {
+                    "name": "Carbohydrates",
+                    "value": 52,
+                    "unit": "g",
+                    "dailyValue": "17%"
+                  },
+                  {
+                    "name": "Fat",
+                    "value": 12,
+                    "unit": "g",
+                    "dailyValue": "18%"
+                  }
+                ]
+              },
+              "customizationOptions": [
                 {
-                  "id": "d2a1",
-                  "name": "Whipped Cream",
-                  "priceUSD": 0.75,
-                  "priceZIG": 20
+                  "id": "opt_1",
+                  "title": "Flavor",
+                  "type": "single",
+                  "required": true,
+                  "options": [
+                    {
+                      "id": "flavor_1",
+                      "name": "Vanilla",
+                      "price": 4.99
+                    },
+                    {
+                      "id": "flavor_2",
+                      "name": "Chocolate",
+                      "price": 4.99
+                    },
+                    {
+                      "id": "flavor_3",
+                      "name": "Strawberry",
+                      "price": 4.99
+                    }
+                  ]
                 },
                 {
-                  "id": "d2a2",
-                  "name": "Cherry",
-                  "priceUSD": 0.5,
-                  "priceZIG": 13
+                  "id": "opt_2",
+                  "title": "Add-ons",
+                  "type": "multiple",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "addon_1",
+                      "name": "Whipped Cream",
+                      "price": 0.75
+                    },
+                    {
+                      "id": "addon_2",
+                      "name": "Cherry",
+                      "price": 0.5
+                    }
+                  ]
+                },
+                {
+                  "id": "opt_3",
+                  "title": "Size",
+                  "type": "single",
+                  "required": false,
+                  "options": [
+                    {
+                      "id": "size_1",
+                      "name": "Regular (16oz)",
+                      "price": 4.99
+                    },
+                    {
+                      "id": "size_2",
+                      "name": "Large (24oz)",
+                      "price": 6.49
+                    }
+                  ]
                 }
               ],
               "allergies": [
-                { "id": "d2al1", "name": "Dairy", "contains": "Milk" }
+                { "id": "al1", "name": "Dairy", "contains": "Milk, ice cream" }
               ],
               "metrics": {
                 "popularity": 93,
-                "calories": 350,
                 "spiceLevel": 0
               }
             }
@@ -424,278 +677,6 @@
         "rating": 5,
         "comment": "Best burgers in town!",
         "date": "2023-05-15"
-      }
-    ]
-  },
-  {
-    "id": "2",
-    "name": "Taco Fiesta",
-    "category": "Mexican • Tacos",
-    "rating": 4.5,
-    "numberOfRatings": 275,
-    "orders": 850,
-    "deliveryTime": "20-25 min",
-    "pickupTime": "15-20 min",
-    "distance": "1.0 km",
-    "status": "open",
-    "openingHours": {
-      "monday": { "open": "11:00", "close": "21:00" },
-      "tuesday": { "open": "11:00", "close": "21:00" },
-      "wednesday": { "open": "11:00", "close": "21:00" },
-      "thursday": { "open": "11:00", "close": "22:00" },
-      "friday": { "open": "11:00", "close": "23:00" },
-      "saturday": { "open": "11:00", "close": "23:00" },
-      "sunday": { "open": "12:00", "close": "21:00" }
-    },
-    "logo": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
-    "coverImage": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
-    "isFavorite": true,
-    "isSponsored": false,
-    "deliveryFeeUSD": 5.00,
-    "deliveryFeeZIG": 125,
-    "minOrderUSD": 12,
-    "minOrderZIG": 300,
-    "coordinates": { "latitude": -17.823456, "longitude": 31.054321 },
-    "about": {
-      "description": "Authentic Mexican street food with bold flavors and fresh ingredients since 2019.",
-      "dateJoined": "2021-08-10",
-      "phone": "+263775678901",
-      "email": "hola@tacofiesta.com",
-      "website": "www.tacofiesta.com",
-      "socialMedia": {
-        "facebook": "facebook.com/tacofiesta",
-        "instagram": "instagram.com/tacofiesta"
-      }
-    },
-    "menu": {
-      "categories": [
-        {
-          "id": "cat1",
-          "name": "Tacos",
-          "products": [
-            {
-              "id": "t1",
-              "name": "Carne Asada Tacos",
-              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
-              "description": "Grilled steak tacos with onions, cilantro and homemade salsa",
-              "category": "Tacos",
-              "ratings": "94% (320)",
-              "badge": "Chef's Choice",
-              "priceUSD": 10.99,
-              "priceZIG": 275,
-              "isFeatured": true,
-              "availableFor": ["delivery", "pickup"],
-              "preparationTime": 15,
-              "variants": [
-                {
-                  "id": "t1v1",
-                  "name": "2 Tacos",
-                  "priceUSD": 10.99,
-                  "priceZIG": 275
-                },
-                {
-                  "id": "t1v2",
-                  "name": "3 Tacos",
-                  "priceUSD": 14.99,
-                  "priceZIG": 375
-                }
-              ],
-              "addons": [
-                {
-                  "id": "t1a1",
-                  "name": "Guacamole",
-                  "priceUSD": 1.50,
-                  "priceZIG": 38
-                },
-                {
-                  "id": "t1a2",
-                  "name": "Extra Spicy Salsa",
-                  "priceUSD": 0.75,
-                  "priceZIG": 20
-                }
-              ],
-              "allergies": [
-                { "id": "t1al1", "name": "Gluten", "contains": "Corn tortillas" },
-                { "id": "t1al2", "name": "Dairy", "contains": "Optional cheese" }
-              ],
-              "metrics": {
-                "popularity": 92,
-                "calories": 480,
-                "spiceLevel": 3
-              }
-            },
-            {
-              "id": "t2",
-              "name": "Veggie Tacos",
-              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/chips-and-guacamole.jpg",
-              "description": "Grilled vegetables with black beans, avocado and chipotle sauce",
-              "category": "Tacos",
-              "ratings": "90% (180)",
-              "badge": "Vegetarian",
-              "priceUSD": 9.99,
-              "priceZIG": 250,
-              "isFeatured": true,
-              "availableFor": ["delivery", "pickup"],
-              "preparationTime": 12,
-              "variants": [
-                {
-                  "id": "t2v1",
-                  "name": "2 Tacos",
-                  "priceUSD": 9.99,
-                  "priceZIG": 250
-                },
-                {
-                  "id": "t2v2",
-                  "name": "3 Tacos",
-                  "priceUSD": 13.99,
-                  "priceZIG": 350
-                }
-              ],
-              "addons": [
-                {
-                  "id": "t2a1",
-                  "name": "Vegan Cheese",
-                  "priceUSD": 1.25,
-                  "priceZIG": 32
-                }
-              ],
-              "allergies": [
-                { "id": "t2al1", "name": "Gluten", "contains": "Corn tortillas" }
-              ],
-              "metrics": {
-                "popularity": 85,
-                "calories": 420,
-                "spiceLevel": 2,
-                "isVegetarian": true
-              }
-            }
-          ]
-        },
-        {
-          "id": "cat2",
-          "name": "Burritos",
-          "products": [
-            {
-              "id": "b1",
-              "name": "Mission Burrito",
-              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/burrito1.jpg",
-              "description": "Large flour tortilla stuffed with rice, beans, meat, salsa and cheese",
-              "category": "Burritos",
-              "ratings": "93% (240)",
-              "badge": "Popular",
-              "priceUSD": 12.99,
-              "priceZIG": 325,
-              "isFeatured": false,
-              "availableFor": ["delivery", "pickup"],
-              "preparationTime": 18,
-              "variants": [
-                {
-                  "id": "b1v1",
-                  "name": "Chicken",
-                  "priceUSD": 12.99,
-                  "priceZIG": 325
-                },
-                {
-                  "id": "b1v2",
-                  "name": "Beef",
-                  "priceUSD": 13.99,
-                  "priceZIG": 350
-                }
-              ],
-              "addons": [
-                {
-                  "id": "b1a1",
-                  "name": "Sour Cream",
-                  "priceUSD": 0.75,
-                  "priceZIG": 20
-                },
-                {
-                  "id": "b1a2",
-                  "name": "Queso",
-                  "priceUSD": 1.25,
-                  "priceZIG": 32
-                }
-              ],
-              "allergies": [
-                { "id": "b1al1", "name": "Gluten", "contains": "Flour tortilla" },
-                { "id": "b1al2", "name": "Dairy", "contains": "Cheese" }
-              ],
-              "metrics": {
-                "popularity": 89,
-                "calories": 850,
-                "spiceLevel": 2
-              }
-            }
-          ]
-        },
-        {
-          "id": "cat3",
-          "name": "Sides & Extras",
-          "products": [
-            {
-              "id": "s1",
-              "name": "Chips & Guacamole",
-              "image": "https://clicknchow.s3.us-east-1.amazonaws.com/media/organisation/fery+cafe/tacos1.jpg",
-              "description": "Homemade tortilla chips with fresh guacamole",
-              "category": "Sides & Extras",
-              "ratings": "96% (190)",
-              "badge": "Best Seller",
-              "priceUSD": 5.99,
-              "priceZIG": 150,
-              "isFeatured": true,
-              "availableFor": ["delivery", "pickup"],
-              "preparationTime": 5,
-              "variants": [
-                {
-                  "id": "s1v1",
-                  "name": "Regular",
-                  "priceUSD": 5.99,
-                  "priceZIG": 150
-                },
-                {
-                  "id": "s1v2",
-                  "name": "Large",
-                  "priceUSD": 8.99,
-                  "priceZIG": 225
-                }
-              ],
-              "addons": [
-                {
-                  "id": "s1a1",
-                  "name": "Extra Salsa",
-                  "priceUSD": 0.50,
-                  "priceZIG": 13
-                }
-              ],
-              "allergies": [
-                { "id": "s1al1", "name": "Gluten", "contains": "Corn chips" }
-              ],
-              "metrics": {
-                "popularity": 95,
-                "calories": 520,
-                "spiceLevel": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "reviews": [
-      {
-        "id": "r1",
-        "userId": "user456",
-        "userName": "Maria S.",
-        "rating": 5,
-        "comment": "Authentic flavors that remind me of Mexico City!",
-        "date": "2023-06-15"
-      },
-      {
-        "id": "r2",
-        "userId": "user789",
-        "userName": "Carlos M.",
-        "rating": 4,
-        "comment": "Great tacos, generous portions. Will definitely order again.",
-        "date": "2023-07-02"
       }
     ]
   }
