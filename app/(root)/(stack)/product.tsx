@@ -1,5 +1,4 @@
-import { dummyProduct } from "@/constants";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,29 +6,58 @@ import {
   ScrollView,
   TouchableOpacity,
   StatusBar,
+  useColorScheme,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronDown, ChevronUp } from "lucide-react-native";
+import { TextInput } from "react-native";
+import { Product } from "@/types";
+import { products } from "@/constants/products.json";
 
 const ProductDetailScreen = () => {
-  const [product] = useState(dummyProduct);
+  const { product: productString } = useLocalSearchParams();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [specialInstructions, setSpecialInstructions] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [selectedOptions, setSelectedOptions] = useState({
-    sauce: product.customizationOptions.sauces.options[0].id,
-    addOns: [] as string[],
-    removables: [] as string[],
-    portionSize: product.customizationOptions.portionSize.options[0].id,
-    specialInstructions: "",
-  });
+  const [selectedOptions, setSelectedOptions] = useState<any>({});
   const [expandedSections, setExpandedSections] = useState({
     ingredients: false,
     nutrition: false,
     instructions: false,
   });
+  const colorScheme = useColorScheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (productString) {
+      try {
+        const parsedProduct = JSON.parse(productString as string);
+        setProduct(parsedProduct);
+
+        // Initialize selected options based on product customization
+        if (parsedProduct.customizationOptions) {
+          const initialOptions: any = {};
+          parsedProduct.customizationOptions.forEach((option: any) => {
+            if (option.type === "single" && option.options.length > 0) {
+              initialOptions[option.id] = option.options[0].id;
+            } else if (option.type === "multiple") {
+              initialOptions[option.id] = [];
+            }
+          });
+          setSelectedOptions(initialOptions);
+        }
+      } catch (error) {
+        console.error("Error parsing product:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, [productString]);
 
   interface ExpandedSections {
     ingredients: boolean;
@@ -46,73 +74,151 @@ const ProductDetailScreen = () => {
     }));
   };
 
-  const router = useRouter();
+  const handleOptionSelect = (optionId: string, value: string | string[]) => {
+    setSelectedOptions((prev: any) => ({
+      ...prev,
+      [optionId]: value,
+    }));
+  };
 
   const getAddOnsPrice = () => {
-    return product.customizationOptions.addOns.options
-      .filter((addOn) => selectedOptions.addOns.includes(addOn.id))
-      .reduce((sum, addOn) => sum + addOn.price, 0);
-  };
+    if (!product?.customizationOptions) return 0;
 
-  const getPortionSizePrice = () => {
-    const portion = product.customizationOptions.portionSize.options.find(
-      (opt) => opt.id === selectedOptions.portionSize
+    const addOnsOption = product.customizationOptions.find(
+      (opt) =>
+        opt.title.toLowerCase().includes("add") || opt.type === "multiple"
     );
-    return portion ? portion.price : 0;
+
+    if (!addOnsOption) return 0;
+
+    return addOnsOption.options
+      .filter((addOn) => selectedOptions[addOnsOption.id]?.includes(addOn.id))
+      .reduce((sum, addOn) => sum + (addOn.price || 0), 0);
   };
 
-  const totalPrice =
-    (product.price + getAddOnsPrice() + getPortionSizePrice()) * quantity;
+  const getTotalPrice = () => {
+    if (!product) return 0;
+
+    const basePrice = product.priceUSD || product.priceUSD || 0;
+    const addOnsPrice = getAddOnsPrice();
+    return (basePrice + addOnsPrice) * quantity;
+  };
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-background dark:bg-background-dark p-4">
+        <View className="flex-row justify-between items-center mb-6">
+          <View className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          <View className="flex-row gap-4">
+            <View className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+            <View className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full" />
+          </View>
+        </View>
+
+        {/* Image Skeleton */}
+        <View className="w-full h-64 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4" />
+
+        {/* Title Skeleton */}
+        <View className="flex-row justify-between mb-4">
+          <View className="w-3/5 h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+          <View className="w-1/5 h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+        </View>
+
+        {/* Rating Skeleton */}
+        <View className="w-1/3 h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+
+        {/* Description Skeleton */}
+        <View className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+        <View className="w-4/5 h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+
+        {/* Customization Skeleton */}
+        <View className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2" />
+        <View className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2" />
+        <View className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4" />
+
+        {/* Bottom Bar Skeleton */}
+        <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 p-4">
+          <View className="w-full h-14 bg-gray-300 dark:bg-gray-700 rounded-lg" />
+        </View>
+      </View>
+    );
+  }
+
+  if (!product) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background dark:bg-background-dark">
+        <Text className="text-lg text-foreground dark:text-foreground-dark">
+          Product not found
+        </Text>
+        <TouchableOpacity
+          className="mt-4 px-4 py-2 bg-primary rounded-lg"
+          onPress={() => router.back()}
+        >
+          <Text className="text-white">Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-background dark:bg-background-dark">
       <StatusBar barStyle="light-content" />
       <View className="flex flex-row items-center justify-between px-6 py-4 mt-4">
-        <TouchableOpacity
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <Ionicons name="arrow-back" size={24} color="black" />
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
         </TouchableOpacity>
         <View className="flex flex-row gap-6 items-center">
           <TouchableOpacity>
-            <MaterialIcons name="favorite-border" size={24} color="black" />
+            <MaterialIcons
+              name="favorite-border"
+              size={24}
+              color={colorScheme === "dark" ? "white" : "black"}
+            />
           </TouchableOpacity>
           <TouchableOpacity>
-            <FontAwesome5 name="share" size={24} color="black" />
+            <FontAwesome5
+              name="share"
+              size={24}
+              color={colorScheme === "dark" ? "white" : "black"}
+            />
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView className="pb-24">
+
+      <ScrollView className="mb-36">
         <Image
-          source={{ uri: product.imageUrls[0] }}
+          source={{ uri: product.imageUrls?.[0] || product.image }}
           className="w-full h-64 object-cover"
         />
 
-        <View className="p-4">
-          <View className="flex-row justify-between items-start mb-1">
-            <Text className="text-2xl font-bold text-gray-900">
+        <View className="">
+          <View className="flex-row justify-between items-start mb-1 p-4">
+            <Text className="text-2xl font-bold text-gray-900 dark:text-white">
               {product.name}
             </Text>
             <View className="items-end">
               <Text className="text-xl font-bold text-green-600">
-                ${product.price.toFixed(2)}
+                ${(product.priceUSD || product.priceUSD).toFixed(2)}
               </Text>
               {product.originalPrice && (
-                <Text className="text-sm line-through text-gray-500">
+                <Text className="text-sm line-through text-gray-500 dark:text-gray-400">
                   ${product.originalPrice.toFixed(2)}
                 </Text>
               )}
             </View>
           </View>
 
-          <View className="flex-row items-center mb-3">
+          <View className="flex-row items-center mb-3 px-4">
             <Ionicons name="star" size={16} color="#facc15" />
             <Text className="ml-1 text-black dark:text-white text-lg">
-              {product.rating} ({product.reviewCount}+ reviews)
+              {product.ratings || product.ratings?.split(" ")[0]}
+              {product.reviewCount && ` (${product.reviewCount}+ reviews)`}
             </Text>
-            {product.stock < 10 && (
+            {product.stock && product.stock < 10 && (
               <View className="bg-primary/15 py-1 px-2 rounded-full ml-4">
                 <Text className="text-primary text-sm font-medium">
                   Only {product.stock} left!
@@ -121,286 +227,319 @@ const ProductDetailScreen = () => {
             )}
           </View>
 
-          <Text className="text-foreground-muted dark:text-foreground-muted-dark mb-6 text-lg">
+          <Text className="text-foreground-muted dark:text-foreground-muted-dark mb-2 text-lg px-4">
             {product.description}
           </Text>
+          {product.badge && (
+            <View className="bg-neutral/20 p-1 mb-5 ms-4 rounded ml-2 self-start">
+              <Text className="text-sm font-medium">{product.badge}</Text>
+            </View>
+          )}
 
-          <Text className="text-xl font-bold text-black dark:text-white mb-4">
-            Customize Your Order
-          </Text>
+          {product?.customizationOptions?.length &&
+          product.customizationOptions.length > 0
+            ? product.customizationOptions.map((option) => (
+                <View key={option.id} className="mb-6">
+                  <Text className="text-xl font-semibold text-black dark:text-white mb-2 px-4">
+                    {option.title}
+                  </Text>
 
-          <View className="mb-6">
-            <Text className="font-medium text-gray-800 mb-2">
-              {product.customizationOptions.sauces.title}
-            </Text>
-            {product.customizationOptions.sauces.options.map((sauce) => (
-              <TouchableOpacity
-                key={sauce.id}
-                className={`flex-row items-center py-2 border ${
-                  selectedOptions.sauce === sauce.id
-                    ? "border-primary"
-                    : "border-border/20"
-                } p-3 mb-4 rounded-lg`}
-                onPress={() =>
-                  setSelectedOptions({ ...selectedOptions, sauce: sauce.id })
-                }
-              >
-                <View
-                  className="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
-                  style={{
-                    borderColor:
-                      selectedOptions.sauce === sauce.id
-                        ? "#ff5a3c"
-                        : "#d1d5db",
-                    backgroundColor:
-                      selectedOptions.sauce === sauce.id
-                        ? "#ff5a3c"
-                        : "transparent",
-                  }}
-                >
-                  {selectedOptions.sauce === sauce.id && (
-                    <View className="w-2 h-2 rounded-full bg-white" />
-                  )}
+                  {option.type === "single"
+                    ? option.options.map((opt) => (
+                        <TouchableOpacity
+                          key={opt.id}
+                          className="border-b border-b-border/15 dark:border-b-border-dark/15 py-4"
+                          onPress={() => handleOptionSelect(option.id, opt.id)}
+                        >
+                          <View className="flex flex-row px-4 items-center justify-between">
+                            <View className="flex-row items-center">
+                              <View
+                                className="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
+                                style={{
+                                  borderColor:
+                                    selectedOptions[option.id] === opt.id
+                                      ? "#ff5a3c"
+                                      : "#d1d5db",
+                                  backgroundColor:
+                                    selectedOptions[option.id] === opt.id
+                                      ? "#ff5a3c"
+                                      : "transparent",
+                                }}
+                              >
+                                {selectedOptions[option.id] === opt.id && (
+                                  <View className="w-2 h-2 rounded-full bg-white" />
+                                )}
+                              </View>
+                              <Text className="text-gray-700 dark:text-gray-300">
+                                {opt.name}
+                              </Text>
+                            </View>
+                            <Text className="dark:text-foreground font-medium text-lg">
+                              {opt.price > 0 && ` +$${opt.price.toFixed(2)}`}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      ))
+                    : option.options.map((opt) => (
+                        <TouchableOpacity
+                          key={opt.id}
+                          className="border-b border-b-border/15 dark:border-b-border-dark/15 py-4"
+                          onPress={() => {
+                            const currentValues =
+                              selectedOptions[option.id] || [];
+                            const newValues = currentValues.includes(opt.id)
+                              ? currentValues.filter(
+                                  (id: string) => id !== opt.id
+                                )
+                              : [...currentValues, opt.id];
+                            handleOptionSelect(option.id, newValues);
+                          }}
+                        >
+                          <View className="flex flex-row justify-between px-4 items-center">
+                            <View className="flex-row items-center">
+                              <View
+                                className={`w-5 h-5 rounded mr-3 flex items-center justify-center ${
+                                  selectedOptions[option.id]?.includes(opt.id)
+                                    ? "bg-primary"
+                                    : "border-2 border-border"
+                                }`}
+                              >
+                                {selectedOptions[option.id]?.includes(
+                                  opt.id
+                                ) && (
+                                  <AntDesign
+                                    name="check"
+                                    size={14}
+                                    color="white"
+                                  />
+                                )}
+                              </View>
+                              <Text className="text-gray-700 dark:text-gray-300">
+                                {opt.name}
+                              </Text>
+                            </View>
+                            {opt.price > 0 && (
+                              <Text className="dark:text-foreground font-medium text-lg">
+                                + ${opt.price.toFixed(2)}
+                              </Text>
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      ))}
                 </View>
-                <Text className="text-gray-700">{sauce.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View className="mb-6">
-            <Text className="font-medium text-gray-800 mb-2">
-              {product.customizationOptions.addOns.title}
+              ))
+            : null}
+
+          <View className="mb-8 rounded-lg overflow-hidden mx-4">
+            <Text className="text-xl font-semibold text-black dark:text-white">
+              Special Instructions
             </Text>
-            {product.customizationOptions.addOns.options.map((addOn) => (
+            <TextInput
+              className="bg-neutral/10 dark:bg-foreground/25 rounded-lg p-3 mt-2 text-gray-800 dark:text-gray-200"
+              value={specialInstructions}
+              onChangeText={setSpecialInstructions}
+              placeholder="e.g., No salt, extra crispy, well done..."
+              placeholderTextColor={
+                colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+              }
+              multiline={true}
+              numberOfLines={4}
+            />
+          </View>
+          {product.ingredients && (
+            <View className="mb-6 border border-border/20 rounded-lg overflow-hidden mx-4">
               <TouchableOpacity
-                key={addOn.id}
-                className={`flex-row justify-between items-center border p-3 mb-4 rounded-lg ${
-                  selectedOptions.addOns.includes(addOn.id)
-                    ? "border-primary"
-                    : "border-border/20"
-                }`}
-                onPress={() => {
-                  const newAddOns = selectedOptions.addOns.includes(addOn.id)
-                    ? selectedOptions.addOns.filter((id) => id !== addOn.id)
-                    : [...selectedOptions.addOns, addOn.id];
-                  setSelectedOptions({ ...selectedOptions, addOns: newAddOns });
-                }}
+                className="flex-row justify-between items-center p-4 bg-gray-50 dark:bg-gray-800"
+                onPress={() => toggleSection("ingredients")}
               >
-                <View className="flex-row items-center">
-                  <View
-                    className={`w-5 h-5 rounded mr-3 flex items-center justify-center
-                    ${
-                      selectedOptions.addOns.includes(addOn.id)
-                        ? "bg-primary"
-                        : "border-2 border-border"
-                    }`}
-                  >
-                    {selectedOptions.addOns.includes(addOn.id) && (
-                      <AntDesign name="check" size={14} color="white" />
-                    )}
+                <Text className="text-lg font-semibold text-black dark:text-white">
+                  Ingredients
+                </Text>
+                {expandedSections.ingredients ? (
+                  <ChevronUp
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "#6b7280"}
+                  />
+                ) : (
+                  <ChevronDown
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "#6b7280"}
+                  />
+                )}
+              </TouchableOpacity>
+
+              {expandedSections.ingredients && (
+                <View className="p-4">
+                  <Text className="text-gray-600 dark:text-gray-300">
+                    {product.ingredients.join(", ")}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          {product.nutritionalInfo && (
+            <View className="mb-6 border border-border/20 rounded-lg overflow-hidden mx-4">
+              <TouchableOpacity
+                className="flex-row justify-between items-center p-4 bg-gray-50 dark:bg-gray-800"
+                onPress={() => toggleSection("nutrition")}
+              >
+                <Text className="text-lg font-semibold text-black dark:text-white">
+                  Nutritional Information
+                </Text>
+                {expandedSections.nutrition ? (
+                  <ChevronUp
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "#6b7280"}
+                  />
+                ) : (
+                  <ChevronDown
+                    size={20}
+                    color={colorScheme === "dark" ? "white" : "#6b7280"}
+                  />
+                )}
+              </TouchableOpacity>
+
+              {expandedSections.nutrition && (
+                <View className="p-4">
+                  <View className="flex-row justify-between mb-2">
+                    <Text className="text-gray-600 dark:text-gray-300">
+                      Calories
+                    </Text>
+                    <Text className="font-medium dark:text-white">
+                      {product.nutritionalInfo.calories.value}
+                      {product.nutritionalInfo.calories.unit}
+                    </Text>
                   </View>
-                  <Text className="text-gray-700">{addOn.name}</Text>
+                  {product.nutritionalInfo.macronutrients.map((nutrient) => (
+                    <View
+                      key={nutrient.name}
+                      className="flex-row justify-between mb-2"
+                    >
+                      <Text className="text-gray-600 dark:text-gray-300">
+                        {nutrient.name}
+                      </Text>
+                      <Text className="font-medium dark:text-white">
+                        {nutrient.value}
+                        {nutrient.unit}
+                        {nutrient.dailyValue && ` (${nutrient.dailyValue})`}
+                      </Text>
+                    </View>
+                  ))}
                 </View>
-                <Text className="dark:text-foreground font-medium text-lg">
-                  + ${addOn.price.toFixed(2)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View className="mb-6">
-            <Text className="font-medium text-gray-800 mb-2">
-              {product.customizationOptions.removables.title}
-            </Text>
-            <ScrollView horizontal>
-              {product.customizationOptions.removables.options.map((item) => (
-                <TouchableOpacity
-                  key={item.id}
-                  className={`flex-row items-center mr-4 px-3 py-2 rounded-full border ${
-                    selectedOptions.removables.includes(item.id)
-                      ? "bg-neutral/10 border-border/90"
-                      : "border-border/30"
-                  }`}
-                  onPress={() => {
-                    const newRemovals = selectedOptions.removables.includes(
-                      item.id
-                    )
-                      ? selectedOptions.removables.filter(
-                          (id) => id !== item.id
-                        )
-                      : [...selectedOptions.removables, item.id];
-                    setSelectedOptions({
-                      ...selectedOptions,
-                      removables: newRemovals,
-                    });
-                  }}
-                >
-                  <Text
-                    className={`${
-                      selectedOptions.removables.includes(item.id)
-                        ? "text-foreground dark:text-background"
-                        : "text-foreground-muted dark:text-foreground-muted-dark"
-                    }`}
-                  >
-                    {item.name}
+              )}
+            </View>
+          )}
+        </View>
+        <View>
+          <Text className="text-xl font-semibold text-black dark:text-white mx-4">
+            Frequently bought together
+          </Text>
+          {products.map((product, index) => (
+            <TouchableOpacity
+              className={`${
+                index === products.length - 1
+                  ? "border-b-2 border-b-border/15 dark:border-b-border-dark/15 pb-4"
+                  : "border-b border-b-border/15 dark:border-b-border-dark/15 pb-4"
+              }`}
+              key={product.id}
+              onPress={() =>
+                router.push({
+                  pathname: "/product",
+                  params: {
+                    product: JSON.stringify(product),
+                  },
+                })
+              }
+            >
+              <View className="flex flex-row flex-1 gap-4 pt-2 px-4">
+                <View className="flex flex-col w-2/3 gap-1">
+                  <Text className="text-lg font-semibold text-black dark:text-white">
+                    {product.name}
                   </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-
-          {/* Portion Size (Radio Buttons) */}
-          <View className="mb-6">
-            <Text className="font-medium text-gray-800 mb-2">
-              {product.customizationOptions.portionSize.title}
-            </Text>
-            {product.customizationOptions.portionSize.options.map((size) => (
-              <TouchableOpacity
-                key={size.id}
-                className={`flex-row items-center py-2 border ${
-                  selectedOptions.portionSize === size.id
-                    ? "border-primary"
-                    : "border-border/20"
-                } p-3 mb-4 rounded-lg`}
-                onPress={() =>
-                  setSelectedOptions({
-                    ...selectedOptions,
-                    portionSize: size.id,
-                  })
-                }
-              >
-                <View
-                  className="w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center"
-                  style={{
-                    borderColor:
-                      selectedOptions.portionSize === size.id
-                        ? "#ff5a3c"
-                        : "#d1d5db",
-                    backgroundColor:
-                      selectedOptions.portionSize === size.id
-                        ? "#ff5a3c"
-                        : "transparent",
-                  }}
-                >
-                  {selectedOptions.portionSize === size.id && (
-                    <View className="w-2 h-2 rounded-full bg-white" />
+                  <View>
+                    <View className="flex flex-row gap-3">
+                      <Text className="text-md font-medium text-foreground-muted dark:text-foreground-muted-dark">
+                        ${product.priceUSD}
+                      </Text>
+                      <Text className="text-green-600 text-md text-foreground-muted dark:text-foreground-muted-dark">
+                        ✔ {product.ratings}
+                      </Text>
+                    </View>
+                    <Text className="text-lg font-thin text-foreground-muted dark:text-foreground-muted-dark line-clamp-2">
+                      {product.description}
+                    </Text>
+                  </View>
+                  {product.badge && product.badge.length > 0 && (
+                    <Text className="text-primary">{product.badge}</Text>
                   )}
                 </View>
-                <Text className="text-gray-700">
-                  {size.name}{" "}
-                  {size.price > 0 ? `(+$${size.price.toFixed(2)})` : ""}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
-            <TouchableOpacity
-              className="flex-row justify-between items-center p-4 bg-gray-50"
-              onPress={() => toggleSection("ingredients")}
-            >
-              <Text className="font-medium text-gray-800">Ingredients</Text>
-              {expandedSections.ingredients ? (
-                <ChevronUp size={20} color="#6b7280" />
-              ) : (
-                <ChevronDown size={20} color="#6b7280" />
-              )}
-            </TouchableOpacity>
-
-            {expandedSections.ingredients && (
-              <View className="p-4">
-                <Text className="text-gray-600">
-                  {product.ingredients.join(", ")}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Nutritional Information Section */}
-          <View className="mb-6 border border-gray-200 rounded-lg overflow-hidden">
-            <TouchableOpacity
-              className="flex-row justify-between items-center p-4 bg-gray-50"
-              onPress={() => toggleSection("nutrition")}
-            >
-              <Text className="font-medium text-gray-800">
-                Nutritional Information
-              </Text>
-              {expandedSections.nutrition ? (
-                <ChevronUp size={20} color="#6b7280" />
-              ) : (
-                <ChevronDown size={20} color="#6b7280" />
-              )}
-            </TouchableOpacity>
-
-            {expandedSections.nutrition && (
-              <View className="p-4">
-                <View className="flex-row justify-between mb-2">
-                  <Text className="text-gray-600">Calories</Text>
-                  <Text className="font-medium">
-                    {product.nutritionalInfo.calories}kcal
-                  </Text>
-                </View>
-                <View className="flex-row justify-between mb-2">
-                  <Text className="text-gray-600">Protein</Text>
-                  <Text className="font-medium">
-                    {product.nutritionalInfo.protein}g
-                  </Text>
+                <View
+                  className={`flex flex-1 items-center justify-center relative`}
+                >
+                  {product.image ? (
+                    <Image
+                      source={{ uri: product.image }}
+                      resizeMode="cover"
+                      style={{ width: 100, height: 100 }}
+                      className="rounded-md"
+                    />
+                  ) : null}
+                  <TouchableOpacity className="bg-foreground dark:bg-white rounded-full p-2 w-12 items-center h-12 absolute right-2 bottom-1 shadow-white shadow-xl">
+                    <Ionicons
+                      name="bag-add-outline"
+                      size={24}
+                      color={colorScheme === "dark" ? "black" : "white"}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
-            )}
-          </View>
-
-          {/* Special Instructions Section */}
-          <View className="mb-8 border border-gray-200 rounded-lg overflow-hidden">
-            <TouchableOpacity
-              className="flex-row justify-between items-center p-4 bg-gray-50"
-              onPress={() => toggleSection("instructions")}
-            >
-              <Text className="font-medium text-gray-800">
-                Special Instructions
-              </Text>
-              {expandedSections.instructions ? (
-                <ChevronUp size={20} color="#6b7280" />
-              ) : (
-                <ChevronDown size={20} color="#6b7280" />
-              )}
             </TouchableOpacity>
-
-            {expandedSections.instructions && (
-              <View className="p-4">
-                <View className="border border-gray-300 rounded-lg p-3">
-                  <Text className="text-gray-400">
-                    e.g., No salt, extra crispy, well done...
-                  </Text>
-                </View>
-              </View>
-            )}
-          </View>
+          ))}
         </View>
       </ScrollView>
 
-      {/* Quantity Selector & Add to Cart */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+      <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-border/20 p-4">
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="font-medium text-gray-800">Quantity</Text>
-          <View className="flex-row items-center border border-gray-300 rounded-lg">
+          <Text className="font-medium text-xl dark:text-foreground">
+            Quantity
+          </Text>
+          <View className="flex-row items-center border border-border/20 rounded-lg overflow-hidden">
             <TouchableOpacity
               className="px-4 py-2"
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
             >
-              <Text className="text-xl text-gray-600">-</Text>
+              <Text className="text-3xl font-bold text-foreground-muted dark:text-foreground-muted-dark">
+                -
+              </Text>
             </TouchableOpacity>
-            <Text className="px-4 py-2 text-lg text-gray-800">{quantity}</Text>
+            <Text className="px-4 py-2 text-lg dark:text-foreground font-medium">
+              {quantity}
+            </Text>
             <TouchableOpacity
               className="px-4 py-2"
               onPress={() => setQuantity(quantity + 1)}
             >
-              <Text className="text-xl text-gray-600">+</Text>
+              <Text className="text-3xl font-bold text-foreground-muted dark:text-foreground-muted-dark">
+                +
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity className="bg-green-600 py-3 rounded-lg items-center">
+        <TouchableOpacity
+          className="bg-foreground py-3 rounded-lg items-center"
+          onPress={() => {
+            // Handle add to cart with selected options
+            console.log({
+              productId: product.id,
+              quantity,
+              options: selectedOptions,
+              specialInstructions,
+            });
+          }}
+        >
           <Text className="text-white font-bold text-lg">
-            Add to Cart - ${totalPrice.toFixed(2)}
+            Add to Cart - ${getTotalPrice().toFixed(2)}
           </Text>
         </TouchableOpacity>
       </View>
