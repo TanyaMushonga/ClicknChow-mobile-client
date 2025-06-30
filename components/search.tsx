@@ -34,7 +34,7 @@ const Search = () => {
             size={26}
             color={colorScheme === "dark" ? "#fff" : "#000"}
           />
-          <Text className="text-black dark:text-white font-thin text-xl">
+          <Text className=" dark:text-white font-thin text-xl">
             Search food, groceries, stores...
           </Text>
         </View>

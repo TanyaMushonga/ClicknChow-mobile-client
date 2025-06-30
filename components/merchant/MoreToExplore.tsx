@@ -40,7 +40,7 @@ const MoreToExplore = ({ merchantId }: { merchantId: string }) => {
                   </Text>
                   <View className="flex-row items-center">
                     <Ionicons name="star" size={16} color="#facc15" />
-                    <Text className="text-md text-black dark:text-white ml-1">
+                    <Text className="text-md  dark:text-white ml-1">
                       {explore.rating}
                     </Text>
                   </View>

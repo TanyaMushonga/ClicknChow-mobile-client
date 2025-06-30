@@ -164,7 +164,7 @@ const TabsLayout = () => {
               style={{ height: "auto" }}
               className="px-4 pt-3 border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
             >
-              <Text className="text-black dark:text-white font-bold text-2xl">
+              <Text className=" dark:text-white font-bold text-2xl">
                 Explore stores
               </Text>
             </SafeAreaView>

@@ -54,14 +54,11 @@ const featuredItems = [
 const FeaturedToday = () => {
   return (
     <View className="mb-6">
-      <Text className="text-xl font-bold text-black dark:text-white mb-3">
+      <Text className="text-xl font-bold  dark:text-white mb-3">
         Featured Today
       </Text>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {featuredItems.map((item) => (
           <TouchableOpacity
             key={item.id}
@@ -96,9 +93,7 @@ const FeaturedToday = () => {
                 </View>
                 <View className="bg-white/90 px-2 py-1 rounded-full flex-row items-center">
                   <Ionicons name="time-outline" size={14} color="black" />
-                  <Text className="text-black text-xs ml-1">
-                    {item.deliveryTime}
-                  </Text>
+                  <Text className=" text-xs ml-1">{item.deliveryTime}</Text>
                 </View>
               </View>
 
@@ -106,7 +101,7 @@ const FeaturedToday = () => {
               <View className="flex-row items-center mt-2">
                 <View className="bg-white/90 px-2 py-1 rounded-full flex-row items-center">
                   <Ionicons name="star" size={14} color="#f59e0b" />
-                  <Text className="text-black text-xs ml-1">{item.rating}</Text>
+                  <Text className=" text-xs ml-1">{item.rating}</Text>
                 </View>
               </View>
             </View>

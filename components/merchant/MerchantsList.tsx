@@ -122,7 +122,7 @@ const Merchants = ({ merchants }: { merchants: MerchantsResponse[] }) => {
                 <View className="flex-row justify-between items-start">
                   <View className="flex-1">
                     <Text
-                      className="text-lg font-semibold text-black dark:text-white"
+                      className="text-lg font-semibold  dark:text-white"
                       numberOfLines={1}
                     >
                       {item.name}
@@ -151,24 +151,24 @@ const Merchants = ({ merchants }: { merchants: MerchantsResponse[] }) => {
                 <View className="flex-row items-center mt-2">
                   <View className="flex-row items-center mr-4">
                     <Ionicons name="star" size={16} color="#facc15" />
-                    <Text className="text-md text-black dark:text-white ml-1">
+                    <Text className="text-md  dark:text-white ml-1">
                       {item.rating}
                     </Text>
                   </View>
 
                   <View className="flex-row items-center mr-4">
                     <Ionicons name="time-outline" size={16} color="#6b7280" />
-                    <Text className="text-md text-black dark:text-white ml-1">
+                    <Text className="text-md  dark:text-white ml-1">
                       {item.deliveryTime}
                     </Text>
                   </View>
 
-                  <Text className="text-md text-black dark:text-white font-medium">
+                  <Text className="text-md  dark:text-white font-medium">
                     {item.deliveryFeeUSD} delivery
                   </Text>
                 </View>
 
-                <Text className="text-sm text-black dark:text-white mt-2">
+                <Text className="text-sm  dark:text-white mt-2">
                   {isStoreOpen(item.openingHours) ? "Open" : "Closed"}
                 </Text>
               </View>

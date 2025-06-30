@@ -41,7 +41,7 @@ const GroceriesAndEssentials = () => {
   return (
     <View className="py-2">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-bold text-black dark:text-white">
+        <Text className="text-xl font-bold  dark:text-white">
           Grocery Essentials
         </Text>
         <TouchableOpacity>
@@ -64,7 +64,7 @@ const GroceriesAndEssentials = () => {
               resizeMode="contain"
             />
             <View className="flex flex-col gap-2">
-              <Text className="text-lg text-black dark:text-white text-center font-semibold">
+              <Text className="text-lg  dark:text-white text-center font-semibold">
                 {item.name}
               </Text>
               <Text className="text-foreground dark:text-foreground-muted-dark text-sm">

@@ -28,7 +28,7 @@ export default function LocationHeader() {
             />
             <View className="flex flex-col">
               <Text
-                className="text-black dark:text-white font-semibold text-lg"
+                className=" dark:text-white font-semibold text-lg"
                 style={{ lineHeight: 20 }}
               >
                 Deliver to

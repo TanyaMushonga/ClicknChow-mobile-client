@@ -76,7 +76,7 @@ const TrendingNearYou = () => {
   return (
     <View className="mt-4">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-semibold text-black dark:text-white">
+        <Text className="text-xl font-semibold  dark:text-white">
           Trending Near You
         </Text>
         <TouchableOpacity>
@@ -108,7 +108,7 @@ const TrendingNearYou = () => {
                 <View className="flex-row justify-between items-start">
                   <View className="flex-1 flex-col gap-2 mr-3">
                     <Text
-                      className="text-md font-semibold text-black dark:text-white"
+                      className="text-md font-semibold  dark:text-white"
                       numberOfLines={2}
                     >
                       {item.name}
@@ -123,21 +123,21 @@ const TrendingNearYou = () => {
 
                   {item.isTrending && (
                     <View className="bg-background dark:bg-background-dark px-2 py-1 rounded-full">
-                      <Text className="text-sm text-black dark:text-white">
+                      <Text className="text-sm  dark:text-white">
                         {item.trendingMetric}
                       </Text>
                     </View>
                   )}
                   {item.isPopular && (
                     <View className="bg-background dark:bg-background-dark px-2 py-1 rounded-full">
-                      <Text className="text-sm text-black dark:text-white">
+                      <Text className="text-sm  dark:text-white">
                         {item.popularMetric}
                       </Text>
                     </View>
                   )}
                   {item.isNew && (
                     <View className="bg-background dark:bg-background-dark px-2 py-1 rounded-full">
-                      <Text className="text-sm text-black dark:text-white">
+                      <Text className="text-sm  dark:text-white">
                         {item.newMetric}
                       </Text>
                     </View>
@@ -146,7 +146,7 @@ const TrendingNearYou = () => {
 
                 <View className="flex-row items-center mt-1">
                   <FontAwesome name="star" size={12} color="#facc15" />
-                  <Text className="text-sm ml-1 text-black dark:text-white">
+                  <Text className="text-sm ml-1  dark:text-white">
                     {item.rating} ({item.orders.toLocaleString()}+ orders)
                   </Text>
                 </View>
@@ -176,7 +176,7 @@ const TrendingNearYou = () => {
                     </Text>
                   </View>
 
-                  <Text className="text-sm font-semibold text-black dark:text-white">
+                  <Text className="text-sm font-semibold  dark:text-white">
                     ${item.price.toFixed(2)}
                   </Text>
                 </View>

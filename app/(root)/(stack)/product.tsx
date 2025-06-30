@@ -38,8 +38,6 @@ const ProductDetailScreen = () => {
       try {
         const parsedProduct = JSON.parse(productString as string);
         setProduct(parsedProduct);
-
-        // Initialize selected options based on product customization
         if (parsedProduct.customizationOptions) {
           const initialOptions: any = {};
           parsedProduct.customizationOptions.forEach((option: any) => {
@@ -115,28 +113,17 @@ const ProductDetailScreen = () => {
           </View>
         </View>
 
-        {/* Image Skeleton */}
         <View className="w-full h-64 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4" />
-
-        {/* Title Skeleton */}
         <View className="flex-row justify-between mb-4">
           <View className="w-3/5 h-8 bg-gray-200 dark:bg-gray-700 rounded" />
           <View className="w-1/5 h-8 bg-gray-200 dark:bg-gray-700 rounded" />
         </View>
-
-        {/* Rating Skeleton */}
         <View className="w-1/3 h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
-
-        {/* Description Skeleton */}
         <View className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
         <View className="w-4/5 h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
-
-        {/* Customization Skeleton */}
         <View className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2" />
         <View className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2" />
         <View className="w-full h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4" />
-
-        {/* Bottom Bar Skeleton */}
         <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-800 p-4">
           <View className="w-full h-14 bg-gray-300 dark:bg-gray-700 rounded-lg" />
         </View>
@@ -201,11 +188,11 @@ const ProductDetailScreen = () => {
               {product.name}
             </Text>
             <View className="items-end">
-              <Text className="text-xl font-bold text-green-600">
+              <Text className="text-xl font-bold text-foreground-muted dark:text-foreground-muted-dark">
                 ${(product.priceUSD || product.priceUSD).toFixed(2)}
               </Text>
               {product.originalPrice && (
-                <Text className="text-sm line-through text-gray-500 dark:text-gray-400">
+                <Text className="text-sm line-through text-foreground-muted dark:text-foreground-muted-dark">
                   ${product.originalPrice.toFixed(2)}
                 </Text>
               )}
@@ -214,7 +201,7 @@ const ProductDetailScreen = () => {
 
           <View className="flex-row items-center mb-3 px-4">
             <Ionicons name="star" size={16} color="#facc15" />
-            <Text className="ml-1 text-black dark:text-white text-lg">
+            <Text className="ml-1  dark:text-white text-lg">
               {product.ratings || product.ratings?.split(" ")[0]}
               {product.reviewCount && ` (${product.reviewCount}+ reviews)`}
             </Text>
@@ -231,8 +218,10 @@ const ProductDetailScreen = () => {
             {product.description}
           </Text>
           {product.badge && (
-            <View className="bg-neutral/20 p-1 mb-5 ms-4 rounded ml-2 self-start">
-              <Text className="text-sm font-medium">{product.badge}</Text>
+            <View className="bg-neutral/20 dark:bg-neutral p-1 mb-5 ms-4 rounded ml-2 self-start">
+              <Text className="text-sm font-medium text-foreground-muted dark:text-foreground-muted-dark">
+                {product.badge}
+              </Text>
             </View>
           )}
 
@@ -240,7 +229,7 @@ const ProductDetailScreen = () => {
           product.customizationOptions.length > 0
             ? product.customizationOptions.map((option) => (
                 <View key={option.id} className="mb-6">
-                  <Text className="text-xl font-semibold text-black dark:text-white mb-2 px-4">
+                  <Text className="text-xl font-semibold dark:text-white mb-2 px-4">
                     {option.title}
                   </Text>
 
@@ -270,11 +259,11 @@ const ProductDetailScreen = () => {
                                   <View className="w-2 h-2 rounded-full bg-white" />
                                 )}
                               </View>
-                              <Text className="text-gray-700 dark:text-gray-300">
+                              <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
                                 {opt.name}
                               </Text>
                             </View>
-                            <Text className="dark:text-foreground font-medium text-lg">
+                            <Text className="text-foreground-muted dark:text-foreground-muted-dark font-medium text-lg">
                               {opt.price > 0 && ` +$${opt.price.toFixed(2)}`}
                             </Text>
                           </View>
@@ -314,12 +303,12 @@ const ProductDetailScreen = () => {
                                   />
                                 )}
                               </View>
-                              <Text className="text-gray-700 dark:text-gray-300">
+                              <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
                                 {opt.name}
                               </Text>
                             </View>
                             {opt.price > 0 && (
-                              <Text className="dark:text-foreground font-medium text-lg">
+                              <Text className="text-foreground-muted dark:text-foreground-muted-dark font-medium text-lg">
                                 + ${opt.price.toFixed(2)}
                               </Text>
                             )}
@@ -331,7 +320,7 @@ const ProductDetailScreen = () => {
             : null}
 
           <View className="mb-8 rounded-lg overflow-hidden mx-4">
-            <Text className="text-xl font-semibold text-black dark:text-white">
+            <Text className="text-xl font-semibold dark:text-white">
               Special Instructions
             </Text>
             <TextInput
@@ -343,7 +332,9 @@ const ProductDetailScreen = () => {
                 colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
               }
               multiline={true}
-              numberOfLines={4}
+              numberOfLines={6}
+              style={{ minHeight: 120 }}
+              textAlignVertical="top"
             />
           </View>
           {product.ingredients && (
@@ -352,7 +343,7 @@ const ProductDetailScreen = () => {
                 className="flex-row justify-between items-center p-4 bg-gray-50 dark:bg-gray-800"
                 onPress={() => toggleSection("ingredients")}
               >
-                <Text className="text-lg font-semibold text-black dark:text-white">
+                <Text className="text-lg font-semibold dark:text-white">
                   Ingredients
                 </Text>
                 {expandedSections.ingredients ? (
@@ -370,7 +361,7 @@ const ProductDetailScreen = () => {
 
               {expandedSections.ingredients && (
                 <View className="p-4">
-                  <Text className="text-gray-600 dark:text-gray-300">
+                  <Text className="text-foreground-muted dark:text-foreground-muted-dark text-md">
                     {product.ingredients.join(", ")}
                   </Text>
                 </View>
@@ -384,7 +375,7 @@ const ProductDetailScreen = () => {
                 className="flex-row justify-between items-center p-4 bg-gray-50 dark:bg-gray-800"
                 onPress={() => toggleSection("nutrition")}
               >
-                <Text className="text-lg font-semibold text-black dark:text-white">
+                <Text className="text-lg font-semibold  dark:text-white">
                   Nutritional Information
                 </Text>
                 {expandedSections.nutrition ? (
@@ -403,7 +394,7 @@ const ProductDetailScreen = () => {
               {expandedSections.nutrition && (
                 <View className="p-4">
                   <View className="flex-row justify-between mb-2">
-                    <Text className="text-gray-600 dark:text-gray-300">
+                    <Text className="text-foreground-muted dark:text-foreground-muted-dark">
                       Calories
                     </Text>
                     <Text className="font-medium dark:text-white">
@@ -416,7 +407,7 @@ const ProductDetailScreen = () => {
                       key={nutrient.name}
                       className="flex-row justify-between mb-2"
                     >
-                      <Text className="text-gray-600 dark:text-gray-300">
+                      <Text className="text-foreground-muted dark:text-foreground-muted-dark">
                         {nutrient.name}
                       </Text>
                       <Text className="font-medium dark:text-white">
@@ -432,7 +423,7 @@ const ProductDetailScreen = () => {
           )}
         </View>
         <View>
-          <Text className="text-xl font-semibold text-black dark:text-white mx-4">
+          <Text className="text-xl font-semibold  dark:text-white mx-4">
             Frequently bought together
           </Text>
           {products.map((product, index) => (
@@ -454,7 +445,7 @@ const ProductDetailScreen = () => {
             >
               <View className="flex flex-row flex-1 gap-4 pt-2 px-4">
                 <View className="flex flex-col w-2/3 gap-1">
-                  <Text className="text-lg font-semibold text-black dark:text-white">
+                  <Text className="text-lg font-semibold  dark:text-white">
                     {product.name}
                   </Text>
                   <View>
@@ -499,11 +490,9 @@ const ProductDetailScreen = () => {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-border/20 p-4">
+      <View className="absolute bottom-0 left-0 right-0 bg-white dark:bg-[#161515] border-t-2 border-border/20 p-4">
         <View className="flex-row justify-between items-center mb-4">
-          <Text className="font-medium text-xl dark:text-foreground">
-            Quantity
-          </Text>
+          <Text className="font-medium text-xl dark:text-white">Quantity</Text>
           <View className="flex-row items-center border border-border/20 rounded-lg overflow-hidden">
             <TouchableOpacity
               className="px-4 py-2"
@@ -513,7 +502,7 @@ const ProductDetailScreen = () => {
                 -
               </Text>
             </TouchableOpacity>
-            <Text className="px-4 py-2 text-lg dark:text-foreground font-medium">
+            <Text className="px-4 py-2 text-lg dark:text-foreground-muted-dark font-medium">
               {quantity}
             </Text>
             <TouchableOpacity
@@ -527,9 +516,8 @@ const ProductDetailScreen = () => {
           </View>
         </View>
         <TouchableOpacity
-          className="bg-foreground py-3 rounded-lg items-center"
+          className="bg-foreground dark:bg-foreground py-3 rounded-lg items-center"
           onPress={() => {
-            // Handle add to cart with selected options
             console.log({
               productId: product.id,
               quantity,

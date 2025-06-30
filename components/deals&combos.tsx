@@ -91,7 +91,7 @@ const DealsAndCombos = () => {
   return (
     <View className="mt-4 mb-2">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-bold text-black dark:text-white">
+        <Text className="text-xl font-bold  dark:text-white">
           Deals & Combos
         </Text>
         <TouchableOpacity>
@@ -120,7 +120,7 @@ const DealsAndCombos = () => {
             <View className="p-4">
               <View className="flex-row items-center justify-between">
                 <Text
-                  className="font-bold text-lg text-black dark:text-white flex-1"
+                  className="font-bold text-lg  dark:text-white flex-1"
                   numberOfLines={1}
                 >
                   {deal.title}
@@ -139,7 +139,7 @@ const DealsAndCombos = () => {
               </Text>
 
               <View className="flex-row items-center justify-between">
-                <Text className="text-black dark:text-white text-md font-semibold">
+                <Text className=" dark:text-white text-md font-semibold">
                   {deal.brand}
                 </Text>
 
@@ -149,7 +149,7 @@ const DealsAndCombos = () => {
                       ${deal.originalPrice.toFixed(2)}
                     </Text>
                   )}
-                  <Text className="text-black dark:text-white font-bold text-md">
+                  <Text className=" dark:text-white font-bold text-md">
                     ${deal.price.toFixed(2)}
                   </Text>
                 </View>

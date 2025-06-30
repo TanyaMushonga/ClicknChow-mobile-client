@@ -30,7 +30,7 @@ const FeaturedProducts = ({
   return (
     <View style={{ marginTop: 16, paddingHorizontal: 16 }}>
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-2xl font-extrabold text-black dark:text-white">
+        <Text className="text-2xl font-extrabold  dark:text-white">
           Featured items
         </Text>
       </View>
@@ -62,7 +62,7 @@ const FeaturedProducts = ({
                 </View>
 
                 <View className="p-2 flex flex-col gap-1 relative flex-1">
-                  <Text className="text-black dark:text-white font-bold text-lg">
+                  <Text className=" dark:text-white font-bold text-lg">
                     {product.name}
                   </Text>
                   <Text className="text-foreground dark:text-foreground-muted-dark text-sm">
@@ -70,7 +70,7 @@ const FeaturedProducts = ({
                   </Text>
 
                   <View className="flex flex-row justify-between items-center mt-3">
-                    <Text className="text-black dark:text-white">
+                    <Text className=" dark:text-white">
                       ${product.priceUSD}
                     </Text>
                   </View>

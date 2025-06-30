@@ -90,7 +90,7 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
         </TouchableOpacity>
       </View>
       <View className="mb-6">
-        <Text className="text-lg font-semibold text-black dark:text-white mb-3">
+        <Text className="text-lg font-semibold  dark:text-white mb-3">
           Categories
         </Text>
         <ScrollView
@@ -137,7 +137,7 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
       </View>
 
       <View className="mb-6">
-        <Text className="text-lg font-semibold text-black dark:text-white mb-3">
+        <Text className="text-lg font-semibold  dark:text-white mb-3">
           Delivery Time
         </Text>
         <View className="flex-row flex-wrap">
@@ -157,7 +157,7 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
                 className={
                   filters.deliveryTime === time.value
                     ? "text-white"
-                    : "text-black dark:text-white"
+                    : " dark:text-white"
                 }
               >
                 {time.label}
@@ -168,7 +168,7 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
       </View>
 
       <View className="mb-6">
-        <Text className="text-lg font-semibold text-black dark:text-white mb-3">
+        <Text className="text-lg font-semibold  dark:text-white mb-3">
           Price Range: ${filters.priceRange[0]} - ${filters.priceRange[1]}
         </Text>
         <View className="flex-row justify-between">
@@ -178,9 +178,9 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
                 {index === 0 ? "Min" : "Max"} Price
               </Text>
               <View className="flex-row items-center bg-foreground-muted-dark dark:bg-foreground-muted rounded-lg px-3 py-1">
-                <Text className="text-black dark:text-white">$</Text>
+                <Text className=" dark:text-white">$</Text>
                 <TextInput
-                  className="flex-1 ml-2 text-black dark:text-white"
+                  className="flex-1 ml-2  dark:text-white"
                   keyboardType="numeric"
                   value={filters.priceRange[index].toString()}
                   onChangeText={(text) =>
@@ -194,16 +194,14 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
       </View>
 
       <View className="mb-6">
-        <Text className="text-lg font-semibold text-black dark:text-white">
-          Dietary
-        </Text>
+        <Text className="text-lg font-semibold  dark:text-white">Dietary</Text>
         {Object.entries(filters.dietary).map(([key, value]) => (
           <TouchableOpacity
             key={key}
             className="flex-row justify-between items-center"
             onPress={() => toggleDietary(key as keyof DietaryFilters)}
           >
-            <Text className="text-black dark:text-white capitalize">
+            <Text className=" dark:text-white capitalize">
               {key.replace(/([A-Z])/g, " $1")}
             </Text>
             <Switch
@@ -217,16 +215,14 @@ const FilterSheet = React.memo(({ onClose }: { onClose: () => void }) => {
       </View>
 
       <View className="mb-2">
-        <Text className="text-lg font-semibold text-black dark:text-white">
-          Features
-        </Text>
+        <Text className="text-lg font-semibold  dark:text-white">Features</Text>
         {Object.entries(filters.features).map(([key, value]) => (
           <TouchableOpacity
             key={key}
             className="flex-row justify-between items-center"
             onPress={() => toggleFeature(key as keyof FeatureFilters)}
           >
-            <Text className="text-black dark:text-white capitalize">
+            <Text className=" dark:text-white capitalize">
               {key.replace(/([A-Z])/g, " $1")}
             </Text>
             <Switch

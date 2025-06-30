@@ -35,7 +35,7 @@ export const TabContainer = ({ tabs, children }: TabContainerProps) => {
               className={`text-lg font-bold ${
                 activeTab === index
                   ? "text-primary dark:text-primary-dark"
-                  : "text-black dark:text-white"
+                  : " dark:text-white"
               }`}
             >
               {tab}

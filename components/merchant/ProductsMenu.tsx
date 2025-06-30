@@ -18,7 +18,7 @@ const ProductsMenu = ({ menu }: { menu: Menu }) => {
     <View className="flex-1 flex-col gap-10">
       {menu.categories.map((category) => (
         <View className="" key={category.id}>
-          <Text className="text-2xl font-extrabold text-black dark:text-white px-4">
+          <Text className="text-2xl font-extrabold  dark:text-white px-4">
             {category.name}
           </Text>
           <View>
@@ -41,7 +41,7 @@ const ProductsMenu = ({ menu }: { menu: Menu }) => {
               >
                 <View className="flex flex-row flex-1 gap-4 p-4">
                   <View className="flex flex-col w-2/3 gap-1">
-                    <Text className="text-lg font-semibold text-black dark:text-white">
+                    <Text className="text-lg font-semibold  dark:text-white">
                       {product.name}
                     </Text>
                     <View>

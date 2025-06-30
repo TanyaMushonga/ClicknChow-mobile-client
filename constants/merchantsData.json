@@ -669,16 +669,139 @@
         }
       ]
     },
+
     "reviews": [
       {
         "id": "r1",
         "userId": "user123",
-        "userName": "John D.",
+        "firstName": "John",
+        "lastName": "Davis",
         "rating": 5,
         "comment": "Best burgers in town!",
         "date": "2023-05-15",
         "helpfulCount": 12,
-        "userImage": "https://clicknchow.s3.us-east-1.amazonaws.com/media/users/user123.jpg"
+        "isHelpful": true,
+        "userImage": "https://clicknchow.s3.us-east-1.amazonaws.com/profile/profile/FB_IMG_1724412641088.jpg"
+      },
+      {
+        "id": "r2",
+        "userId": "user456",
+        "firstName": "Sarah",
+        "lastName": "Martinez",
+        "rating": 4,
+        "comment": "Great atmosphere and friendly staff. The fries were perfectly crispy!",
+        "date": "2023-05-18",
+        "helpfulCount": 8,
+        "isHelpful": true,
+        "userImage": ""
+      },
+      {
+        "id": "r3",
+        "userId": "user789",
+        "firstName": "Mike",
+        "lastName": "Rodriguez",
+        "rating": 3,
+        "comment": "Food was decent but took a while to arrive. Service could be improved.",
+        "date": "2023-05-20",
+        "helpfulCount": 5,
+        "isHelpful": false,
+        "userImage": "https://clicknchow.s3.us-east-1.amazonaws.com/profile/profile/20240603_093110.jpg"
+      },
+      {
+        "id": "r4",
+        "userId": "user101",
+        "firstName": "Emily",
+        "lastName": "Kim",
+        "rating": 5,
+        "comment": "Amazing veggie burger option! Finally a place that caters to vegetarians properly.",
+        "date": "2023-05-22",
+        "helpfulCount": 15,
+        "isHelpful": true,
+        "userImage": ""
+      },
+      {
+        "id": "r5",
+        "userId": "user202",
+        "firstName": "David",
+        "lastName": "Lee",
+        "rating": 2,
+        "comment": "Overpriced for the portion size. Burger was dry and lacked flavor.",
+        "date": "2023-05-25",
+        "helpfulCount": 3,
+        "isHelpful": false,
+        "userImage": "https://clicknchow.s3.us-east-1.amazonaws.com/profile/profile/cropped-logo.jpeg"
+      },
+      {
+        "id": "r6",
+        "userId": "user303",
+        "firstName": "Lisa",
+        "lastName": "Taylor",
+        "rating": 4,
+        "comment": "Love the milkshakes here! The chocolate one is to die for. Good burger too.",
+        "date": "2023-05-28",
+        "helpfulCount": 7,
+        "isHelpful": true,
+        "userImage": ""
+      },
+      {
+        "id": "r7",
+        "userId": "user404",
+        "firstName": "Alex",
+        "lastName": "Parker",
+        "rating": 5,
+        "comment": "Outstanding quality ingredients. You can taste the difference in every bite!",
+        "date": "2023-06-02",
+        "helpfulCount": 11,
+        "isHelpful": true,
+        "userImage": "https://clicknchow.s3.us-east-1.amazonaws.com/profile/profile/_SKC0756.JPG"
+      },
+      {
+        "id": "r8",
+        "userId": "user505",
+        "firstName": "Rachel",
+        "lastName": "Brown",
+        "rating": 3,
+        "comment": "Nice place but gets really crowded during lunch hours. Food is good though.",
+        "date": "2023-06-05",
+        "helpfulCount": 4,
+        "isHelpful": false,
+        "userImage": ""
+      },
+      {
+        "id": "r9",
+        "userId": "user606",
+        "firstName": "Tom",
+        "lastName": "Harris",
+        "rating": 4,
+        "comment": "Excellent customer service and clean environment. Will definitely come back!",
+        "date": "2023-06-08",
+        "helpfulCount": 9,
+        "isHelpful": true,
+        "userImage": ""
+      },
+      {
+        "id": "r10",
+        "userId": "user707",
+        "firstName": "Jennifer",
+        "lastName": "Smith",
+        "rating": 1,
+        "comment": "Terrible experience. Food was cold and the order was wrong. Very disappointed.",
+        "date": "2023-06-10",
+        "helpfulCount": 2,
+        "isHelpful": false,
+        "userImage": ""
+      },
+      {
+        "id": "r11",
+        "userId": "user808",
+        "firstName": "Chris",
+        "lastName": "Wilson",
+        "rating": 5,
+        "comment": "Best dining experience I've had in months! The bacon cheeseburger is phenomenal.",
+        "date": "2023-06-12",
+        "helpfulCount": 13,
+        "isHelpful": true,
+        "userImage": ""
       }
     ]
   }

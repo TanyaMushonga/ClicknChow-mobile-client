@@ -1,3 +1,5 @@
+import { Review } from "./merchants";
+
 export interface DietaryFilters {
   vegan: boolean;
   vegetarian: boolean;
@@ -18,26 +20,6 @@ export interface Filters {
 }
 export interface UpdatePriceRange {
   (index: number, value: number): void;
-}
-
-interface ProductVariant {
-  id: string;
-  name: string;
-  priceUSD: number;
-  priceZIG: number;
-}
-
-interface ProductAddon {
-  id: string;
-  name: string;
-  priceUSD: number;
-  priceZIG: number;
-}
-
-interface ProductAllergy {
-  id: string;
-  name: string;
-  contains: string;
 }
 
 export interface Product {
@@ -102,17 +84,6 @@ export interface Product {
     isVegetarian?: boolean;
     isVegan?: boolean;
   };
-}
-
-interface Review {
-  id: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  comment: string;
-  date: string;
-  userImage?: string;
-  helpfulCount?: number;
 }
 
 export interface StoreHours {

@@ -80,7 +80,7 @@ const MerchantsCloseBy = () => {
   return (
     <View className="mt-4">
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-bold text-black dark:text-white">
+        <Text className="text-xl font-bold  dark:text-white">
           Merchants close by
         </Text>
         <TouchableOpacity>
@@ -118,7 +118,7 @@ const MerchantsCloseBy = () => {
               <View className="flex-row justify-between items-start">
                 <View className="flex-1">
                   <Text
-                    className="text-lg font-bold text-black dark:text-white"
+                    className="text-lg font-bold  dark:text-white"
                     numberOfLines={1}
                   >
                     {item.name}
@@ -130,7 +130,7 @@ const MerchantsCloseBy = () => {
 
                 <View className="flex-row items-center bg-yellow-100 dark:bg-yellow-900 px-2 py-1 rounded">
                   <FontAwesome name="star" size={12} color="#facc15" />
-                  <Text className="text-sm font-semibold ml-1 text-black dark:text-white">
+                  <Text className="text-sm font-semibold ml-1  dark:text-white">
                     {item.rating}
                   </Text>
                 </View>

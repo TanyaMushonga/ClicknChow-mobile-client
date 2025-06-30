@@ -42,7 +42,7 @@ const LastOrder = () => {
   return (
     <View className="mb-4">
       <View className="flex-row justify-between items-center mb-3">
-        <Text className="text-lg font-semibold text-black dark:text-white">
+        <Text className="text-lg font-semibold  dark:text-white">
           Your Last Orders
         </Text>
         <TouchableOpacity>
@@ -67,7 +67,7 @@ const LastOrder = () => {
               />
             </View>
             <Text
-              className="text-lg font-semibold text-black dark:text-white"
+              className="text-lg font-semibold  dark:text-white"
               numberOfLines={1}
             >
               {order.name}

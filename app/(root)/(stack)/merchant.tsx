@@ -180,7 +180,7 @@ const Merchant = () => {
 
         <View style={styles.content} className="pt-4">
           <View className="flex items-center mt-3">
-            <Text className="font-bold text-2xl text-black dark:text-white flex-col gap-4">
+            <Text className="font-bold text-2xl  dark:text-white flex-col gap-4">
               {merchantData.name}
             </Text>
             <TouchableOpacity
@@ -194,7 +194,7 @@ const Merchant = () => {
               <View className="flex flex-row items-center gap-2">
                 <View className="flex-row items-center">
                   <Ionicons name="star" size={16} color="#facc15" />
-                  <Text className="text-md text-black dark:text-white ml-1">
+                  <Text className="text-md  dark:text-white ml-1">
                     {merchantData.rating}
                   </Text>
                 </View>
@@ -250,7 +250,7 @@ const Merchant = () => {
             </View>
           </View>
 
-          <View className="flex-row items-center justify-start gap-1 my-4 mx-2 bg-neutral/10 rounded-full p-1 w-[62%]">
+          <View className="flex-row items-center justify-start gap-1 my-4 mx-2 rounded-full p-1">
             {options.map((option) => (
               <TouchableOpacity
                 onPress={() => {
@@ -280,7 +280,7 @@ const Merchant = () => {
                   <Text
                     className={`text-md font-bold ${
                       activeOption === option.label
-                        ? "text-black dark:text-white"
+                        ? " dark:text-white"
                         : "text-foreground-muted dark:text-foreground-muted-dark"
                     }`}
                   >

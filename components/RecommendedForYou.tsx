@@ -125,7 +125,7 @@ const RecommendedForYou = () => {
         </View>
 
         <View className="p-2 flex flex-col gap-1">
-          <Text className="text-black dark:text-white font-bold text-lg">
+          <Text className=" dark:text-white font-bold text-lg">
             {item.name}
           </Text>
           <Text className="text-foreground dark:text-foreground-muted-dark text-sm">
@@ -135,13 +135,9 @@ const RecommendedForYou = () => {
           <View className="flex flex-row justify-between mt-3">
             <View className="flex flex-row items-center gap-2">
               <FontAwesome name="star" size={12} color="#facc15" />
-              <Text className="text-sm text-black dark:text-white">
-                {item.rating}
-              </Text>
+              <Text className="text-sm  dark:text-white">{item.rating}</Text>
             </View>
-            <Text className="text-black dark:text-white">
-              ${item.price.toFixed(2)}
-            </Text>
+            <Text className=" dark:text-white">${item.price.toFixed(2)}</Text>
           </View>
 
           <TouchableOpacity
@@ -153,7 +149,7 @@ const RecommendedForYou = () => {
               size={16}
               color={colorScheme === "dark" ? "#fff" : "#000"}
             />
-            <Text className="text-black dark:text-white ml-3">Add to Cart</Text>
+            <Text className=" dark:text-white ml-3">Add to Cart</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -163,7 +159,7 @@ const RecommendedForYou = () => {
   return (
     <View style={{ marginTop: 16 }}>
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-bold text-black dark:text-white">
+        <Text className="text-xl font-bold  dark:text-white">
           Recommended for you
         </Text>
         <TouchableOpacity>

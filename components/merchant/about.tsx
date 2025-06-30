@@ -188,7 +188,7 @@ const OrganizationAbout = ({
         )}
 
         <View className="mb-6">
-          <Text className={`text-sm text-gray-500 dark:text-gray-400`}>
+          <Text className={`text-md text-foreground-muted dark:text-foreground-muted-dark mb-2`}>
             Member since{" "}
             {new Date(organization.about.dateJoined).toLocaleDateString()}
           </Text>
