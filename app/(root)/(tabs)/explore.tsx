@@ -27,7 +27,6 @@ const Explore = () => {
     if (filterSheetVisible) {
       filterBottomSheetRef.current?.close();
       setFilterSheetVisible(false);
-      console.log("filter sheet");
     }
   };
 
