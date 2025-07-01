@@ -11,9 +11,10 @@ export interface Store {
   id: string;
   name: string;
   logo: string;
+  address: string;
   deliveryTime: string;
   deliveryType: "Delivery" | "Pickup" | "Dine In";
-  isExpanded: boolean;
+  serviceFee: number;
   items: CartItem[];
   deliveryFee: number;
   tax: number;
