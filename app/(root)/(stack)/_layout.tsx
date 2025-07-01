@@ -25,6 +25,18 @@ const _layout = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="checkout"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="tracking"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );
