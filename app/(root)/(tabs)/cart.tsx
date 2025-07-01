@@ -10,6 +10,7 @@ import {
   useColorScheme,
   Modal,
   FlatList,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
@@ -17,11 +18,43 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useRouter } from "expo-router";
 import cart from "@/constants/cart.json";
 
+const suggestedItems = [
+  {
+    id: "suggest_1",
+    name: "Garlic Bread",
+    description: "Crispy bread with garlic butter",
+    image: "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=400",
+    price: 4.99,
+  },
+  {
+    id: "suggest_2",
+    name: "Caesar Salad",
+    description: "Fresh romaine lettuce with caesar dressing",
+    image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400",
+    price: 8.99,
+  },
+  {
+    id: "suggest_3",
+    name: "Mozzarella Sticks",
+    description: "Crispy fried mozzarella with marinara sauce",
+    image: "https://images.unsplash.com/photo-1531749668029-2db88e4276c7?w=400",
+    price: 6.99,
+  },
+  {
+    id: "suggest_4",
+    name: "Chocolate Cake",
+    description: "Rich chocolate cake with fudge frosting",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400",
+    price: 5.99,
+  },
+];
+
 const CartScreen: React.FC = () => {
   const [cartData, setCartData] = useState<CartData>(cart as CartData);
-
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [suggestionsModalVisible, setSuggestionsModalVisible] = useState(false);
+  const [orderNote, setOrderNote] = useState("");
   const router = useRouter();
 
   const colorScheme = useColorScheme();
@@ -183,6 +216,41 @@ const CartScreen: React.FC = () => {
     });
   };
 
+  const addSuggestedItemToCart = (suggestedItem: any): void => {
+    if (!selectedStore) return;
+
+    const newCartItem: CartItem = {
+      id: `suggested_${Date.now()}`,
+      name: suggestedItem.name,
+      image: suggestedItem.image,
+      customizations: suggestedItem.description,
+      price: suggestedItem.price,
+      quantity: 1,
+    };
+
+    setCartData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        stores: prev.stores.map((store) =>
+          store.id === selectedStore.id
+            ? { ...store, items: [...store.items, newCartItem] }
+            : store
+        ),
+      };
+    });
+
+    // Update selected store
+    setSelectedStore((prev) =>
+      prev
+        ? {
+            ...prev,
+            items: [...prev.items, newCartItem],
+          }
+        : null
+    );
+  };
+
   const calculateStoreSubtotal = (store: Store): number => {
     return store?.items?.reduce(
       (total, item) => total + item?.price * item?.quantity,
@@ -201,7 +269,10 @@ const CartScreen: React.FC = () => {
 
   const proceedToCheckout = (storeId: string): void => {
     const store = cartData?.stores.find((s) => s.id === storeId);
-    Alert.alert("Checkout", `Proceeding to checkout for ${store?.name}`);
+    router.push({
+      pathname: "/checkout",
+      params: { store: JSON.stringify(store) },
+    });
   };
 
   const saveStoreForLater = (storeId: string): void => {
@@ -219,15 +290,35 @@ const CartScreen: React.FC = () => {
   const closeCartModal = (): void => {
     setModalVisible(false);
     setSelectedStore(null);
+    setOrderNote("");
+  };
+
+  const openSuggestionsModal = (): void => {
+    // setModalVisible(false);
+    setSuggestionsModalVisible(true);
+  };
+
+  const closeSuggestionsModal = (): void => {
+    setSuggestionsModalVisible(false);
+    setModalVisible(true);
+  };
+
+  const noThanksAndCheckout = (): void => {
+    setSuggestionsModalVisible(false);
+    setModalVisible(false);
+    proceedToCheckout(selectedStore!.id);
+    closeCartModal();
   };
 
   const viewStore = (storeId: string): void => {
-    Alert.alert(
-      "View Store",
-      `Opening store details for ${
-        cartData?.stores.find((s) => s.id === storeId)?.name
-      }`
-    );
+    router.push({
+      pathname: "/merchant",
+      params: {
+        merchant: JSON.stringify(
+          cartData?.stores.find((s) => s.id === storeId)
+        ),
+      },
+    });
   };
 
   const renderCartItem = ({
@@ -295,6 +386,87 @@ const CartScreen: React.FC = () => {
       </View>
     </View>
   );
+
+  const renderSuggestedItem = ({ item }: { item: any }) => {
+    const isInCart = selectedStore?.items.some(
+      (cartItem) => cartItem.name === item.name
+    );
+    const cartItem = selectedStore?.items.find(
+      (cartItem) => cartItem.name === item.name
+    );
+    const quantity = cartItem?.quantity || 0;
+
+    return (
+      <View className="flex-row p-4 border-b border-border/15 dark:border-border/25">
+        <Image source={{ uri: item.image }} className="w-16 h-16 rounded-lg" />
+        <View className="flex-1 ml-3">
+          <Text className="text-lg font-medium dark:text-white mb-1">
+            {item.name}
+          </Text>
+          <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark mb-2">
+            {item.description}
+          </Text>
+          <Text className="text-base font-semibold dark:text-white">
+            ${item.price.toFixed(2)}
+          </Text>
+        </View>
+        <View className="items-center justify-center ml-4">
+          {isInCart ? (
+            <View className="flex-row items-center justify-center rounded-full border border-border/15 dark:border-border/25 w-28">
+              <TouchableOpacity
+                className="w-8 h-8 items-center justify-center"
+                onPress={() => {
+                  if (cartItem) {
+                    updateQuantity(
+                      selectedStore!.id,
+                      cartItem.id,
+                      cartItem.quantity - 1
+                    );
+                  }
+                }}
+              >
+                <Icon
+                  name="minus"
+                  size={16}
+                  color={colorScheme === "dark" ? "white" : "gray"}
+                />
+              </TouchableOpacity>
+              <Text className="text-lg font-medium mx-3 min-w-8 text-center dark:text-white">
+                {quantity}
+              </Text>
+              <TouchableOpacity
+                className="w-8 h-8 items-center justify-center"
+                onPress={() => {
+                  if (cartItem) {
+                    updateQuantity(
+                      selectedStore!.id,
+                      cartItem.id,
+                      cartItem.quantity + 1
+                    );
+                  } else {
+                    addSuggestedItemToCart(item);
+                  }
+                }}
+              >
+                <Icon
+                  name="plus"
+                  size={16}
+                  color={colorScheme === "dark" ? "white" : "gray"}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              className="bg-foreground dark:bg-background-dark p-3 rounded-full"
+              onPress={() => addSuggestedItemToCart(item)}
+            >
+              <Icon name="plus" size={20} color="white" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    );
+  };
 
   if (!cartData) {
     return (
@@ -446,6 +618,7 @@ const CartScreen: React.FC = () => {
         )}
       </ScrollView>
 
+      {/* Main Cart Modal */}
       <Modal
         animationType="slide"
         presentationStyle="pageSheet"
@@ -480,12 +653,33 @@ const CartScreen: React.FC = () => {
               />
             </TouchableOpacity>
           </View>
-          <FlatList
-            data={selectedStore?.items || []}
-            renderItem={renderCartItem}
-            keyExtractor={(item) => item.id}
-            className="flex-1"
-          />
+
+          <ScrollView className="flex-1">
+            <FlatList
+              data={selectedStore?.items || []}
+              renderItem={renderCartItem}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+            />
+
+            {/* Order Note Section */}
+            <View className="p-4 border-t border-border/15 dark:border-border/25">
+              <Text className="text-lg font-semibold dark:text-white mb-3">
+                Order Note
+              </Text>
+              <TextInput
+                className="border border-border/30 dark:border-border/50 rounded-lg p-3 h-20 text-base dark:text-white"
+                placeholder="Add any special instructions for your order..."
+                placeholderTextColor={
+                  colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                }
+                value={orderNote}
+                onChangeText={setOrderNote}
+                multiline
+                textAlignVertical="top"
+              />
+            </View>
+          </ScrollView>
 
           <View className="p-4 border-t border-border/15 dark:border-border/25">
             <View className="mb-4">
@@ -539,10 +733,62 @@ const CartScreen: React.FC = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 className="flex-1 bg-foreground py-3 rounded-lg"
-                onPress={() => {
-                  proceedToCheckout(selectedStore!.id);
-                  closeCartModal();
-                }}
+                onPress={openSuggestionsModal}
+              >
+                <Text className="text-white text-base font-semibold text-center">
+                  Continue
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        presentationStyle="pageSheet"
+        visible={suggestionsModalVisible}
+        onRequestClose={closeSuggestionsModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="flex-row items-center justify-between p-4 border-b border-border/15 dark:border-border/25">
+            <View>
+              <Text className="text-xl font-bold dark:text-white">
+                Add More Items?
+              </Text>
+              <Text className="text-md text-foreground-muted dark:text-foreground-muted-dark">
+                Complete your order with these popular items
+              </Text>
+            </View>
+            <TouchableOpacity onPress={closeSuggestionsModal} className="p-2">
+              <Icon
+                name="x"
+                size={24}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            data={suggestedItems}
+            renderItem={renderSuggestedItem}
+            keyExtractor={(item) => item.id}
+            className="flex-1"
+          />
+
+          <View className="p-4 border-t border-border/15 dark:border-border/25">
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                className="flex-1 border border-border/50 py-3 rounded-lg"
+                onPress={noThanksAndCheckout}
+              >
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-base font-semibold text-center">
+                  No Thanks
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-1 bg-foreground py-3 rounded-lg"
+                onPress={noThanksAndCheckout}
               >
                 <Text className="text-white text-base font-semibold text-center">
                   Proceed to Checkout
