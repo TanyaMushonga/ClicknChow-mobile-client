@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import LocationHeader from "@/components/LocationHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Icon from "react-native-vector-icons/Feather";
 
 const TabsLayout = () => {
   const colorScheme = useColorScheme();
@@ -146,7 +147,7 @@ const TabsLayout = () => {
             <SafeAreaView
               edges={["top"]}
               style={{ height: "auto" }}
-              className="border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
+              className=""
             >
               <LocationHeader />
             </SafeAreaView>
@@ -162,7 +163,7 @@ const TabsLayout = () => {
             <SafeAreaView
               edges={["top"]}
               style={{ height: "auto" }}
-              className="px-4 pt-3 border-b border-[#b9b9b8] dark:border-[#2d2d2c]"
+              className="px-4 py-3 "
             >
               <Text className=" dark:text-white font-bold text-2xl">
                 Explore stores
@@ -174,7 +175,30 @@ const TabsLayout = () => {
       />
       <Tabs.Screen
         name="cart"
-        options={{ title: "Cart", headerShown: false }}
+        options={{
+          title: "Cart",
+          header: () => (
+            <SafeAreaView
+              edges={["top"]}
+              style={{ height: "auto" }}
+              className="px-4 py-3 "
+            >
+              <View className="flex-row items-center justify-between">
+                <Text className="text-2xl font-bold dark:text-white">
+                  My Cart
+                </Text>
+                <TouchableOpacity>
+                  <Icon
+                    name="more-vertical"
+                    size={24}
+                    color={colorScheme === "dark" ? "white" : "black"}
+                  />
+                </TouchableOpacity>
+              </View>
+            </SafeAreaView>
+          ),
+          headerShown: true,
+        }}
       />
       <Tabs.Screen
         name="order"
