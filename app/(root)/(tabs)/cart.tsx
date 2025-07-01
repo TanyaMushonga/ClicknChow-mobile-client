@@ -538,7 +538,7 @@ const CartScreen: React.FC = () => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                className="flex-1 bg-foreground dark:bg-background-dark py-3 rounded-lg"
+                className="flex-1 bg-foreground py-3 rounded-lg"
                 onPress={() => {
                   proceedToCheckout(selectedStore!.id);
                   closeCartModal();
