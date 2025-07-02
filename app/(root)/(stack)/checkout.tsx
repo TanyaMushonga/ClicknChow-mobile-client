@@ -192,7 +192,7 @@ const Checkout: React.FC = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-background dark:bg-background-dark">
+    <SafeAreaView className="flex-1">
       <View className="flex-row items-center justify-between p-4 border-b border-border/15 dark:border-border/25">
         <TouchableOpacity onPress={() => router.back()} className="p-2">
           <Icon
@@ -205,8 +205,11 @@ const Checkout: React.FC = () => {
         <View className="w-10" />
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+      <ScrollView
+        className="flex-1 bg-background dark:bg-background-dark"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <View className="flex-row items-center">
             <Image
               source={{ uri: mockOrderData.store.logo }}
@@ -234,7 +237,7 @@ const Checkout: React.FC = () => {
           </View>
         </View>
 
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-semibold dark:text-white">
               Delivery Address
@@ -285,7 +288,7 @@ const Checkout: React.FC = () => {
           )}
         </View>
 
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-semibold dark:text-white">
               Contact Phone
@@ -336,7 +339,7 @@ const Checkout: React.FC = () => {
           )}
         </View>
 
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <Text className="text-lg font-semibold dark:text-white mb-3">
             Order Summary
           </Text>
@@ -353,7 +356,7 @@ const Checkout: React.FC = () => {
           )}
         </View>
 
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <View className="flex-row items-center justify-between mb-3">
             <Text className="text-lg font-semibold dark:text-white">
               Payment Method
@@ -380,8 +383,7 @@ const Checkout: React.FC = () => {
           )}
         </View>
 
-        {/* Promo Code */}
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <Text className="text-lg font-semibold dark:text-white mb-3">
             Promo Code
           </Text>
@@ -412,8 +414,7 @@ const Checkout: React.FC = () => {
           )}
         </View>
 
-        {/* Tip */}
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <Text className="text-lg font-semibold dark:text-white mb-3">
             Add Tip
           </Text>
@@ -452,8 +453,7 @@ const Checkout: React.FC = () => {
           />
         </View>
 
-        {/* Order Total */}
-        <View className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl p-4">
+        <View className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl p-4">
           <Text className="text-lg font-semibold dark:text-white mb-3">
             Order Total
           </Text>
@@ -514,7 +514,7 @@ const Checkout: React.FC = () => {
         <View className="h-4" />
       </ScrollView>
 
-      <View className="p-4 border-t border-border/15 dark:border-border/25">
+      <View className="p-4 border-t border-border/15 dark:border-border/25 bg-background dark:bg-background-dark">
         <TouchableOpacity
           className={`py-4 rounded-lg bg-foreground`}
           onPress={placeOrder}
