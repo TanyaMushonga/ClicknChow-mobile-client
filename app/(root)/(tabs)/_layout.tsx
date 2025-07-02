@@ -12,7 +12,7 @@ import LocationHeader from "@/components/LocationHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 
-const TabsLayout = () => {
+export default function TabsLayout() {
   const colorScheme = useColorScheme();
   const cartCount = 5;
 
@@ -210,7 +210,7 @@ const TabsLayout = () => {
       />
     </Tabs>
   );
-};
+}
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -266,5 +266,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-export default TabsLayout;

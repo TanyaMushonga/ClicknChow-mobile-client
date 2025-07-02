@@ -1,11 +1,8 @@
 import React from "react";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
-const _layout = () => {
+export default function Layout() {
   return (
     <GestureHandlerRootView>
       <Stack>
@@ -40,6 +37,4 @@ const _layout = () => {
       </Stack>
     </GestureHandlerRootView>
   );
-};
-
-export default _layout;
+}
