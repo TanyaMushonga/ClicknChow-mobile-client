@@ -514,21 +514,18 @@ const Checkout: React.FC = () => {
         <View className="h-4" />
       </ScrollView>
 
-      {/* Place Order Button */}
       <View className="p-4 border-t border-border/15 dark:border-border/25">
         <TouchableOpacity
-          className={`py-4 rounded-lg ${
-            isProcessing ? "bg-gray-400" : "bg-foreground"
-          }`}
+          className={`py-4 rounded-lg bg-foreground`}
           onPress={placeOrder}
           disabled={isProcessing}
         >
           {isProcessing ? (
-            <View className="flex-row items-center justify-center">
+            <View className="flex-row items-center justify-center gap-2">
+              <Icon name="loader" size={20} color={"white"} />
               <Text className="text-white text-lg font-semibold mr-2">
                 Processing...
               </Text>
-              <Icon name="loader" size={20} color="white" />
             </View>
           ) : (
             <Text className="text-white text-lg font-semibold text-center">
