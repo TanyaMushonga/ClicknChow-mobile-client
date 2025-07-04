@@ -40,6 +40,18 @@ export default function Layout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="paymentMethods"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="addMoney"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );
