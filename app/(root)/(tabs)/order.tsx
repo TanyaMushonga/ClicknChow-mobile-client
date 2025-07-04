@@ -9,6 +9,7 @@ import {
   Pressable,
   Alert,
   Linking,
+  useColorScheme,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -48,6 +49,7 @@ const OrdersScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>("active");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const colorScheme = useColorScheme();
 
   // Sample orders data
   const orders: Record<TabType, Order[]> = {
@@ -265,44 +267,44 @@ const OrdersScreen: React.FC = () => {
         presentationStyle="pageSheet"
         onRequestClose={() => setModalVisible(false)}
       >
-        <SafeAreaView className="flex-1 bg-background">
-          {/* Header */}
-          <View className="flex-row items-center justify-between p-4 border-b border-border bg-card">
-            <Text className="text-lg font-semibold text-foreground">
+        <SafeAreaView className="flex-1 bg-background dark:bg-background-dark">
+          <View className="flex-row items-center justify-between px-6 py-4 border-b-2 border-border/15 dark:border-border-dark/25">
+            <Text className="text-2xl font-bold dark:text-white">
               Order Details
             </Text>
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
-              className="w-8 h-8 rounded-full bg-background items-center justify-center"
+              className="w-10 h-10 rounded-full bg-card dark:bg-card-dark items-center justify-center"
             >
-              <Ionicons name="close-outline" size={20} color="#000" />
+              <Ionicons
+                name="close-outline"
+                size={24}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
             </TouchableOpacity>
           </View>
 
           <ScrollView className="flex-1">
-            {/* Restaurant Info */}
-            <View className="bg-card m-4 p-4 rounded-lg border border-border">
-              <Text className="text-lg font-semibold text-foreground mb-2">
+            <View className="py-4 border-b border-border/15 dark:border-border/25">
+              <Text className="text-xl font-bold dark:text-white mb-2 px-4">
                 {selectedOrder.restaurantName}
               </Text>
-              <Text className="text-sm text-foreground-muted mb-2">
+              <Text className="text-lg text-foreground-muted dark:text-foreground-muted-dark mb-1 px-4">
                 Order #{selectedOrder.id}
               </Text>
-              <Text className="text-sm text-foreground-muted">
+              <Text className="text-base text-foreground-muted dark:text-foreground-muted-dark px-4">
                 {selectedOrder.orderTime}
               </Text>
             </View>
-
-            {/* Status */}
-            <View className="bg-card m-4 p-4 rounded-lg border border-border">
-              <View className="flex-row items-center mb-2">
+            <View className="py-4 border-b border-border/15 dark:border-border/25">
+              <View className="flex-row items-center mb-3 px-4">
                 <Ionicons
                   name={getStatusIcon(selectedOrder.status)}
-                  size={20}
+                  size={24}
                   color={getStatusColor(selectedOrder.status)}
                 />
                 <Text
-                  className="ml-2 text-base font-medium"
+                  className="text-xl font-bold dark:text-white px-4"
                   style={{ color: getStatusColor(selectedOrder.status) }}
                 >
                   {formatStatus(selectedOrder.status)}
@@ -310,7 +312,7 @@ const OrdersScreen: React.FC = () => {
               </View>
 
               {selectedOrder.estimatedDelivery && activeTab === "active" && (
-                <Text className="text-sm text-foreground-muted">
+                <Text className="text-base text-foreground-muted dark:text-foreground-muted-dark px-4">
                   {selectedOrder.deliveryType === "delivery"
                     ? "Estimated Delivery: "
                     : "Ready: "}
@@ -319,104 +321,104 @@ const OrdersScreen: React.FC = () => {
               )}
 
               {selectedOrder.deliveredTime && (
-                <Text className="text-sm text-foreground-muted">
+                <Text className="text-base text-foreground-muted dark:text-foreground-muted-dark px-4">
                   Delivered: {selectedOrder.deliveredTime}
                 </Text>
               )}
             </View>
 
-            {/* Order Items */}
-            <View className="bg-card m-4 p-4 rounded-lg border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">
+            <View className="py-4 border-b border-border/15 dark:border-border/25">
+              <Text className="text-xl font-bold dark:text-white mb-2 px-4">
                 Order Items
               </Text>
               {selectedOrder.items.map((item) => (
                 <View
                   key={item.id}
-                  className="flex-row justify-between items-start mb-2"
+                  className="flex-row justify-between items-start py-2 px-4"
                 >
                   <View className="flex-1">
-                    <Text className="text-sm text-foreground">
+                    <Text className="text-lg font-medium dark:text-white">
                       {item.quantity}x {item.name}
                     </Text>
                     {item.specialInstructions && (
-                      <Text className="text-xs text-foreground-muted italic">
+                      <Text className="text-base text-foreground-muted dark:text-foreground-muted-dark italic mt-1">
                         Note: {item.specialInstructions}
                       </Text>
                     )}
                   </View>
-                  <Text className="text-sm font-medium text-foreground">
+                  <Text className="text-lg font-semibold dark:text-white">
                     ${item.price.toFixed(2)}
                   </Text>
                 </View>
               ))}
             </View>
 
-            {/* Delivery Info */}
-            <View className="bg-card m-4 p-4 rounded-lg border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">
+            <View className="py-4 border-b border-border/15 dark:border-border/25">
+              <Text className="text-xl font-bold dark:text-white mb-4 px-4">
                 {selectedOrder.deliveryType === "delivery"
                   ? "Delivery Info"
                   : "Pickup Info"}
               </Text>
-              <View className="flex-row items-start mb-2">
-                <Ionicons name="location-outline" size={16} color="#4b5563" />
-                <View className="ml-2 flex-1">
-                  <Text className="text-sm font-medium text-foreground">
+              <View className="flex-row items-start px-4">
+                <Ionicons name="location-outline" size={20} color="#6B7280" />
+                <View className="ml-3 flex-1">
+                  <Text className="text-lg font-medium dark:text-white mb-1">
                     {selectedOrder.deliveryType === "delivery"
                       ? "Delivery Address"
                       : "Pickup Location"}
                   </Text>
-                  <Text className="text-sm text-foreground-muted">
+                  <Text className="text-lg font-medium text-foreground-muted dark:text-foreground-muted-dark mb-1">
                     {selectedOrder.deliveryAddress}
                   </Text>
                 </View>
               </View>
             </View>
 
-            {/* Order Total */}
-            <View className="bg-card m-4 p-4 rounded-lg border border-border">
-              <Text className="text-base font-semibold text-foreground mb-3">
+            <View className="py-4">
+              <Text className="text-xl font-bold dark:text-white mb-2 px-4">
                 Order Summary
               </Text>
-              <View className="flex-row justify-between items-center mb-1">
-                <Text className="text-sm text-foreground-muted">Subtotal</Text>
-                <Text className="text-sm text-foreground">
-                  ${selectedOrder.subtotal.toFixed(2)}
+              <View className="gap-3">
+                <View className="flex-row justify-between items-center px-4">
+                  <Text className="text-lg text-foreground-muted dark:text-foreground-muted-dark">
+                    Subtotal
+                  </Text>
+                  <Text className="text-lg text-foreground-muted dark:text-foreground-muted-dark">
+                    ${selectedOrder.subtotal.toFixed(2)}
+                  </Text>
+                </View>
+                {selectedOrder.deliveryFee > 0 && (
+                  <View className="flex-row justify-between items-center px-4 mb-2">
+                    <Text className="text-lg text-foreground-muted dark:text-foreground-muted-dark">
+                      Delivery Fee
+                    </Text>
+                    <Text className="text-lg text-foreground-muted dark:text-foreground-muted-dark">
+                      ${selectedOrder.deliveryFee.toFixed(2)}
+                    </Text>
+                  </View>
+                )}
+                <View className="px-4 pt-2">
+                  <View className="flex-row justify-between items-center">
+                    <Text className="text-xl font-bold text-foreground-muted dark:text-foreground-muted-dark">
+                      Total
+                    </Text>
+                    <Text className="text-xl font-bold text-foreground-muted dark:text-foreground-muted-dark">
+                      ${selectedOrder.total.toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+                <Text className="text-md text-primary-dark mt-2 px-4">
+                  Paid via {selectedOrder.paymentMethod}
                 </Text>
               </View>
-              {selectedOrder.deliveryFee > 0 && (
-                <View className="flex-row justify-between items-center mb-1">
-                  <Text className="text-sm text-foreground-muted">
-                    Delivery Fee
-                  </Text>
-                  <Text className="text-sm text-foreground">
-                    ${selectedOrder.deliveryFee.toFixed(2)}
-                  </Text>
-                </View>
-              )}
-              <View className="border-t border-border pt-2 mt-2">
-                <View className="flex-row justify-between items-center">
-                  <Text className="text-base font-semibold text-foreground">
-                    Total
-                  </Text>
-                  <Text className="text-base font-semibold text-foreground">
-                    ${selectedOrder.total.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
-              <Text className="text-xs text-foreground-muted mt-2">
-                Paid via {selectedOrder.paymentMethod}
-              </Text>
             </View>
 
-            {/* Rating (Past Orders) */}
             {activeTab === "past" && selectedOrder.rating && (
-              <View className="bg-card m-4 p-4 rounded-lg border border-border">
-                <Text className="text-base font-semibold text-foreground mb-2">
+              <View className="py-4 border-t border-border/15 dark:border-border/25">
+                <Text className="text-xl font-bold dark:text-white mb-2 px-4">
                   Your Rating
                 </Text>
-                <View className="flex-row items-center mb-2">
+                <View className="flex-row items-center mb-3 px-4">
                   <View className="flex-row">
                     {[...Array(5)].map((_, i) => (
                       <Ionicons
@@ -424,58 +426,57 @@ const OrdersScreen: React.FC = () => {
                         name={
                           i < selectedOrder.rating! ? "star" : "star-outline"
                         }
-                        size={16}
+                        size={20}
                         color="#F59E0B"
                       />
                     ))}
                   </View>
-                  <Text className="ml-2 text-sm text-foreground-muted">
+                  <Text className="ml-3 text-lg text-foreground-muted dark:text-foreground-muted-dark">
                     {selectedOrder.rating}/5
                   </Text>
                 </View>
                 {selectedOrder.feedback && (
-                  <Text className="text-sm text-foreground-muted italic">
+                  <Text className="ml-3 text-lg text-foreground-muted dark:text-foreground-muted-dark">
                     "{selectedOrder.feedback}"
                   </Text>
                 )}
               </View>
             )}
 
-            {/* Cancel Reason */}
             {selectedOrder.status === "cancelled" &&
               selectedOrder.cancelReason && (
-                <View className="bg-card m-4 p-4 rounded-lg border border-destructive">
-                  <View className="flex-row items-start">
+                <View className="py-4 border-t border-border/15 dark:border-border/25">
+                  <View className="flex-row items-start bg-red-50 dark:bg-red-900/20 p-4">
                     <Ionicons
                       name="information-circle-outline"
-                      size={16}
+                      size={20}
                       color="#f13b58"
                     />
-                    <View className="ml-2 flex-1">
-                      <Text className="text-sm font-medium text-destructive">
+                    <View className="ml-3 flex-1">
+                      <Text className="text-base font-semibold text-destructive mb-1">
                         Order Cancelled
                       </Text>
-                      <Text className="text-sm text-foreground-muted">
+                      <Text className="text-base text-destructive/80">
                         {selectedOrder.cancelReason}
                       </Text>
                     </View>
                   </View>
                 </View>
               )}
+
           </ScrollView>
 
-          {/* Action Buttons */}
-          <View className="bg-card border-t border-border p-4">
+          <View className="border-t border-border/15 dark:border-border/25 p-6">
             {activeTab === "active" ? (
-              <View className="flex-row space-x-3">
+              <View className="flex-row gap-4">
                 {selectedOrder.trackingNumber && (
                   <TouchableOpacity
                     onPress={() =>
                       handleTrackOrder(selectedOrder.trackingNumber!)
                     }
-                    className="flex-1 bg-primary py-3 rounded-lg"
+                    className="flex-1 bg-foreground py-4 rounded-xl"
                   >
-                    <Text className="text-white font-medium text-center">
+                    <Text className="text-white font-semibold text-lg text-center">
                       Track Order
                     </Text>
                   </TouchableOpacity>
@@ -484,9 +485,9 @@ const OrdersScreen: React.FC = () => {
                   onPress={() =>
                     handleCallRestaurant(selectedOrder.restaurantPhone)
                   }
-                  className="flex-1 bg-background border border-border py-3 rounded-lg"
+                  className="flex-1 border border-border/65 dark:border-border/50 py-4 rounded-xl"
                 >
-                  <Text className="text-foreground font-medium text-center">
+                  <Text className="text-gray-900 dark:text-white font-semibold text-lg text-center">
                     Call Restaurant
                   </Text>
                 </TouchableOpacity>
@@ -494,9 +495,9 @@ const OrdersScreen: React.FC = () => {
             ) : (
               <TouchableOpacity
                 onPress={() => handleReorderItems(selectedOrder)}
-                className="bg-primary py-3 rounded-lg"
+                className="bg-foreground py-4 rounded-xl"
               >
-                <Text className="text-white font-medium text-center">
+                <Text className="text-white font-semibold text-lg text-center">
                   Reorder Items
                 </Text>
               </TouchableOpacity>
