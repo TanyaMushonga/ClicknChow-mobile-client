@@ -50,7 +50,7 @@ export default function TabsLayout() {
             case "order":
               iconName = isFocused ? "receipt" : "receipt-outline";
               break;
-            case "profile":
+            case "account":
               iconName = isFocused ? "person" : "person-outline";
               break;
             case "cart":
@@ -205,8 +205,8 @@ export default function TabsLayout() {
         options={{ title: "Orders", headerShown: false }}
       />
       <Tabs.Screen
-        name="profile"
-        options={{ title: "Profile", headerShown: false }}
+        name="account"
+        options={{ title: "Account", headerShown: false }}
       />
     </Tabs>
   );
