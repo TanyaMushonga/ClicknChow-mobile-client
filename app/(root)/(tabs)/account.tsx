@@ -11,7 +11,7 @@ import {
   Linking,
   useColorScheme,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   ChevronRight,
   Heart,
@@ -68,8 +68,22 @@ interface NotificationSetting {
   enabled: boolean;
 }
 
+// Define modal types as constants
+const MODAL_TYPES = {
+  EDIT_PROFILE: "edit_profile",
+  FAVORITES: "favorites",
+  WALLET: "wallet",
+  PROMOTIONS: "promotions",
+  HELP_CENTER: "help_center",
+  PRIVACY_SETTINGS: "privacy_settings",
+  ACCESSIBILITY: "accessibility",
+  ABOUT: "about",
+} as const;
+
+type ModalType = (typeof MODAL_TYPES)[keyof typeof MODAL_TYPES] | null;
+
 const Profile: React.FC = () => {
-  const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [expandedFAQ, setExpandedFAQ] = useState<string | null>(null);
   const merchants = useMerchantsStore((state) => state.merchants);
   const [supportMessage, setSupportMessage] = useState<string>("");
@@ -166,82 +180,33 @@ const Profile: React.FC = () => {
     },
   ];
 
-  const openModal = (modalType: string) => {
+  const openModal = useCallback((modalType: ModalType) => {
     setActiveModal(modalType);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setActiveModal(null);
-  };
+    setExpandedFAQ(null); // Reset expanded FAQ when closing modal
+  }, []);
 
-  const setDefaultPayment = (id: string) => {
+  const setDefaultPayment = useCallback((id: string) => {
     setPaymentMethods((methods) =>
       methods.map((method) => ({
         ...method,
         isDefault: method.id === id,
       }))
     );
-  };
-  const addPaymentMethod = () => {
-    if (
-      newPaymentMethod.cardNumber &&
-      newPaymentMethod.expiryDate &&
-      newPaymentMethod.cvv &&
-      newPaymentMethod.cardholderName
-    ) {
-      const cardType = getCardType(newPaymentMethod.cardNumber);
-      const newMethod: PaymentMethod = {
-        id: Date.now().toString(),
-        type: cardType,
-        last4: newPaymentMethod.cardNumber.slice(-4),
-        isDefault: paymentMethods.length === 0,
-      };
-      setPaymentMethods([...paymentMethods, newMethod]);
-      setNewPaymentMethod({
-        cardNumber: "",
-        expiryDate: "",
-        cvv: "",
-        cardholderName: "",
-        cardType: "",
-      });
-      setActiveModal("wallet");
-      Alert.alert("Success", "Payment method added successfully!");
-    } else {
-      Alert.alert("Error", "Please fill in all fields");
-    }
-  };
+  }, []);
 
-  const getCardType = (cardNumber: string): string => {
-    const num = cardNumber.replace(/\s/g, "");
-    if (num.startsWith("4")) return "Visa";
-    if (num.startsWith("5") || num.startsWith("2")) return "Mastercard";
-    if (num.startsWith("3")) return "American Express";
-    return "Unknown";
-  };
-
-  const formatCardNumber = (text: string): string => {
-    const cleaned = text.replace(/\s/g, "");
-    const match = cleaned.match(/.{1,4}/g);
-    return match ? match.join(" ") : cleaned;
-  };
-
-  const formatExpiryDate = (text: string): string => {
-    const cleaned = text.replace(/\D/g, "");
-    if (cleaned.length >= 2) {
-      return `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`;
-    }
-    return cleaned;
-  };
-
-  const toggleNotification = (id: string) => {
+  const toggleNotification = useCallback((id: string) => {
     setNotificationSettings((settings) =>
       settings.map((setting) =>
         setting.id === id ? { ...setting, enabled: !setting.enabled } : setting
       )
     );
-  };
+  }, []);
 
-  const sendSupportMessage = () => {
+  const sendSupportMessage = useCallback(() => {
     if (supportMessage.trim()) {
       Alert.alert(
         "Message Sent",
@@ -249,27 +214,27 @@ const Profile: React.FC = () => {
       );
       setSupportMessage("");
     }
-  };
+  }, [supportMessage]);
 
-  const openDriverApp = () => {
+  const openDriverApp = useCallback(() => {
     Linking.openURL(
       "https://play.google.com/store/apps/details?id=com.clicknchow.driver"
     );
-  };
+  }, []);
 
-  const openLegal = () => {
+  const openLegal = useCallback(() => {
     Linking.openURL("https://clicknchow.com/legal");
-  };
+  }, []);
 
-  const rateOnGooglePlay = () => {
+  const rateOnGooglePlay = useCallback(() => {
     Linking.openURL(
       "https://play.google.com/store/apps/details?id=com.clicknchow.app"
     );
-  };
+  }, []);
 
-  const likeOnFacebook = () => {
+  const likeOnFacebook = useCallback(() => {
     Linking.openURL("https://facebook.com/clicknchow");
-  };
+  }, []);
 
   const MenuOption: React.FC<{
     icon: React.ComponentType<any>;
@@ -312,57 +277,35 @@ const Profile: React.FC = () => {
     </TouchableOpacity>
   );
 
-  const ModalSheet: React.FC<{ title: string; children: React.ReactNode }> = ({
-    title,
-    children,
-  }) => (
-    <Modal
-      visible={activeModal === title.toLowerCase()}
-      animationType="slide"
-      presentationStyle="pageSheet"
-      onRequestClose={closeModal}
-    >
-      <View className="flex-1 bg-background dark:bg-background-dark">
-        <View className="border-b border-border/15 px-6 py-4 flex-row items-center justify-between">
-          <Text className="dark:text-white text-2xl font-semibold">
-            {title}
-          </Text>
-          <TouchableOpacity onPress={closeModal}>
-            <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+  const PaymentMethodCard: React.FC<{ method: PaymentMethod }> = React.memo(
+    ({ method }) => (
+      <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3 flex-row items-center justify-between">
+        <View className="flex-row items-center">
+          <CreditCard size={24} color="#666" />
+          <View className="ml-4">
+            <Text className="text-foreground dark:text-white font-semibold">
+              {method.type} •••• {method.last4}
+            </Text>
+            {method.isDefault && (
+              <View className="flex-row items-center">
+                <View className="w-2 h-2 bg-primary rounded-full mr-2" />
+                <Text className="text-primary text-sm font-medium">
+                  Default
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+        {!method.isDefault && (
+          <TouchableOpacity
+            onPress={() => setDefaultPayment(method.id)}
+            className="bg-primary rounded-full px-3 py-1"
+          >
+            <Text className="text-white text-sm">Set Default</Text>
           </TouchableOpacity>
-        </View>
-        <ScrollView className="flex-1">{children}</ScrollView>
+        )}
       </View>
-    </Modal>
-  );
-
-  const PaymentMethodCard: React.FC<{ method: PaymentMethod }> = ({
-    method,
-  }) => (
-    <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3 flex-row items-center justify-between">
-      <View className="flex-row items-center">
-        <CreditCard size={24} color="#666" />
-        <View className="ml-4">
-          <Text className="text-foreground dark:text-white font-semibold">
-            {method.type} •••• {method.last4}
-          </Text>
-          {method.isDefault && (
-            <View className="flex-row items-center">
-              <View className="w-2 h-2 bg-primary rounded-full mr-2" />
-              <Text className="text-primary text-sm font-medium">Default</Text>
-            </View>
-          )}
-        </View>
-      </View>
-      {!method.isDefault && (
-        <TouchableOpacity
-          onPress={() => setDefaultPayment(method.id)}
-          className="bg-primary rounded-full px-3 py-1"
-        >
-          <Text className="text-white text-sm">Set Default</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    )
   );
 
   return (
@@ -388,7 +331,9 @@ const Profile: React.FC = () => {
               <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
                 {profileData.phone}
               </Text>
-              <TouchableOpacity onPress={() => openModal("edit profile")}>
+              <TouchableOpacity
+                onPress={() => openModal(MODAL_TYPES.EDIT_PROFILE)}
+              >
                 <Text className="text-primary text-md">Edit Profile</Text>
               </TouchableOpacity>
             </View>
@@ -405,13 +350,13 @@ const Profile: React.FC = () => {
           <MenuOption
             icon={Heart}
             title="Favorites"
-            onPress={() => openModal("favorites")}
+            onPress={() => openModal(MODAL_TYPES.FAVORITES)}
           />
 
           <MenuOption
             icon={Wallet}
             title="Wallet"
-            onPress={() => openModal("wallet")}
+            onPress={() => openModal(MODAL_TYPES.WALLET)}
           />
 
           <MenuOption
@@ -424,7 +369,7 @@ const Profile: React.FC = () => {
           <MenuOption
             icon={Tag}
             title="Promotions"
-            onPress={() => openModal("promotions")}
+            onPress={() => openModal(MODAL_TYPES.PROMOTIONS)}
             isNew={true}
           />
         </View>
@@ -494,26 +439,26 @@ const Profile: React.FC = () => {
           <MenuOption
             icon={HelpCircle}
             title="Help Center"
-            onPress={() => openModal("help")}
+            onPress={() => openModal(MODAL_TYPES.HELP_CENTER)}
           />
 
           <MenuOption
             icon={Shield}
             title="Privacy Settings"
-            onPress={() => openModal("privacy")}
+            onPress={() => openModal(MODAL_TYPES.PRIVACY_SETTINGS)}
           />
 
           <MenuOption
             icon={Eye}
             title="Accessibility"
-            onPress={() => openModal("accessibility")}
+            onPress={() => openModal(MODAL_TYPES.ACCESSIBILITY)}
           />
 
           <MenuOption
             icon={Info}
             title="About ClickNChow"
             subtitle="v2.3.4"
-            onPress={() => openModal("about")}
+            onPress={() => openModal(MODAL_TYPES.ABOUT)}
           />
         </View>
 
@@ -523,389 +468,536 @@ const Profile: React.FC = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      <ModalSheet title="Edit Profile">
-        <View className="p-6">
-          <View className="flex flex-col gap-4 justify-center items-center mb-6">
-            <View className="w-28 h-28 bg-card dark:bg-card-dark rounded-full mr-4 items-center justify-center">
-              <Text className="dark:text-white text-3xl font-semibold">SJ</Text>
-            </View>
-            <TouchableOpacity className="flex-row items-center">
-              <Camera size={18} color="#ff5a3c" />
-              <Text className="text-primary text-lg ml-2">Change Photo</Text>
+      <Modal
+        visible={activeModal === MODAL_TYPES.EDIT_PROFILE}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Edit Profile
+            </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
             </TouchableOpacity>
           </View>
+          <ScrollView className="flex-1">
+            <View className="p-6">
+              <View className="flex flex-col gap-4 justify-center items-center mb-6">
+                <View className="w-28 h-28 bg-card dark:bg-card-dark rounded-full mr-4 items-center justify-center">
+                  <Text className="dark:text-white text-3xl font-semibold">
+                    SJ
+                  </Text>
+                </View>
+                <TouchableOpacity className="flex-row items-center">
+                  <Camera size={18} color="#ff5a3c" />
+                  <Text className="text-primary text-lg ml-2">
+                    Change Photo
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-          <View className="mb-4">
-            <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
-              Firstname
-            </Text>
-            <TextInput
-              className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
-              value={profileData.name}
-              onChangeText={(text) =>
-                setProfileData({ ...profileData, name: text })
-              }
-            />
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
-              Lastname
-            </Text>
-            <TextInput
-              className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
-              value={profileData.name}
-              onChangeText={(text) =>
-                setProfileData({ ...profileData, name: text })
-              }
-            />
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
-              Email
-            </Text>
-            <TextInput
-              className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
-              value={profileData.email}
-              onChangeText={(text) =>
-                setProfileData({ ...profileData, email: text })
-              }
-              keyboardType="email-address"
-            />
-          </View>
-
-          <View className="mb-6">
-            <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
-              Phone
-            </Text>
-            <TextInput
-              className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
-              value={profileData.phone}
-              onChangeText={(text) =>
-                setProfileData({ ...profileData, phone: text })
-              }
-              keyboardType="phone-pad"
-            />
-          </View>
-
-          <TouchableOpacity className="bg-primary rounded-lg py-3 items-center">
-            <Text className="text-white font-semibold">Save Changes</Text>
-          </TouchableOpacity>
-        </View>
-      </ModalSheet>
-
-      <ModalSheet title="Favorites">
-        <View className="p-4">
-          <Merchants merchants={merchants} />
-        </View>
-      </ModalSheet>
-
-      <ModalSheet title="Wallet">
-        <View className="p-4">
-          <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-6">
-            <Text className="text-foreground-muted dark:text-foreground-muted-dark text-md">
-              Current Balance
-            </Text>
-            <Text className="text-foreground dark:text-white text-2xl font-bold">
-              $0.00
-            </Text>
-          </View>
-
-          <Text className="text-foreground dark:text-white text-lg font-semibold mb-4">
-            Payment Methods
-          </Text>
-
-          {paymentMethods.map((method) => (
-            <PaymentMethodCard key={method.id} method={method} />
-          ))}
-          <TouchableOpacity
-            onPress={() => {
-              closeModal();
-              router.push("/paymentMethods");
-            }}
-            className="border border-border/20 dark:border-border/50 rounded-lg py-3 items-center my-4 flex-row justify-center"
-          >
-            <Plus size={20} color="grey" />
-            <Text className="text-foreground-muted dark:text-foreground-muted-dark font-semibold ml-2">
-              Add Payment Method
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="bg-foreground rounded-lg py-4 items-center"
-            onPress={() => {
-              closeModal();
-              router.push("/addMoney");
-            }}
-          >
-            <Text className="text-white font-semibold">Add Money</Text>
-          </TouchableOpacity>
-        </View>
-      </ModalSheet>
-
-      <ModalSheet title="Promotions">
-        <View className="p-4">
-          <View className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-            <Text className="text-green-800 font-semibold">
-              20% OFF First Order
-            </Text>
-            <Text className="text-green-600 text-sm">Use code: WELCOME20</Text>
-          </View>
-          <View className="bg-card rounded-lg p-4 mb-4">
-            <Text className="text-foreground font-semibold">
-              Free Delivery Weekend
-            </Text>
-            <Text className="text-foreground-muted text-sm">
-              Valid until Sunday
-            </Text>
-          </View>
-          <View className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <Text className="text-blue-800 font-semibold">
-              ClickNChow+ Member Benefits
-            </Text>
-            <Text className="text-blue-600 text-sm">
-              Free delivery on orders over $15
-            </Text>
-          </View>
-        </View>
-      </ModalSheet>
-
-      {/* Help Center Modal */}
-      <ModalSheet title="Help Center">
-        <View className="p-6">
-          <Text className="text-foreground text-lg font-semibold mb-4">
-            Frequently Asked Questions
-          </Text>
-
-          {faqData.map((faq) => (
-            <TouchableOpacity
-              key={faq.id}
-              onPress={() =>
-                setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)
-              }
-              className="bg-card rounded-lg mb-3 overflow-hidden"
-            >
-              <View className="p-4 flex-row justify-between items-center">
-                <Text className="text-foreground font-medium flex-1">
-                  {faq.question}
+              <View className="mb-4">
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
+                  Firstname
                 </Text>
-                <ChevronRight
-                  size={20}
-                  color="#666"
-                  style={{
-                    transform: [
-                      { rotate: expandedFAQ === faq.id ? "90deg" : "0deg" },
-                    ],
-                  }}
+                <TextInput
+                  className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
+                  value={profileData.name}
+                  onChangeText={(text) =>
+                    setProfileData({ ...profileData, name: text })
+                  }
                 />
               </View>
-              {expandedFAQ === faq.id && (
-                <View className="px-4 pb-4">
-                  <Text className="text-foreground-muted">{faq.answer}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
 
-          <View className="mt-6 bg-gray-50 rounded-lg p-4">
-            <Text className="text-foreground font-semibold mb-2">
-              Still need help?
-            </Text>
-            <Text className="text-foreground-muted text-sm mb-3">
-              Describe your issue and we'll get back to you within 24 hours.
-            </Text>
-            <TextInput
-              className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-foreground mb-3"
-              placeholder="Type your message here..."
-              multiline
-              numberOfLines={4}
-              value={supportMessage}
-              onChangeText={setSupportMessage}
-            />
-            <TouchableOpacity
-              onPress={sendSupportMessage}
-              className="bg-primary rounded-lg py-3 items-center"
-            >
-              <Text className="text-white font-semibold">Send Message</Text>
-            </TouchableOpacity>
-          </View>
+              <View className="mb-4">
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
+                  Lastname
+                </Text>
+                <TextInput
+                  className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
+                  value={profileData.name}
+                  onChangeText={(text) =>
+                    setProfileData({ ...profileData, name: text })
+                  }
+                />
+              </View>
+
+              <View className="mb-4">
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
+                  Email
+                </Text>
+                <TextInput
+                  className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
+                  value={profileData.email}
+                  onChangeText={(text) =>
+                    setProfileData({ ...profileData, email: text })
+                  }
+                  keyboardType="email-address"
+                />
+              </View>
+
+              <View className="mb-6">
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg mb-2">
+                  Phone
+                </Text>
+                <TextInput
+                  className="bg-card dark:bg-card-dark border border-border/15 dark:border-border/30 rounded-lg px-4 py-3 text-foreground dark:text-white"
+                  value={profileData.phone}
+                  onChangeText={(text) =>
+                    setProfileData({ ...profileData, phone: text })
+                  }
+                  keyboardType="phone-pad"
+                />
+              </View>
+
+              <TouchableOpacity className="bg-primary rounded-lg py-3 items-center">
+                <Text className="text-white font-semibold">Save Changes</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
-      </ModalSheet>
+      </Modal>
 
-      {/* Privacy Settings Modal */}
-      <ModalSheet title="Privacy Settings">
-        <View className="p-6">
-          <Text className="text-foreground text-lg font-semibold mb-4">
-            Data Usage Preferences
-          </Text>
-
-          <View className="bg-card rounded-lg p-4 mb-4">
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-foreground font-medium">Location Data</Text>
-              <Switch value={true} onValueChange={() => {}} />
-            </View>
-            <Text className="text-foreground-muted text-sm">
-              Used for delivery and restaurant recommendations
+      <Modal
+        visible={activeModal === MODAL_TYPES.FAVORITES}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Favorites
             </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
           </View>
-
-          <View className="bg-card rounded-lg p-4 mb-4">
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-foreground font-medium">
-                Order History Analysis
-              </Text>
-              <Switch value={true} onValueChange={() => {}} />
+          <ScrollView className="flex-1">
+            <View className="p-4">
+              <Merchants merchants={merchants} />
             </View>
-            <Text className="text-foreground-muted text-sm">
-              Helps us provide personalized recommendations
-            </Text>
-          </View>
-
-          <View className="bg-card rounded-lg p-4 mb-4">
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-foreground font-medium">
-                Marketing Analytics
-              </Text>
-              <Switch value={false} onValueChange={() => {}} />
-            </View>
-            <Text className="text-foreground-muted text-sm">
-              Used for targeted promotions and advertisements
-            </Text>
-          </View>
-
-          <View className="bg-card rounded-lg p-4 mb-4">
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-foreground font-medium">
-                Third-party Data Sharing
-              </Text>
-              <Switch value={false} onValueChange={() => {}} />
-            </View>
-            <Text className="text-foreground-muted text-sm">
-              Share anonymized data with partner restaurants
-            </Text>
-          </View>
-
-          <TouchableOpacity className="bg-primary rounded-lg py-3 items-center">
-            <Text className="text-white font-semibold">
-              Save Privacy Settings
-            </Text>
-          </TouchableOpacity>
+          </ScrollView>
         </View>
-      </ModalSheet>
+      </Modal>
 
-      {/* Accessibility Modal */}
-      <ModalSheet title="Accessibility">
-        <View className="p-6">
-          <Text className="text-foreground text-lg font-semibold mb-4">
-            Communication Settings
-          </Text>
-
-          <View className="mb-6">
-            <Text className="text-foreground font-medium mb-3">
-              Email Notifications
+      <Modal
+        visible={activeModal === MODAL_TYPES.WALLET}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Wallet
             </Text>
-            {notificationSettings.map((setting) => (
-              <View key={setting.id} className="bg-card rounded-lg p-4 mb-3">
-                <View className="flex-row justify-between items-center mb-1">
-                  <Text className="text-foreground font-medium">
-                    {setting.title}
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView className="flex-1">
+            <View className="p-4">
+              <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-6">
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-md">
+                  Current Balance
+                </Text>
+                <Text className="text-foreground dark:text-white text-2xl font-bold">
+                  $0.00
+                </Text>
+              </View>
+
+              <Text className="text-foreground dark:text-white text-lg font-semibold mb-4">
+                Payment Methods
+              </Text>
+
+              {paymentMethods.map((method) => (
+                <PaymentMethodCard key={method.id} method={method} />
+              ))}
+              <TouchableOpacity
+                onPress={() => {
+                  closeModal();
+                  router.push("/paymentMethods");
+                }}
+                className="border border-border/20 dark:border-border/50 rounded-lg py-3 items-center my-4 flex-row justify-center"
+              >
+                <Plus size={20} color="grey" />
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark font-semibold ml-2">
+                  Add Payment Method
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="bg-foreground rounded-lg py-4 items-center"
+                onPress={() => {
+                  closeModal();
+                  router.push("/addMoney");
+                }}
+              >
+                <Text className="text-white font-semibold">Add Money</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={activeModal === MODAL_TYPES.PROMOTIONS}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Promotions
+            </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView className="flex-1">
+            <View className="p-4">
+              <View className="relative">
+                <LinearGradient
+                  colors={["#10b981", "#059669"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="rounded-xl p-6 mb-4 shadow-lg"
+                >
+                  <View className="absolute top-4 right-4 bg-white/20 rounded-full px-3 py-1">
+                    <Text className="text-white text-xs font-bold">
+                      FEATURED
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center mb-3">
+                    <View className="bg-white/20 rounded-full p-2 mr-3">
+                      <Tag size={24} color="white" />
+                    </View>
+                    <Text className="text-white text-xl font-bold">
+                      20% OFF First Order
+                    </Text>
+                  </View>
+                  <Text className="text-green-100 text-base mb-4">
+                    New customer? Get 20% off your first order with us!
                   </Text>
-                  <Switch
-                    value={setting.enabled}
-                    onValueChange={() => toggleNotification(setting.id)}
-                  />
-                </View>
-                <Text className="text-foreground-muted text-sm">
-                  {setting.description}
-                </Text>
+                  <View className="flex-row items-center justify-between">
+                    <View className="bg-white/20 rounded-lg px-4 py-2">
+                      <Text className="text-white font-mono text-lg font-bold">
+                        WELCOME20
+                      </Text>
+                    </View>
+                    <TouchableOpacity className="bg-white rounded-full px-6 py-2">
+                      <Text className="text-green-600 font-bold">
+                        Copy Code
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </LinearGradient>
               </View>
-            ))}
-          </View>
 
-          <View className="mb-6">
-            <Text className="text-foreground font-medium mb-3">
-              Push Notifications
-            </Text>
-            <View className="bg-card rounded-lg p-4 mb-3">
-              <View className="flex-row justify-between items-center mb-1">
-                <Text className="text-foreground font-medium">
-                  Order Updates
+              <View className="mt-6 bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-sm">
+                  Terms & Conditions: Offers cannot be combined. Valid for
+                  limited time only. Free delivery applies to orders within
+                  standard delivery zones.
                 </Text>
-                <Switch value={true} onValueChange={() => {}} />
               </View>
-              <Text className="text-foreground-muted text-sm">
-                Real-time delivery tracking
-              </Text>
             </View>
-          </View>
-
-          <View className="bg-card rounded-lg p-4 mb-3">
-            <Text className="text-foreground font-semibold">Font Size</Text>
-            <Text className="text-foreground-muted text-sm">
-              Adjust text size for better readability
-            </Text>
-          </View>
-
-          <View className="bg-card rounded-lg p-4 mb-3">
-            <Text className="text-foreground font-semibold">High Contrast</Text>
-            <Text className="text-foreground-muted text-sm">
-              Enable high contrast mode
-            </Text>
-          </View>
+          </ScrollView>
         </View>
-      </ModalSheet>
+      </Modal>
 
-      {/* About Modal */}
-      <ModalSheet title="About ClickNChow">
-        <View className="p-6">
-          <Text className="text-foreground text-base mb-6">Version 2.3.4</Text>
-
-          <TouchableOpacity
-            onPress={rateOnGooglePlay}
-            className="bg-card rounded-lg p-4 mb-3 flex-row items-center"
-          >
-            <Star size={24} color="#4285f4" />
-            <Text className="text-foreground font-semibold ml-4">
-              Rate us on Google Play
+      <Modal
+        visible={activeModal === MODAL_TYPES.HELP_CENTER}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Help Center
             </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={likeOnFacebook}
-            className="bg-card rounded-lg p-4 mb-3 flex-row items-center"
-          >
-            <Facebook size={24} color="#1877f2" />
-            <Text className="text-foreground font-semibold ml-4">
-              Like us on Facebook
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={openLegal}
-            className="bg-card rounded-lg p-4 mb-3 flex-row items-center justify-between"
-          >
-            <Text className="text-foreground font-semibold">Legal</Text>
-            <ChevronRight size={20} color="#666" />
-          </TouchableOpacity>
-
-          <View className="bg-card rounded-lg p-4 mb-3">
-            <Text className="text-foreground font-semibold">
-              Terms of Service
-            </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
           </View>
+          <ScrollView className="flex-1">
+            <View className="p-4">
+              {faqData.map((faq) => (
+                <TouchableOpacity
+                  key={faq.id}
+                  onPress={() =>
+                    setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)
+                  }
+                  className="bg-card dark:bg-card-dark rounded-lg mb-3 overflow-hidden"
+                >
+                  <View className="p-4 flex-row justify-between items-center">
+                    <Text className="text-foreground dark:text-white font-bold flex-1 text-xl">
+                      {faq.question}
+                    </Text>
+                    <ChevronRight
+                      size={20}
+                      color="#666"
+                      style={{
+                        transform: [
+                          { rotate: expandedFAQ === faq.id ? "90deg" : "0deg" },
+                        ],
+                      }}
+                    />
+                  </View>
+                  {expandedFAQ === faq.id && (
+                    <View className="px-4 pb-4">
+                      <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
+                        {faq.answer}
+                      </Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
 
-          <View className="bg-card rounded-lg p-4 mb-3">
-            <Text className="text-foreground font-semibold">
-              Privacy Policy
-            </Text>
-          </View>
-
-          <View className="bg-card rounded-lg p-4 mb-3">
-            <Text className="text-foreground font-semibold">Licenses</Text>
-          </View>
+              <View className="mt-6 rounded-lg">
+                <Text className="text-foreground dark:text-white font-semibold mb-2 text-xl">
+                  Still need help?
+                </Text>
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-md mb-3">
+                  Describe your issue and we'll get back to you within 24 hours.
+                </Text>
+                <TextInput
+                  className="bg-neutral/10 dark:bg-foreground/25 rounded-lg p-3 mt-2 dark:text-white mb-4"
+                  placeholder="Type your message here..."
+                  multiline
+                  value={supportMessage}
+                  onChangeText={setSupportMessage}
+                  placeholderTextColor={
+                    colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                  }
+                  numberOfLines={6}
+                  style={{ minHeight: 120 }}
+                  textAlignVertical="top"
+                />
+                <TouchableOpacity
+                  onPress={sendSupportMessage}
+                  className="bg-foreground rounded-lg py-4 items-center"
+                >
+                  <Text className="text-white font-semibold">Send Message</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
         </View>
-      </ModalSheet>
+      </Modal>
+
+      <Modal
+        visible={activeModal === MODAL_TYPES.PRIVACY_SETTINGS}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Privacy and Settings
+            </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView className="flex-1">
+            <View className="p-4 flex-col gap-6">
+              <View className="border-b border-border/15 dark:border-border/30 rounded-lg pb-4">
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-foreground dark:text-white text-xl font-bold">
+                    Location Data
+                  </Text>
+                  <Switch value={true} onValueChange={() => {}} />
+                </View>
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
+                  Used for delivery and restaurant recommendations
+                </Text>
+              </View>
+
+              <View className="border-b border-border/15 dark:border-border/30 rounded-lg pb-4">
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-foreground dark:text-white text-xl font-bold">
+                    Order History Analysis
+                  </Text>
+                  <Switch value={true} onValueChange={() => {}} />
+                </View>
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
+                  Helps us provide personalized recommendations
+                </Text>
+              </View>
+
+              <View className="border-b border-border/15 dark:border-border/30 pb-4">
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-foreground dark:text-white text-xl font-bold">
+                    Marketing Analytics
+                  </Text>
+                  <Switch value={false} onValueChange={() => {}} />
+                </View>
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
+                  Used for targeted promotions and advertisements
+                </Text>
+              </View>
+
+              <View className="border-b border-border/15 dark:border-border/30 pb-4">
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-foreground dark:text-white text-xl font-bold">
+                    Third-party Data Sharing
+                  </Text>
+                  <Switch onValueChange={() => {}} />
+                </View>
+                <Text className="text-foreground-muted dark:text-foreground-muted-dark text-lg">
+                  Share anonymized data with partner restaurants
+                </Text>
+              </View>
+
+              <TouchableOpacity className="bg-foreground rounded-lg py-4 items-center">
+                <Text className="text-white font-semibold">
+                  Save Privacy Settings
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={activeModal === MODAL_TYPES.ACCESSIBILITY}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              Accessbility
+            </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView className="flex-1">
+            <View className="p-4">
+              <View className="mb-6">
+                <Text className="text-foreground dark:text-white text-xl font-bold mb-4">
+                  Email Notifications
+                </Text>
+                {notificationSettings.map((setting) => (
+                  <View
+                    key={setting.id}
+                    className="border-b border-border/15 dark:border-border/30 pb-4 mt-2"
+                  >
+                    <View className="flex-row justify-between items-center mb-1">
+                      <Text className="text-foreground dark:text-white text-lg font-medium">
+                        {setting.title}
+                      </Text>
+                      <Switch
+                        value={setting.enabled}
+                        onValueChange={() => toggleNotification(setting.id)}
+                      />
+                    </View>
+                    <Text className="text-foreground-muted dark:text-foreground-muted-dark text-md">
+                      {setting.description}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              <View className="mb-6">
+                <Text className="text-foreground dark:text-white text-xl font-bold mb-3">
+                  Push Notifications
+                </Text>
+                <View className="mb-4">
+                  <View className="flex-row justify-between items-center mb-1">
+                    <Text className="text-foreground dark:text-white text-lg font-medium">
+                      Order Updates
+                    </Text>
+                    <Switch value={true} onValueChange={() => {}} />
+                  </View>
+                  <Text className="text-foreground-muted dark:text-foreground-muted-dark text-md">
+                    Real-time delivery tracking
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={activeModal === MODAL_TYPES.ABOUT}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeModal}
+      >
+        <View className="flex-1 bg-background dark:bg-background-dark">
+          <View className="border-b border-border/15 px-4 py-4 flex-row items-center justify-between">
+            <Text className="dark:text-white text-2xl font-semibold">
+              About ClicknChow
+            </Text>
+            <TouchableOpacity onPress={closeModal}>
+              <X size={24} color={colorScheme === "dark" ? "white" : "black"} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView className="flex-1">
+            <View className="p-4">
+              <Text className="text-foreground dark:text-foreground-muted-dark text-lg mb-6">
+                Version 2.3.4
+              </Text>
+
+              <TouchableOpacity
+                onPress={rateOnGooglePlay}
+                className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3 flex-row items-center"
+              >
+                <Star size={24} color="#ff5a3c" />
+                <Text className="text-foreground dark:text-foreground-muted-dark font-medium ml-4">
+                  Rate us on Google Play
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={likeOnFacebook}
+                className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3 flex-row items-center"
+              >
+                <Facebook size={24} color="#ff5a3c" />
+                <Text className="text-foreground dark:text-foreground-muted-dark font-medium ml-4">
+                  Like us on Facebook
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={openLegal}
+                className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3 flex-row items-center justify-between"
+              >
+                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">Legal</Text>
+                <ChevronRight size={20} color="#666" />
+              </TouchableOpacity>
+
+              <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3">
+                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">
+                  Terms of Service
+                </Text>
+              </View>
+
+              <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3">
+                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">
+                  Privacy Policy
+                </Text>
+              </View>
+
+              <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3">
+                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">Licenses</Text>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
