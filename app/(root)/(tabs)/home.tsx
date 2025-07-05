@@ -232,7 +232,7 @@ const Home = () => {
             <View className="flex-col items-start gap-6 justify-between p-4">
               <TouchableOpacity
                 onPress={() => setShowAuthModal(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
+                className="w-8 h-8 items-center justify-center"
               >
                 <Ionicons
                   name="close"
@@ -245,7 +245,7 @@ const Home = () => {
               </Text>
             </View>
 
-            <ScrollView className="flex-1 py-8">
+            <ScrollView className="flex-1">
               <View className="flex-row mb-8 border-b-2 border-border/15 dark:border-border/50">
                 <TouchableOpacity
                   onPress={() => setLoginMethod("phone")}
