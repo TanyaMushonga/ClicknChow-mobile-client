@@ -324,7 +324,7 @@ const ProductDetailScreen = () => {
               Special Instructions
             </Text>
             <TextInput
-              className="bg-neutral/10 dark:bg-foreground/25 rounded-lg p-3 mt-2 text-gray-800 dark:text-gray-200"
+              className="bg-neutral/10 dark:bg-foreground/25 rounded-lg p-3 mt-2 dark:text-white"
               value={specialInstructions}
               onChangeText={setSpecialInstructions}
               placeholder="e.g., No salt, extra crispy, well done..."
