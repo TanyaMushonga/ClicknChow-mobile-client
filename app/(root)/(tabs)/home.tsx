@@ -229,11 +229,7 @@ const Home = () => {
       case "login":
         return (
           <View className="flex-1">
-            <View className="flex-row items-center justify-between p-4 border-b border-border/15 dark:border-border/30">
-              <View className="w-8" />
-              <Text className="text-2xl font-bold text-foreground dark:text-white">
-                Welcome Back!
-              </Text>
+            <View className="flex-col items-start gap-6 justify-between p-4">
               <TouchableOpacity
                 onPress={() => setShowAuthModal(false)}
                 className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
@@ -244,12 +240,12 @@ const Home = () => {
                   color={colorScheme === "dark" ? "white" : "black"}
                 />
               </TouchableOpacity>
+              <Text className="text-2xl font-bold text-foreground dark:text-white">
+                Login or sign up to ClicknChow
+              </Text>
             </View>
 
-            <ScrollView className="flex-1 px-6 py-8">
-              <Text className="text-foreground-muted dark:text-foreground-muted-dark text-center mb-8 text-lg">
-                Sign in to your account to continue
-              </Text>
+            <ScrollView className="flex-1 py-8">
               <View className="flex-row mb-8 border-b-2 border-border/15 dark:border-border/50">
                 <TouchableOpacity
                   onPress={() => setLoginMethod("phone")}
@@ -288,78 +284,79 @@ const Home = () => {
                   </View>
                 </TouchableOpacity>
               </View>
-              <View className="mb-6">
-                <View className="relative">
-                  <TextInput
-                    placeholder={
-                      loginMethod === "phone"
-                        ? "Enter your phone number"
-                        : "Enter your email address"
-                    }
-                    placeholderTextColor={
-                      colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                    }
-                    value={loginMethod === "phone" ? phoneNumber : email}
-                    onChangeText={
-                      loginMethod === "phone" ? setPhoneNumber : setEmail
-                    }
-                    keyboardType={
-                      loginMethod === "phone" ? "phone-pad" : "email-address"
-                    }
-                    className="border border-border/15 dark:border-border/40 rounded-xl px-4 py-4 text-foreground dark:text-white bg-card dark:bg-card-dark text-base"
-                    autoCapitalize="none"
-                    style={{
-                      fontSize: 16,
-                    }}
-                  />
+              <View className="px-4">
+                <View className="mb-6">
+                  <View className="relative">
+                    <TextInput
+                      placeholder={
+                        loginMethod === "phone"
+                          ? "Enter your phone number"
+                          : "Enter your email address"
+                      }
+                      placeholderTextColor={
+                        colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                      }
+                      value={loginMethod === "phone" ? phoneNumber : email}
+                      onChangeText={
+                        loginMethod === "phone" ? setPhoneNumber : setEmail
+                      }
+                      keyboardType={
+                        loginMethod === "phone" ? "phone-pad" : "email-address"
+                      }
+                      className="border border-border/15 dark:border-border/40 rounded-xl px-4 py-4 text-foreground dark:text-white bg-card dark:bg-card-dark text-base"
+                      autoCapitalize="none"
+                      style={{
+                        fontSize: 16,
+                      }}
+                    />
+                  </View>
                 </View>
-              </View>
-              <TouchableOpacity
-                onPress={handleSendOtp}
-                disabled={isLoading}
-                className={`bg-primary rounded-xl py-4 mb-8 ${
-                  isLoading ? "opacity-50" : ""
-                }`}
-              >
-                <Text className="text-white text-center font-bold text-lg">
-                  {isLoading ? "Sending OTP..." : "Continue"}
-                </Text>
-              </TouchableOpacity>
-              <View className="flex-row items-center mb-8">
-                <View className="flex-1 h-px bg-border/35 dark:bg-border-60" />
-                <Text className="px-4 text-foreground-muted dark:text-foreground-muted-dark font-medium">
-                  Or continue with
-                </Text>
-                <View className="flex-1 h-px bg-border/35 dark:bg-border-60" />
-              </View>
-
-              <View className="flex flex-col gap-4">
                 <TouchableOpacity
-                  onPress={() => handleSocialLogin("google")}
-                  className="bg-foreground border rounded-xl p-4"
+                  onPress={handleSendOtp}
+                  disabled={isLoading}
+                  className={`bg-primary rounded-xl py-4 mb-8 ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
                 >
-                  <View className="flex-row items-center justify-center relative">
-                    <View className="absolute left-0">
-                      <AntDesign name="google" size={24} color="white" />
-                    </View>
-                    <Text className="text-center flex-1 text-white text-lg">
-                      Google
-                    </Text>
-                  </View>
+                  <Text className="text-white text-center font-bold text-lg">
+                    {isLoading ? "Sending OTP..." : "Continue"}
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => handleSocialLogin("facebook")}
-                  className="bg-card dark:bg-card-dark border-2 border-border/5 dark:border rounded-xl p-4"
-                >
-                  <View className="flex-row items-center justify-center relative">
-                    <View className="absolute left-0">
-                      <Entypo name="facebook" size={24} color="black" />
+                <View className="flex-row items-center mb-8">
+                  <View className="flex-1 h-px bg-border/35 dark:bg-border-60" />
+                  <Text className="px-4 text-foreground-muted dark:text-foreground-muted-dark font-medium">
+                    Or
+                  </Text>
+                  <View className="flex-1 h-px bg-border/35 dark:bg-border-60" />
+                </View>
+                <View className="flex flex-col gap-4">
+                  <TouchableOpacity
+                    onPress={() => handleSocialLogin("google")}
+                    className="bg-foreground border rounded-xl p-4"
+                  >
+                    <View className="flex-row items-center justify-center relative">
+                      <View className="absolute left-0">
+                        <AntDesign name="google" size={24} color="white" />
+                      </View>
+                      <Text className="text-center flex-1 text-white text-lg">
+                        Continue with Google
+                      </Text>
                     </View>
-                    <Text className="text-center flex-1 text-lg text-foreground dark:text-white">
-                      Facebook
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleSocialLogin("facebook")}
+                    className="border-2 border-primary/35 rounded-xl p-4"
+                  >
+                    <View className="flex-row items-center justify-center relative">
+                      <View className="absolute left-0">
+                        <Entypo name="facebook" size={24} color={"#ff5a3c"} />
+                      </View>
+                      <Text className="text-center flex-1 text-lg text-primary">
+                        Continue with Facebook
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             </ScrollView>
           </View>
