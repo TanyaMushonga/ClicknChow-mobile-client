@@ -36,7 +36,7 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Merchants from "@/components/merchant/MerchantsList";
+import Merchants from "@/components/client/merchant/MerchantsList";
 import { useMerchantsStore } from "@/store/merchants";
 
 interface Restaurant {
@@ -975,7 +975,9 @@ const Profile: React.FC = () => {
                 onPress={openLegal}
                 className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3 flex-row items-center justify-between"
               >
-                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">Legal</Text>
+                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">
+                  Legal
+                </Text>
                 <ChevronRight size={20} color="#666" />
               </TouchableOpacity>
 
@@ -992,7 +994,9 @@ const Profile: React.FC = () => {
               </View>
 
               <View className="bg-card dark:bg-card-dark rounded-lg p-4 mb-3">
-                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">Licenses</Text>
+                <Text className="text-foreground dark:text-foreground-muted-dark font-semibold">
+                  Licenses
+                </Text>
               </View>
             </View>
           </ScrollView>
