@@ -10,12 +10,21 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useIsAuthenticated } from "@/store/auth";
 import { useAuthModal } from "@/hooks/useAuth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  emailSchema,
+  onboardingSchema,
+  otpSchema,
+  phoneSchema,
+} from "@/utils/zod";
+import { AnimatedInput } from "@/components/ui/animated_input";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal } = useIsAuthenticated();
@@ -45,6 +54,94 @@ const AuthModal = () => {
     handleCompleteOnboarding,
     handleSocialLogin,
   } = useAuthModal();
+
+  type LoginFormValues = { phoneNumber?: string; email?: string };
+
+  const loginForm = useForm<LoginFormValues>({
+    resolver:
+      loginMethod === "phone"
+        ? zodResolver(phoneSchema)
+        : zodResolver(emailSchema),
+    defaultValues: {
+      phoneNumber: phoneNumber || "",
+      email: email || "",
+    },
+  });
+
+  const otpForm = useForm({
+    resolver: zodResolver(otpSchema),
+    defaultValues: {
+      otp: otp || "",
+    },
+  });
+
+  const onboardingForm = useForm({
+    resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      firstName: firstName || "",
+      lastName: lastName || "",
+      dateOfBirth: dateOfBirth || "",
+    },
+  });
+
+  // Reset forms when login method changes
+  useEffect(() => {
+    loginForm.reset();
+  }, [loginMethod]);
+
+  // Update form values when external state changes
+  useEffect(() => {
+    loginForm.setValue("phoneNumber", phoneNumber || "");
+    loginForm.setValue("email", email || "");
+  }, [phoneNumber, email]);
+
+  useEffect(() => {
+    otpForm.setValue("otp", otp || "");
+  }, [otp]);
+
+  useEffect(() => {
+    onboardingForm.setValue("firstName", firstName || "");
+    onboardingForm.setValue("lastName", lastName || "");
+    onboardingForm.setValue("dateOfBirth", dateOfBirth || "");
+  }, [firstName, lastName, dateOfBirth]);
+
+  interface LoginFormData {
+    phoneNumber?: string;
+    email?: string;
+  }
+
+  const onLoginSubmit = async (data: LoginFormData): Promise<void> => {
+    if (loginMethod === "phone") {
+      setPhoneNumber(data.phoneNumber || "");
+    } else {
+      setEmail(data.email || "");
+    }
+    handleSendOtp();
+  };
+
+  interface OtpFormData {
+    otp: string;
+  }
+
+  const onOtpSubmit = async (data: OtpFormData): Promise<void> => {
+    setOtp(data.otp);
+    handleVerifyOtp();
+  };
+
+  interface OnboardingFormData {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+  }
+
+  const onOnboardingSubmit = async (
+    data: OnboardingFormData
+  ): Promise<void> => {
+    setFirstName(data.firstName);
+    setLastName(data.lastName);
+    setDateOfBirth(data.dateOfBirth);
+    handleCompleteOnboarding();
+  };
 
   return (
     <Modal
@@ -126,39 +223,25 @@ const AuthModal = () => {
                       </View>
                       <View className="px-4">
                         <View className="mb-6">
-                          <View className="relative">
-                            <TextInput
-                              placeholder={
-                                loginMethod === "phone"
-                                  ? "Enter your phone number"
-                                  : "Enter your email address"
-                              }
-                              placeholderTextColor={
-                                colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                              }
-                              value={
-                                loginMethod === "phone" ? phoneNumber : email
-                              }
-                              onChangeText={
-                                loginMethod === "phone"
-                                  ? setPhoneNumber
-                                  : setEmail
-                              }
-                              keyboardType={
-                                loginMethod === "phone"
-                                  ? "phone-pad"
-                                  : "email-address"
-                              }
-                              className="border border-border/15 dark:border-border/40 rounded-xl px-4 py-4 text-foreground dark:text-white bg-card dark:bg-card-dark text-base"
-                              autoCapitalize="none"
-                              style={{
-                                fontSize: 16,
-                              }}
-                            />
-                          </View>
+                          <AnimatedInput
+                            control={loginForm.control}
+                            name={
+                              loginMethod === "phone" ? "phoneNumber" : "email"
+                            }
+                            placeholder={
+                              loginMethod === "phone"
+                                ? "Enter your phone number"
+                                : "Enter your email address"
+                            }
+                            keyboardType={
+                              loginMethod === "phone"
+                                ? "phone-pad"
+                                : "email-address"
+                            }
+                          />
                         </View>
                         <TouchableOpacity
-                          onPress={handleSendOtp}
+                          onPress={loginForm.handleSubmit(onLoginSubmit)}
                           disabled={isLoading}
                           className={`bg-primary rounded-xl py-4 mb-8 ${
                             isLoading ? "opacity-50" : ""
@@ -256,25 +339,29 @@ const AuthModal = () => {
                       </View>
 
                       <View className="mb-8">
-                        <TextInput
+                        <AnimatedInput
+                          control={otpForm.control}
+                          name="otp"
                           placeholder="Enter 6-digit code"
-                          placeholderTextColor={
-                            colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                          }
-                          value={otp}
-                          onChangeText={setOtp}
-                          keyboardType="number-pad"
+                          keyboardType="phone-pad"
                           maxLength={6}
-                          className="border-2 border-border/15 dark:border-border/50 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-center text-2xl font-bold tracking-widest"
-                          autoFocus
+                          autoFocus={true}
+                          textAlign="center"
+                          style={{
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            letterSpacing: 4,
+                          }}
                         />
                       </View>
 
                       <TouchableOpacity
-                        onPress={handleVerifyOtp}
-                        disabled={isLoading || otp.length !== 6}
+                        onPress={otpForm.handleSubmit(onOtpSubmit)}
+                        disabled={isLoading || !otpForm.formState.isValid}
                         className={`bg-primary rounded-xl py-4 mb-6 shadow-lg ${
-                          isLoading || otp.length !== 6 ? "opacity-50" : ""
+                          isLoading || !otpForm.formState.isValid
+                            ? "opacity-50"
+                            : ""
                         }`}
                         style={{
                           shadowColor: "#3B82F6",
@@ -339,112 +426,57 @@ const AuthModal = () => {
                       </View>
 
                       {/* Form Fields */}
-                      <View className="space-y-4">
+                      <View className="space-y-6">
                         <View>
                           <Text className="text-foreground dark:text-white font-semibold mb-2">
                             First Name
                           </Text>
-                          <View className="relative">
-                            <TextInput
-                              placeholder="Enter your first name"
-                              placeholderTextColor={
-                                colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                              }
-                              value={firstName}
-                              onChangeText={setFirstName}
-                              className="border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-gray-800 text-base"
-                              style={{
-                                fontSize: 16,
-                                paddingLeft: 50,
-                              }}
-                            />
-                            <View className="absolute left-4 top-4">
-                              <Ionicons
-                                name="person"
-                                size={20}
-                                color={
-                                  colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                                }
-                              />
-                            </View>
-                          </View>
+                          <AnimatedInput
+                            control={onboardingForm.control}
+                            name="firstName"
+                            placeholder="Enter your first name"
+                            icon="person"
+                            autoCapitalize="words"
+                          />
                         </View>
 
                         <View>
                           <Text className="text-foreground dark:text-white font-semibold mb-2">
                             Last Name
                           </Text>
-                          <View className="relative">
-                            <TextInput
-                              placeholder="Enter your last name"
-                              placeholderTextColor={
-                                colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                              }
-                              value={lastName}
-                              onChangeText={setLastName}
-                              className="border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-gray-800 text-base"
-                              style={{
-                                fontSize: 16,
-                                paddingLeft: 50,
-                              }}
-                            />
-                            <View className="absolute left-4 top-4">
-                              <Ionicons
-                                name="person"
-                                size={20}
-                                color={
-                                  colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                                }
-                              />
-                            </View>
-                          </View>
+                          <AnimatedInput
+                            control={onboardingForm.control}
+                            name="lastName"
+                            placeholder="Enter your last name"
+                            icon="person"
+                            autoCapitalize="words"
+                          />
                         </View>
 
                         <View>
                           <Text className="text-foreground dark:text-white font-semibold mb-2">
                             Date of Birth
                           </Text>
-                          <View className="relative">
-                            <TextInput
-                              placeholder="YYYY-MM-DD"
-                              placeholderTextColor={
-                                colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                              }
-                              value={dateOfBirth}
-                              onChangeText={setDateOfBirth}
-                              className="border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-gray-800 text-base"
-                              style={{
-                                fontSize: 16,
-                                paddingLeft: 50,
-                              }}
-                            />
-                            <View className="absolute left-4 top-4">
-                              <Ionicons
-                                name="calendar"
-                                size={20}
-                                color={
-                                  colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                                }
-                              />
-                            </View>
-                          </View>
+                          <AnimatedInput
+                            control={onboardingForm.control}
+                            name="dateOfBirth"
+                            placeholder="YYYY-MM-DD"
+                            icon="calendar"
+                            keyboardType="numeric"
+                          />
                         </View>
                       </View>
 
                       {/* Complete Button */}
                       <TouchableOpacity
-                        onPress={handleCompleteOnboarding}
+                        onPress={onboardingForm.handleSubmit(
+                          onOnboardingSubmit
+                        )}
                         disabled={
-                          isLoading ||
-                          !firstName.trim() ||
-                          !lastName.trim() ||
-                          !dateOfBirth.trim()
+                          isLoading || !onboardingForm.formState.isValid
                         }
                         className={`bg-primary rounded-xl py-4 mt-8 shadow-lg ${
-                          isLoading ||
-                          !firstName.trim() ||
-                          !lastName.trim() ||
-                          !dateOfBirth.trim()
+                          isLoading || !onboardingForm.formState.isValid
                             ? "opacity-50"
                             : ""
                         }`}
