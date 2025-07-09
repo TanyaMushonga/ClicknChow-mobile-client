@@ -1,4 +1,5 @@
 import { requestOTPAction, verifyOTPAction } from "@/app/actions/requestOTP";
+import { useIsAuthenticated } from "@/store/auth";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Alert } from "react-native";
@@ -23,7 +24,7 @@ const completeOnboardingApi = async (payload: {
 
 export function useAuthModal() {
   const [authStep, setAuthStep] = useState("login");
-  const [loginMethod, setLoginMethod] = useState("phone");
+  const [loginMethod, setLoginMethod] = useState("email");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -31,6 +32,7 @@ export function useAuthModal() {
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [isNewAccount, setIsNewAccount] = useState(false);
+  const { setIsAuthenticated, setShowAuthModal } = useIsAuthenticated();
 
   const resetAuthModal = () => {
     setAuthStep("login");
@@ -47,16 +49,26 @@ export function useAuthModal() {
     mutationFn: (payload: { email?: string; phone?: string }) =>
       requestOTPAction(payload.email, payload.phone),
     onSuccess: () => {
+      console.log("OTP sent successfully");
       setAuthStep("otp");
     },
-    onError: (error: Error) => Alert.alert("Error", error.message),
+    onError: (error: Error) => {
+      console.log("error");
+      Alert.alert("Error", error.message);
+    },
   });
 
   const verifyOtpMutation = useMutation({
     mutationFn: (payload: { otp: string; email?: string; phone?: string }) =>
       verifyOTPAction(payload.otp, payload.email, payload.phone),
     onSuccess: (data) => {
-      if (data.success) setAuthStep("onboarding");
+      if (data.success && data.data === null) {
+        setAuthStep("onboarding");
+        setIsNewAccount(true);
+      } else if (data.success && data.data !== null) {
+        setIsNewAccount(false);
+        setShowAuthModal(false);
+      }
     },
     onError: (error: Error) => Alert.alert("Error", error.message),
   });
@@ -70,12 +82,6 @@ export function useAuthModal() {
   });
 
   const handleSendOtp = () => {
-    if (loginMethod === "phone" && !phoneNumber.trim()) {
-      return Alert.alert("Error", "Please enter your phone number");
-    }
-    if (loginMethod === "email" && !email.trim()) {
-      return Alert.alert("Error", "Please enter your email address");
-    }
     sendOtpMutation.mutate({
       phone: loginMethod === "phone" ? phoneNumber : undefined,
       email: loginMethod === "email" ? email : undefined,
