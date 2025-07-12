@@ -22,7 +22,7 @@ import FeaturedToday from "@/components/ui/FeaturedToday";
 import AuthModal from "@/components/client/auth/auth_modal";
 import { useIsAuthenticated } from "@/store/auth";
 
-const Home = () => {
+export default function Home() {
   const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showMapButton, setShowMapButton] = useState(false);
@@ -139,6 +139,4 @@ const Home = () => {
       <AuthModal />
     </View>
   );
-};
-
-export default Home;
+}
