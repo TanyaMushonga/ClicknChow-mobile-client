@@ -1,8 +1,9 @@
 import { requestOTPAction, verifyOTPAction } from "@/app/actions/requestOTP";
 import { useIsAuthenticated } from "@/store/auth";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Alert } from "react-native";
+import PhoneInput from "react-native-phone-number-input";
 
 const completeOnboardingApi = async (payload: {
   firstName: string;
@@ -32,6 +33,8 @@ export function useAuthModal() {
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [isNewAccount, setIsNewAccount] = useState(false);
+  const phoneInput = useRef<PhoneInput>(null);
+  const [phoneInputValue, setPhoneInputValue] = useState("");
   const { setIsAuthenticated, setShowAuthModal } = useIsAuthenticated();
 
   const resetAuthModal = () => {
@@ -119,7 +122,7 @@ export function useAuthModal() {
     setTimeout(() => {}, 1000);
   };
 
-  return {
+  return {phoneInput,
     authStep,
     setAuthStep,
     loginMethod,
@@ -146,5 +149,7 @@ export function useAuthModal() {
     handleVerifyOtp,
     handleCompleteOnboarding,
     handleSocialLogin,
+    phoneInputValue,
+    setPhoneInputValue,
   };
 }

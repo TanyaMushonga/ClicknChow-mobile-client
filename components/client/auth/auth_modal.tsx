@@ -25,6 +25,7 @@ import {
   phoneSchema,
 } from "@/utils/zod";
 import { AnimatedInput } from "@/components/ui/animated_input";
+import PhoneInput from "react-native-phone-number-input";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal } = useIsAuthenticated();
@@ -53,17 +54,16 @@ const AuthModal = () => {
     handleVerifyOtp,
     handleCompleteOnboarding,
     handleSocialLogin,
+    phoneInput,
+    phoneInputValue,
+    setPhoneInputValue,
   } = useAuthModal();
 
-  type LoginFormValues = { phoneNumber?: string; email?: string };
+  const PhoneInputComponent = PhoneInput as unknown as React.ComponentType<any>;
 
-  const loginForm = useForm<LoginFormValues>({
-    resolver:
-      loginMethod === "phone"
-        ? zodResolver(phoneSchema)
-        : zodResolver(emailSchema),
+  const loginForm = useForm<{ email: string }>({
+    resolver: zodResolver(emailSchema),
     defaultValues: {
-      phoneNumber: phoneNumber || "",
       email: email || "",
     },
   });
@@ -84,14 +84,11 @@ const AuthModal = () => {
     },
   });
 
-  // Reset forms when login method changes
   useEffect(() => {
     loginForm.reset();
   }, [loginMethod]);
 
-  // Update form values when external state changes
   useEffect(() => {
-    loginForm.setValue("phoneNumber", phoneNumber || "");
     loginForm.setValue("email", email || "");
   }, [phoneNumber, email]);
 
@@ -223,22 +220,53 @@ const AuthModal = () => {
                       </View>
                       <View className="px-4">
                         <View className="mb-6">
-                          <AnimatedInput
-                            control={loginForm.control}
-                            name={
-                              loginMethod === "phone" ? "phoneNumber" : "email"
-                            }
-                            placeholder={
-                              loginMethod === "phone"
-                                ? "Enter your phone number"
-                                : "Enter your email address"
-                            }
-                            keyboardType={
-                              loginMethod === "phone"
-                                ? "phone-pad"
-                                : "email-address"
-                            }
-                          />
+                          {loginMethod === "phone" ? (
+                            <PhoneInputComponent
+                              ref={phoneInput}
+                              defaultValue={phoneInputValue}
+                              defaultCode="ZW"
+                              layout="second"
+                              onChange={setPhoneInputValue}
+                              onChangeFormattedText={setPhoneNumber}
+                              withDarkTheme={colorScheme === "dark"}
+                              autoFocus={true}
+                              containerStyle={{
+                                borderRadius: 12,
+                                borderWidth: 1,
+                                borderColor:
+                                  colorScheme === "dark" ? "#333" : "#e5e7eb",
+                                backgroundColor:
+                                  colorScheme === "dark" ? "#222" : "#fff",
+                                marginBottom: 8,
+                                width: "100%",
+                                alignSelf: "center",
+                              }}
+                              textContainerStyle={{
+                                borderRadius: 12,
+                                backgroundColor:
+                                  colorScheme === "dark" ? "#222" : "#fff",
+                              }}
+                              textInputStyle={{
+                                color: colorScheme === "dark" ? "#fff" : "#111",
+                                fontSize: 16,
+                                paddingVertical: 0,
+                              }}
+                              codeTextStyle={{
+                                color: colorScheme === "dark" ? "#fff" : "#111",
+                                fontWeight: "bold",
+                              }}
+                              flagButtonStyle={{
+                                borderRadius: 8,
+                              }}
+                            />
+                          ) : (
+                            <AnimatedInput
+                              control={loginForm.control}
+                              name={"email"}
+                              placeholder={"Enter your email address"}
+                              keyboardType={"email-address"}
+                            />
+                          )}
                         </View>
                         <TouchableOpacity
                           onPress={loginForm.handleSubmit(onLoginSubmit)}
