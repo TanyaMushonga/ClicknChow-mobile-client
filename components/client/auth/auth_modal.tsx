@@ -5,139 +5,88 @@ import {
   TouchableOpacity,
   useColorScheme,
   ScrollView,
-  TextInput,
   Modal,
   KeyboardAvoidingView,
   Platform,
+  TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useIsAuthenticated } from "@/store/auth";
-import { useAuthModal } from "@/hooks/useAuth";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  emailSchema,
-  onboardingSchema,
-  otpSchema,
-  phoneSchema,
-} from "@/utils/zod";
+import { useAuth } from "@/hooks/useAuth";
 import { AnimatedInput } from "@/components/ui/animated_input";
 import PhoneInput from "react-native-phone-number-input";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal } = useIsAuthenticated();
+  const PhoneInputComponent = PhoneInput as unknown as React.ComponentType<any>;
   const colorScheme = useColorScheme();
   const {
-    authStep,
-    setAuthStep,
-    loginMethod,
-    setLoginMethod,
-    phoneNumber,
-    setPhoneNumber,
-    email,
-    setEmail,
-    otp,
-    setOtp,
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
-    dateOfBirth,
-    setDateOfBirth,
-    isNewAccount,
+    authState,
+    updateAuthState,
+    resetAuth,
+    sendEmailOtpMutation,
+    sendPhoneOtpMutation,
+    verifyOtpMutation,
+    completeOnboardingMutation,
     isLoading,
-    resetAuthModal,
-    handleSendOtp,
-    handleVerifyOtp,
-    handleCompleteOnboarding,
-    handleSocialLogin,
-    phoneInput,
-    phoneInputValue,
-    setPhoneInputValue,
-  } = useAuthModal();
+  } = useAuth();
 
-  const PhoneInputComponent = PhoneInput as unknown as React.ComponentType<any>;
+  const phoneInput = React.useRef<PhoneInput>(null);
 
-  const loginForm = useForm<{ email: string }>({
-    resolver: zodResolver(emailSchema),
-    defaultValues: {
-      email: email || "",
-    },
-  });
-
-  const otpForm = useForm({
-    resolver: zodResolver(otpSchema),
-    defaultValues: {
-      otp: otp || "",
-    },
-  });
-
-  const onboardingForm = useForm({
-    resolver: zodResolver(onboardingSchema),
-    defaultValues: {
-      firstName: firstName || "",
-      lastName: lastName || "",
-      dateOfBirth: dateOfBirth || "",
-    },
-  });
-
-  useEffect(() => {
-    loginForm.reset();
-  }, [loginMethod]);
-
-  useEffect(() => {
-    loginForm.setValue("email", email || "");
-  }, [phoneNumber, email]);
-
-  useEffect(() => {
-    otpForm.setValue("otp", otp || "");
-  }, [otp]);
-
-  useEffect(() => {
-    onboardingForm.setValue("firstName", firstName || "");
-    onboardingForm.setValue("lastName", lastName || "");
-    onboardingForm.setValue("dateOfBirth", dateOfBirth || "");
-  }, [firstName, lastName, dateOfBirth]);
-
-  interface LoginFormData {
-    phoneNumber?: string;
-    email?: string;
-  }
-
-  const onLoginSubmit = async (data: LoginFormData): Promise<void> => {
-    if (loginMethod === "phone") {
-      setPhoneNumber(data.phoneNumber || "");
+  const handleSendOtp = () => {
+    if (authState.method === "email") {
+      sendEmailOtpMutation.mutate(authState.credentials.email);
     } else {
-      setEmail(data.email || "");
+      sendPhoneOtpMutation.mutate(authState.credentials.phone);
     }
-    handleSendOtp();
   };
 
-  interface OtpFormData {
-    otp: string;
-  }
-
-  const onOtpSubmit = async (data: OtpFormData): Promise<void> => {
-    setOtp(data.otp);
-    handleVerifyOtp();
+  const handleVerifyOtp = () => {
+    verifyOtpMutation.mutate({
+      method: authState.method,
+      otp: authState.otp,
+      email: authState.credentials.email,
+      phone_number: authState.credentials.phone,
+    });
   };
 
-  interface OnboardingFormData {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-  }
+  const handleCompleteOnboarding = () => {
+    completeOnboardingMutation.mutate();
+  };
 
-  const onOnboardingSubmit = async (
-    data: OnboardingFormData
-  ): Promise<void> => {
-    setFirstName(data.firstName);
-    setLastName(data.lastName);
-    setDateOfBirth(data.dateOfBirth);
-    handleCompleteOnboarding();
+  const handleSocialLogin = (provider: string) => {
+    console.log(`Logging in with ${provider}`);
+  };
+
+  const renderError = (field: string) => {
+    if (!authState.errors[field]) return null;
+
+    return (
+      <View className="mt-1">
+        {authState.errors[field].map((error, index) => (
+          <Text key={index} className="text-red-500 text-sm">
+            {error}
+          </Text>
+        ))}
+      </View>
+    );
+  };
+
+  const renderNonFieldErrors = () => {
+    if (!authState.errors.nonFieldErrors) return null;
+
+    return (
+      <View className="mb-4 p-3 bg-red-100 rounded-lg">
+        {authState.errors.nonFieldErrors.map((error, index) => (
+          <Text key={index} className="text-red-700">
+            {error}
+          </Text>
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -147,6 +96,7 @@ const AuthModal = () => {
       presentationStyle="pageSheet"
       onRequestClose={() => {
         setShowAuthModal(false);
+        resetAuth();
       }}
     >
       <KeyboardAvoidingView
@@ -155,7 +105,7 @@ const AuthModal = () => {
       >
         <View style={{ flex: 1 }}>
           {(() => {
-            switch (authStep) {
+            switch (authState.step) {
               case "login":
                 return (
                   <View className="flex-1">
@@ -178,9 +128,9 @@ const AuthModal = () => {
                     <ScrollView className="flex-1">
                       <View className="flex-row mb-8 border-b-2 border-border/15 dark:border-border/50">
                         <TouchableOpacity
-                          onPress={() => setLoginMethod("phone")}
+                          onPress={() => updateAuthState({ method: "phone" })}
                           className={`flex-1 py-4 ${
-                            loginMethod === "phone"
+                            authState.method === "phone"
                               ? "border-b-2 border-primary"
                               : ""
                           }`}
@@ -188,7 +138,7 @@ const AuthModal = () => {
                           <View className="flex-row items-center justify-center">
                             <Text
                               className={`ml-2 font-semibold ${
-                                loginMethod === "phone"
+                                authState.method === "phone"
                                   ? "text-primary"
                                   : "dark:text-white"
                               }`}
@@ -198,9 +148,9 @@ const AuthModal = () => {
                           </View>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={() => setLoginMethod("email")}
+                          onPress={() => updateAuthState({ method: "email" })}
                           className={`flex-1 py-4  ${
-                            loginMethod === "email"
+                            authState.method === "email"
                               ? "border-b-2 border-primary"
                               : " "
                           }`}
@@ -208,7 +158,7 @@ const AuthModal = () => {
                           <View className="flex-row items-center justify-center">
                             <Text
                               className={`ml-2 font-semibold ${
-                                loginMethod === "email"
+                                authState.method === "email"
                                   ? "text-primary"
                                   : "dark:text-white"
                               }`}
@@ -219,57 +169,94 @@ const AuthModal = () => {
                         </TouchableOpacity>
                       </View>
                       <View className="px-4">
+                        {renderNonFieldErrors()}
                         <View className="mb-6">
-                          {loginMethod === "phone" ? (
-                            <PhoneInputComponent
-                              ref={phoneInput}
-                              defaultValue={phoneInputValue}
-                              defaultCode="ZW"
-                              layout="second"
-                              onChange={setPhoneInputValue}
-                              onChangeFormattedText={setPhoneNumber}
-                              withDarkTheme={colorScheme === "dark"}
-                              autoFocus={true}
-                              containerStyle={{
-                                borderRadius: 12,
-                                borderWidth: 1,
-                                borderColor:
-                                  colorScheme === "dark" ? "#333" : "#e5e7eb",
-                                backgroundColor:
-                                  colorScheme === "dark" ? "#222" : "#fff",
-                                marginBottom: 8,
-                                width: "100%",
-                                alignSelf: "center",
-                              }}
-                              textContainerStyle={{
-                                borderRadius: 12,
-                                backgroundColor:
-                                  colorScheme === "dark" ? "#222" : "#fff",
-                              }}
-                              textInputStyle={{
-                                color: colorScheme === "dark" ? "#fff" : "#111",
-                                fontSize: 16,
-                                paddingVertical: 0,
-                              }}
-                              codeTextStyle={{
-                                color: colorScheme === "dark" ? "#fff" : "#111",
-                                fontWeight: "bold",
-                              }}
-                              flagButtonStyle={{
-                                borderRadius: 8,
-                              }}
-                            />
+                          {authState.method === "phone" ? (
+                            <>
+                              <PhoneInputComponent
+                                ref={phoneInput}
+                                defaultValue={
+                                  authState.credentials.phoneInputValue
+                                }
+                                defaultCode="ZW"
+                                layout="second"
+                                onChangeFormattedText={(text: string) => {
+                                  updateAuthState({
+                                    credentials: {
+                                      ...authState.credentials,
+                                      phone: text,
+                                      phoneInputValue: text,
+                                    },
+                                  });
+                                }}
+                                withDarkTheme={colorScheme === "dark"}
+                                autoFocus={true}
+                                containerStyle={{
+                                  borderRadius: 12,
+                                  borderWidth: 1,
+                                  borderColor:
+                                    colorScheme === "dark" ? "#333" : "#e5e7eb",
+                                  backgroundColor:
+                                    colorScheme === "dark" ? "#222" : "#fff",
+                                  marginBottom: 8,
+                                  width: "100%",
+                                  alignSelf: "center",
+                                }}
+                                textContainerStyle={{
+                                  borderRadius: 12,
+                                  backgroundColor:
+                                    colorScheme === "dark" ? "#222" : "#fff",
+                                }}
+                                textInputStyle={{
+                                  color:
+                                    colorScheme === "dark" ? "#fff" : "#111",
+                                  fontSize: 16,
+                                  paddingVertical: 0,
+                                }}
+                                codeTextStyle={{
+                                  color:
+                                    colorScheme === "dark" ? "#fff" : "#111",
+                                  fontWeight: "bold",
+                                }}
+                                flagButtonStyle={{
+                                  borderRadius: 8,
+                                }}
+                              />
+                              {renderError("phone_number")}
+                            </>
                           ) : (
-                            <AnimatedInput
-                              control={loginForm.control}
-                              name={"email"}
-                              placeholder={"Enter your email address"}
-                              keyboardType={"email-address"}
-                            />
+                            <>
+                              <TextInput
+                                placeholder="Enter your email"
+                                placeholderTextColor={
+                                  colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                                }
+                                value={authState.credentials.email}
+                                onChangeText={(text) =>
+                                  updateAuthState({
+                                    credentials: {
+                                      ...authState.credentials,
+                                      email: text,
+                                    },
+                                  })
+                                }
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base border-border/15 dark:border-border/40`}
+                                style={[
+                                  {
+                                    fontSize: 16,
+                                    textAlign: "left",
+                                    paddingLeft: 16,
+                                  },
+                                ]}
+                              />
+                              {renderError("email")}
+                            </>
                           )}
                         </View>
                         <TouchableOpacity
-                          onPress={loginForm.handleSubmit(onLoginSubmit)}
+                          onPress={handleSendOtp}
                           disabled={isLoading}
                           className={`bg-primary rounded-xl py-4 mb-8 ${
                             isLoading ? "opacity-50" : ""
@@ -332,7 +319,7 @@ const AuthModal = () => {
                   <View className="flex-1">
                     <View className="flex-row items-center justify-between p-6 border-b border-border/15 dark:border-border/50">
                       <TouchableOpacity
-                        onPress={() => setAuthStep("login")}
+                        onPress={() => updateAuthState({ step: "login" })}
                         className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
                       >
                         <Ionicons
@@ -345,7 +332,10 @@ const AuthModal = () => {
                         Verify Code
                       </Text>
                       <TouchableOpacity
-                        onPress={() => setShowAuthModal(false)}
+                        onPress={() => {
+                          setShowAuthModal(false);
+                          resetAuth();
+                        }}
                         className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
                       >
                         <Ionicons
@@ -361,15 +351,15 @@ const AuthModal = () => {
                         <Text className="text-center text-foreground-muted dark:text-foreground-muted-dark text-lg px-4">
                           We've sent a 6-digit verification code to{"\n"}
                           <Text className="font-semibold text-foreground dark:text-white">
-                            {loginMethod === "phone" ? phoneNumber : email}
+                            {authState.method === "email"
+                              ? authState.credentials.email
+                              : authState.credentials.phone}
                           </Text>
                         </Text>
                       </View>
 
                       <View className="mb-8">
-                        <AnimatedInput
-                          control={otpForm.control}
-                          name="otp"
+                        <TextInput
                           placeholder="Enter 6-digit code"
                           keyboardType="phone-pad"
                           maxLength={6}
@@ -380,16 +370,27 @@ const AuthModal = () => {
                             fontWeight: "bold",
                             letterSpacing: 4,
                           }}
+                          placeholderTextColor={
+                            colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                          }
+                          value={authState.otp}
+                          onChangeText={(text) =>
+                            updateAuthState({ otp: text })
+                          }
+                          className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
+                            authState.errors.otp
+                              ? "border-destructive"
+                              : "border-border/15 dark:border-border/40"
+                          }`}
                         />
+                        {renderError("otp")}
                       </View>
 
                       <TouchableOpacity
-                        onPress={otpForm.handleSubmit(onOtpSubmit)}
-                        disabled={isLoading || !otpForm.formState.isValid}
+                        onPress={handleVerifyOtp}
+                        disabled={isLoading}
                         className={`bg-primary rounded-xl py-4 mb-6 shadow-lg ${
-                          isLoading || !otpForm.formState.isValid
-                            ? "opacity-50"
-                            : ""
+                          isLoading ? "opacity-50" : ""
                         }`}
                         style={{
                           shadowColor: "#3B82F6",
@@ -424,14 +425,16 @@ const AuthModal = () => {
               case "onboarding":
                 return (
                   <View className="flex-1">
-                    {/* Header */}
                     <View className="flex-row items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
                       <View className="w-8" />
                       <Text className="text-xl font-bold text-foreground dark:text-white">
                         Complete Profile
                       </Text>
                       <TouchableOpacity
-                        onPress={() => setShowAuthModal(false)}
+                        onPress={() => {
+                          setShowAuthModal(false);
+                          resetAuth();
+                        }}
                         className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
                       >
                         <Ionicons
@@ -443,7 +446,7 @@ const AuthModal = () => {
                     </View>
 
                     <ScrollView className="flex-1 px-6 py-8">
-                      {/* Profile Icon */}
+                      {renderNonFieldErrors()}
                       <View className="items-center mb-8">
                         <View className="w-20 h-20 bg-primary/10 rounded-full items-center justify-center mb-4">
                           <Ionicons name="person" size={32} color="#3B82F6" />
@@ -453,58 +456,133 @@ const AuthModal = () => {
                         </Text>
                       </View>
 
-                      {/* Form Fields */}
                       <View className="space-y-6">
                         <View>
                           <Text className="text-foreground dark:text-white font-semibold mb-2">
                             First Name
                           </Text>
-                          <AnimatedInput
-                            control={onboardingForm.control}
-                            name="firstName"
-                            placeholder="Enter your first name"
-                            icon="person"
-                            autoCapitalize="words"
+                          <TextInput
+                            placeholder="Enter first name"
+                            keyboardType="default"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.firstName}
+                            onChangeText={(text) =>
+                              updateAuthState({
+                                profile: {
+                                  ...authState.profile,
+                                  firstName: text,
+                                },
+                              })
+                            }
+                            className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
+                              authState.errors.first_name
+                                ? "border-destructive"
+                                : "border-border/15 dark:border-border/40"
+                            }`}
                           />
+                          {renderError("first_name")}
                         </View>
-
                         <View>
                           <Text className="text-foreground dark:text-white font-semibold mb-2">
                             Last Name
                           </Text>
-                          <AnimatedInput
-                            control={onboardingForm.control}
-                            name="lastName"
-                            placeholder="Enter your last name"
-                            icon="person"
-                            autoCapitalize="words"
+                          <TextInput
+                            placeholder="Enter last name"
+                            keyboardType="default"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.lastName}
+                            onChangeText={(text) =>
+                              updateAuthState({
+                                profile: {
+                                  ...authState.profile,
+                                  lastName: text,
+                                },
+                              })
+                            }
+                            className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
+                              authState.errors.last_name
+                                ? "border-destructive"
+                                : "border-border/15 dark:border-border/40"
+                            }`}
                           />
+                          {renderError("last_name")}
                         </View>
-
                         <View>
                           <Text className="text-foreground dark:text-white font-semibold mb-2">
                             Date of Birth
                           </Text>
-                          <AnimatedInput
-                            control={onboardingForm.control}
-                            name="dateOfBirth"
-                            placeholder="YYYY-MM-DD"
-                            icon="calendar"
-                            keyboardType="numeric"
+                          <TextInput
+                            placeholder="Enter date of birth (DD/MM/YYYY)"
+                            keyboardType="default"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.dateOfBirth}
+                            onChangeText={(text) =>
+                              updateAuthState({
+                                profile: {
+                                  ...authState.profile,
+                                  dateOfBirth: text,
+                                },
+                              })
+                            }
+                            className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
+                              authState.errors.date_of_birth
+                                ? "border-destructive"
+                                : "border-border/15 dark:border-border/40"
+                            }`}
                           />
+                          {renderError("date_of_birth")}
                         </View>
+
+                        <View className="flex-row items-start mt-6">
+                          <TouchableOpacity
+                            onPress={() =>
+                              updateAuthState({
+                                termsAccepted: !authState.termsAccepted,
+                              })
+                            }
+                            className="mr-3 mt-1"
+                          >
+                            <View
+                              className={`w-5 h-5 rounded border-2 items-center justify-center ${
+                                authState.termsAccepted
+                                  ? "bg-primary border-primary"
+                                  : "border-gray-300 dark:border-gray-600"
+                              }`}
+                            >
+                              {authState.termsAccepted && (
+                                <Ionicons
+                                  name="checkmark"
+                                  size={12}
+                                  color="white"
+                                />
+                              )}
+                            </View>
+                          </TouchableOpacity>
+                          <Text className="flex-1 text-sm text-foreground-muted dark:text-foreground-muted-dark">
+                            I agree to the{" "}
+                            <Text className="text-primary font-semibold">
+                              Terms of Service
+                            </Text>{" "}
+                            and{" "}
+                            <Text className="text-primary font-semibold">
+                              Privacy Policy
+                            </Text>
+                          </Text>
+                        </View>
+                        {renderError("terms")}
                       </View>
 
-                      {/* Complete Button */}
                       <TouchableOpacity
-                        onPress={onboardingForm.handleSubmit(
-                          onOnboardingSubmit
-                        )}
-                        disabled={
-                          isLoading || !onboardingForm.formState.isValid
-                        }
+                        onPress={handleCompleteOnboarding}
+                        disabled={isLoading || !authState.termsAccepted}
                         className={`bg-primary rounded-xl py-4 mt-8 shadow-lg ${
-                          isLoading || !onboardingForm.formState.isValid
+                          isLoading || isLoading || !authState.termsAccepted
                             ? "opacity-50"
                             : ""
                         }`}

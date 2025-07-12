@@ -1,94 +1,72 @@
 "use server";
 
 import { BASE_URL } from "@/config/environments";
+import {
+  processDjangoErrors,
+  validateEmail,
+  validateOtp,
+  validatePhone,
+} from "@/utils/auth";
+
 import axios from "axios";
-async function requestOTPAction(email?: string, phone_number?: string) {
-  if (!email && !phone_number) {
-    throw new Error("Please provide either phone number or email");
+
+async function sendOTPWIthEmailAction(email: string) {
+  const errors = validateEmail(email);
+  if (errors.length) {
+    throw new Error(errors[0]);
   }
+
   try {
-    const requestBody: { email?: string; phone_number?: string } = {};
-    if (email) requestBody.email = email;
-    if (phone_number) requestBody.phone_number = phone_number;
-
-    const response = await axios.post(
-      `${BASE_URL}/auth/send-otp/`,
-      requestBody
-    );
-
-    return {
-      success: true,
-      data: null,
-      message: response.data.message,
-    };
+    const response = await axios.post(`${BASE_URL}/auth/send-otp/`, {
+      email,
+    });
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(
-        error.response?.data?.message || "Failed to send OTP"
-      );
-    }
-    throw new Error(
-      error instanceof Error ? error.message : "Unknown error occurred"
-    );
+    const djangoErrors = processDjangoErrors(error);
+    throw djangoErrors;
+  }
+}
+
+async function sendOTPWithPhoneAction(phone: string) {
+  const errors = validatePhone(phone);
+  if (errors.length) {
+    throw new Error(errors[0]);
+  }
+
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/send-otp/`, {
+      phone_number: phone,
+    });
+    return response.data;
+  } catch (error) {
+    const djangoErrors = processDjangoErrors(error);
+    throw djangoErrors;
   }
 }
 
 async function verifyOTPAction(
+  method: "email" | "phone",
   otp: string,
   email?: string,
   phone_number?: string
 ) {
-  if (!otp || otp.toLocaleString().length !== 6) {
-    return {
-      success: false,
-      error: "Please provide a valid the OTP",
-    };
+  const errors = validateOtp(otp);
+  if (errors.length) {
+    throw new Error(errors[0]);
   }
-  if (!email && !phone_number) {
-    return {
-      success: false,
-      error: "Please provide either phone number or email",
-    };
-  }
+
+  const payload = method === "email" ? { email, otp } : { phone_number, otp };
+
   try {
-    const requestBody: {
-      otp: string;
-      email?: string;
-      phone_number?: string;
-    } = { otp };
-    if (email) {
-      requestBody.email = email;
-    }
-    if (phone_number) {
-      requestBody.phone_number = phone_number;
-    }
-
-    const response = await axios.post(
-      `${BASE_URL}/auth/verify-otp/`,
-      requestBody
-    );
-    return {
-      success: true,
-      data: null,
-      message: response.data.message,
-    };
+    const response = await axios.post(`${BASE_URL}/auth/verify-otp/`, payload);
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return {
-        success: false,
-        error: error.response?.data?.error || "Failed to send OTP",
-        status: error.response?.status,
-      };
-    }
-
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error occurred",
-    };
+    const djangoErrors = processDjangoErrors(error);
+    throw djangoErrors;
   }
 }
 
-export { requestOTPAction, verifyOTPAction };
+export { verifyOTPAction, sendOTPWIthEmailAction, sendOTPWithPhoneAction };
 
 export default function Placeholder() {
   return null;

@@ -1,155 +1,158 @@
-import { requestOTPAction, verifyOTPAction } from "@/app/actions/requestOTP";
-import { useIsAuthenticated } from "@/store/auth";
+// src/hooks/useAuth.ts
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useRef, useState } from "react";
-import { Alert } from "react-native";
-import PhoneInput from "react-native-phone-number-input";
+import axios from "axios";
+import { BASE_URL } from "@/config/environments";
+import { useIsAuthenticated } from "@/store/auth";
+import {
+  initialAuthState,
+  validateEmail,
+  validatePhone,
+  validateOtp,
+  validateProfile,
+  processDjangoErrors,
+} from "@/utils/auth";
+import {
+  sendOTPWIthEmailAction,
+  sendOTPWithPhoneAction,
+  verifyOTPAction,
+} from "@/app/actions/requestOTP";
 
-const completeOnboardingApi = async (payload: {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  email?: string;
-  phone?: string;
-}) => {
-  const response = await fetch("/api/complete-onboarding", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const data = await response.json();
-  if (!response.ok)
-    throw new Error(data.message || "Failed to complete registration");
-  return data;
-};
-
-export function useAuthModal() {
-  const [authStep, setAuthStep] = useState("login");
-  const [loginMethod, setLoginMethod] = useState("email");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [isNewAccount, setIsNewAccount] = useState(false);
-  const phoneInput = useRef<PhoneInput>(null);
-  const [phoneInputValue, setPhoneInputValue] = useState("");
+export function useAuth() {
+  const [authState, setAuthState] =
+    useState<typeof initialAuthState>(initialAuthState);
   const { setIsAuthenticated, setShowAuthModal } = useIsAuthenticated();
 
-  const resetAuthModal = () => {
-    setAuthStep("login");
-    setPhoneNumber("");
-    setEmail("");
-    setOtp("");
-    setFirstName("");
-    setLastName("");
-    setDateOfBirth("");
-    setIsNewAccount(false);
+  const updateAuthState = (updates: Partial<typeof initialAuthState>) => {
+    setAuthState((prev) => ({ ...prev, ...updates, errors: {} }));
   };
 
-  const sendOtpMutation = useMutation({
-    mutationFn: (payload: { email?: string; phone?: string }) =>
-      requestOTPAction(payload.email, payload.phone),
+  const resetAuth = () => {
+    setAuthState(initialAuthState);
+  };
+
+  const sendEmailOtpMutation = useMutation({
+    mutationFn: async (email: string) => sendOTPWIthEmailAction(email),
     onSuccess: () => {
-      console.log("OTP sent successfully");
-      setAuthStep("otp");
+      updateAuthState({ step: "otp" });
     },
-    onError: (error: Error) => {
-      console.log("error");
-      Alert.alert("Error", error.message);
+    onError: (error: any) => {
+      if (typeof error === "string") {
+        setAuthState((prev) => ({
+          ...prev,
+          errors: { nonFieldErrors: [error] },
+        }));
+      } else {
+        setAuthState((prev) => ({ ...prev, errors: error }));
+      }
+    },
+  });
+
+  const sendPhoneOtpMutation = useMutation({
+    mutationFn: async (phone: string) => sendOTPWithPhoneAction(phone),
+    onSuccess: () => {
+      updateAuthState({ step: "otp" });
+    },
+    onError: (error: any) => {
+      if (typeof error === "string") {
+        setAuthState((prev) => ({
+          ...prev,
+          errors: { nonFieldErrors: [error] },
+        }));
+      } else {
+        setAuthState((prev) => ({ ...prev, errors: error }));
+      }
     },
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (payload: { otp: string; email?: string; phone?: string }) =>
-      verifyOTPAction(payload.otp, payload.email, payload.phone),
+    mutationFn: async ({
+      method,
+      otp,
+      email,
+      phone_number,
+    }: {
+      method: "email" | "phone";
+      otp: string;
+      email: string;
+      phone_number: string;
+    }) => verifyOTPAction(method, otp, email, phone_number),
     onSuccess: (data) => {
-      if (data.success && data.data === null) {
-        setAuthStep("onboarding");
-        setIsNewAccount(true);
-      } else if (data.success && data.data !== null) {
-        setIsNewAccount(false);
+
+      if (data.user === null) {
+        updateAuthState({ step: "onboarding", isNewAccount: true });
+        console.log(data)
+      } else {
+        setIsAuthenticated(true);
         setShowAuthModal(false);
       }
     },
-    onError: (error: Error) => Alert.alert("Error", error.message),
-  });
-
-  const completeOnboardingMutation = useMutation({
-    mutationFn: completeOnboardingApi,
-    onSuccess: (data) => {
-      // Auth completed
+    onError: (error: any) => {
+      if (typeof error === "string") {
+        setAuthState((prev) => ({
+          ...prev,
+          errors: { nonFieldErrors: [error] },
+        }));
+      } else {
+        setAuthState((prev) => ({ ...prev, errors: error }));
+      }
     },
-    onError: (error: Error) => Alert.alert("Error", error.message),
   });
 
-  const handleSendOtp = () => {
-    sendOtpMutation.mutate({
-      phone: loginMethod === "phone" ? phoneNumber : undefined,
-      email: loginMethod === "email" ? email : undefined,
-    });
-  };
+  // Complete onboarding
+  const completeOnboardingMutation = useMutation({
+    mutationFn: async () => {
+      const profileErrors = validateProfile(authState.profile);
+      if (Object.keys(profileErrors).length) {
+        throw profileErrors;
+      }
 
-  const handleVerifyOtp = () => {
-    if (!otp?.toLocaleString().trim()) {
-      return Alert.alert("Error", "Please enter the OTP");
-    }
-    verifyOtpMutation.mutate({
-      otp,
-      phone: loginMethod === "phone" ? phoneNumber : undefined,
-      email: loginMethod === "email" ? email : undefined,
-    });
-  };
+      if (!authState.termsAccepted) {
+        throw { nonFieldErrors: ["You must accept the terms and conditions"] };
+      }
 
-  const handleCompleteOnboarding = () => {
-    if (!firstName.trim() || !lastName.trim() || !dateOfBirth.trim()) {
-      return Alert.alert("Error", "Please fill in all fields");
-    }
-    completeOnboardingMutation.mutate({
-      firstName,
-      lastName,
-      dateOfBirth,
-      phone: loginMethod === "phone" ? phoneNumber : undefined,
-      email: loginMethod === "email" ? email : undefined,
-    });
-  };
+      const payload = {
+        first_name: authState.profile.firstName,
+        last_name: authState.profile.lastName,
+        date_of_birth: authState.profile.dateOfBirth,
+        ...(authState.method === "email"
+          ? { email: authState.credentials.email }
+          : { phone_number: authState.credentials.phone }),
+      };
 
-  const handleSocialLogin = async (
-    provider: "google" | "facebook" | "twitter"
-  ) => {
-    console.log(`Logging in with ${provider}`);
-    setTimeout(() => {}, 1000);
-  };
+      try {
+        const response = await axios.post(`${BASE_URL}/users/`, payload);
+        return response.data;
+      } catch (error) {
+        const djangoErrors = processDjangoErrors(error);
+        throw djangoErrors;
+      }
+    },
+    onSuccess: () => {
+      setIsAuthenticated(true);
+      setShowAuthModal(false);
+      resetAuth();
+    },
+    onError: (error: any) => {
+      setAuthState((prev) => ({ ...prev, errors: error }));
+    },
+  });
 
-  return {phoneInput,
-    authStep,
-    setAuthStep,
-    loginMethod,
-    setLoginMethod,
-    phoneNumber,
-    setPhoneNumber,
-    email,
-    setEmail,
-    otp,
-    setOtp,
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
-    dateOfBirth,
-    setDateOfBirth,
-    isNewAccount,
-    isLoading:
-      sendOtpMutation.isPending ||
-      verifyOtpMutation.isPending ||
-      completeOnboardingMutation.isPending,
-    resetAuthModal,
-    handleSendOtp,
-    handleVerifyOtp,
-    handleCompleteOnboarding,
-    handleSocialLogin,
-    phoneInputValue,
-    setPhoneInputValue,
+  // Combined loading state
+  const isLoading =
+    sendEmailOtpMutation.isPending ||
+    sendPhoneOtpMutation.isPending ||
+    verifyOtpMutation.isPending ||
+    completeOnboardingMutation.isPending;
+
+  return {
+    authState,
+    updateAuthState,
+    resetAuth,
+    sendEmailOtpMutation,
+    sendPhoneOtpMutation,
+    verifyOtpMutation,
+    completeOnboardingMutation,
+    isLoading,
   };
 }
