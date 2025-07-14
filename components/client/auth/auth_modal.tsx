@@ -27,10 +27,10 @@ const AuthModal = () => {
     authState,
     updateAuthState,
     resetAuth,
-    sendEmailOtpMutation,
-    sendPhoneOtpMutation,
-    verifyOtpMutation,
-    completeOnboardingMutation,
+    sendEmailOtp,
+    sendPhoneOtp,
+    verifyOtp,
+    completeOnboarding,
     isLoading,
   } = useAuth();
 
@@ -38,14 +38,14 @@ const AuthModal = () => {
 
   const handleSendOtp = () => {
     if (authState.method === "email") {
-      sendEmailOtpMutation.mutate(authState.credentials.email);
+      sendEmailOtp(authState.credentials.email);
     } else {
-      sendPhoneOtpMutation.mutate(authState.credentials.phone);
+      sendPhoneOtp(authState.credentials.phone);
     }
   };
 
   const handleVerifyOtp = () => {
-    verifyOtpMutation.mutate({
+    verifyOtp({
       method: authState.method,
       otp: authState.otp,
       email: authState.credentials.email,
@@ -54,7 +54,7 @@ const AuthModal = () => {
   };
 
   const handleCompleteOnboarding = () => {
-    completeOnboardingMutation.mutate();
+    completeOnboarding();
   };
 
   const handleSocialLogin = (provider: string) => {
