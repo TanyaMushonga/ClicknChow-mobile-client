@@ -1,7 +1,5 @@
 // src/hooks/useAuth.ts
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { BASE_URL } from "@/config/environments";
 import { useIsAuthenticated } from "@/store/auth";
 import {
@@ -12,15 +10,12 @@ import {
   validateProfile,
   processDjangoErrors,
 } from "@/utils/auth";
-import {
-  sendOTPWIthEmailAction,
-  sendOTPWithPhoneAction,
-  verifyOTPAction,
-} from "@/app/actions/requestOTP";
+import { apiPost } from "@/config/apiClient";
+ 
 
 export function useAuth() {
-  const [authState, setAuthState] =
-    useState<typeof initialAuthState>(initialAuthState);
+  const [authState, setAuthState] = useState(initialAuthState);
+  const [isLoading, setIsLoading] = useState(false);
   const { setIsAuthenticated, setShowAuthModal } = useIsAuthenticated();
 
   const updateAuthState = (updates: Partial<typeof initialAuthState>) => {
@@ -31,77 +26,88 @@ export function useAuth() {
     setAuthState(initialAuthState);
   };
 
-  const sendEmailOtpMutation = useMutation({
-    mutationFn: async (email: string) => sendOTPWIthEmailAction(email),
-    onSuccess: () => {
-      updateAuthState({ step: "otp" });
-    },
-    onError: (error: any) => {
-      if (typeof error === "string") {
-        setAuthState((prev) => ({
-          ...prev,
-          errors: { nonFieldErrors: [error] },
-        }));
-      } else {
-        setAuthState((prev) => ({ ...prev, errors: error }));
-      }
-    },
-  });
+  const handleError = (error: any) => {
+    if (typeof error === "string") {
+      setAuthState((prev) => ({
+        ...prev,
+        errors: { nonFieldErrors: [error] },
+      }));
+    } else {
+      setAuthState((prev) => ({ ...prev, errors: error }));
+    }
+  };
 
-  const sendPhoneOtpMutation = useMutation({
-    mutationFn: async (phone: string) => sendOTPWithPhoneAction(phone),
-    onSuccess: () => {
-      updateAuthState({ step: "otp" });
-    },
-    onError: (error: any) => {
-      if (typeof error === "string") {
-        setAuthState((prev) => ({
-          ...prev,
-          errors: { nonFieldErrors: [error] },
-        }));
-      } else {
-        setAuthState((prev) => ({ ...prev, errors: error }));
+  const sendEmailOtp = async (email: string) => {
+    try {
+      const errors = validateEmail(email);
+      if (errors.length) {
+        throw new Error(errors[0]);
       }
-    },
-  });
 
-  const verifyOtpMutation = useMutation({
-    mutationFn: async ({
-      method,
-      otp,
-      email,
-      phone_number,
-    }: {
-      method: "email" | "phone";
-      otp: string;
-      email: string;
-      phone_number: string;
-    }) => verifyOTPAction(method, otp, email, phone_number),
-    onSuccess: (data) => {
+      setIsLoading(true);
+      await apiPost(`${BASE_URL}/auth/send-otp/`, { email });
+      updateAuthState({ step: "otp" });
+    } catch (error) {
+      handleError(processDjangoErrors(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendPhoneOtp = async (phone: string) => {
+    try {
+      const errors = validatePhone(phone);
+      if (errors.length) {
+        throw new Error(errors[0]);
+      }
+
+      setIsLoading(true);
+      await apiPost(`${BASE_URL}/auth/send-otp/`, { phone_number: phone });
+      updateAuthState({ step: "otp" });
+    } catch (error) {
+      handleError(processDjangoErrors(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyOtp = async ({
+    method,
+    otp,
+    email,
+    phone_number,
+  }: {
+    method: "email" | "phone";
+    otp: string;
+    email: string;
+    phone_number: string;
+  }) => {
+    try {
+      const errors = validateOtp(otp);
+      if (errors.length) {
+        throw new Error(errors[0]);
+      }
+
+      setIsLoading(true);
+      const payload =
+        method === "email" ? { email, otp } : { phone_number, otp };
+      const data = await apiPost(`${BASE_URL}/auth/verify-otp/`, payload) as { user: any };
 
       if (data.user === null) {
         updateAuthState({ step: "onboarding", isNewAccount: true });
-        console.log(data)
       } else {
         setIsAuthenticated(true);
         setShowAuthModal(false);
       }
-    },
-    onError: (error: any) => {
-      if (typeof error === "string") {
-        setAuthState((prev) => ({
-          ...prev,
-          errors: { nonFieldErrors: [error] },
-        }));
-      } else {
-        setAuthState((prev) => ({ ...prev, errors: error }));
-      }
-    },
-  });
+    } catch (error) {
+      handleError(processDjangoErrors(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // Complete onboarding
-  const completeOnboardingMutation = useMutation({
-    mutationFn: async () => {
+  const completeOnboarding = async () => {
+    try {
       const profileErrors = validateProfile(authState.profile);
       if (Object.keys(profileErrors).length) {
         throw profileErrors;
@@ -111,6 +117,7 @@ export function useAuth() {
         throw { nonFieldErrors: ["You must accept the terms and conditions"] };
       }
 
+      setIsLoading(true);
       const payload = {
         first_name: authState.profile.firstName,
         last_name: authState.profile.lastName,
@@ -120,39 +127,25 @@ export function useAuth() {
           : { phone_number: authState.credentials.phone }),
       };
 
-      try {
-        const response = await axios.post(`${BASE_URL}/users/`, payload);
-        return response.data;
-      } catch (error) {
-        const djangoErrors = processDjangoErrors(error);
-        throw djangoErrors;
-      }
-    },
-    onSuccess: () => {
+      await apiPost(`${BASE_URL}/users/`, payload);
       setIsAuthenticated(true);
       setShowAuthModal(false);
       resetAuth();
-    },
-    onError: (error: any) => {
-      setAuthState((prev) => ({ ...prev, errors: error }));
-    },
-  });
-
-  // Combined loading state
-  const isLoading =
-    sendEmailOtpMutation.isPending ||
-    sendPhoneOtpMutation.isPending ||
-    verifyOtpMutation.isPending ||
-    completeOnboardingMutation.isPending;
+    } catch (error) {
+      handleError(processDjangoErrors(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     authState,
     updateAuthState,
     resetAuth,
-    sendEmailOtpMutation,
-    sendPhoneOtpMutation,
-    verifyOtpMutation,
-    completeOnboardingMutation,
+    sendEmailOtp,
+    sendPhoneOtp,
+    verifyOtp,
+    completeOnboarding,
     isLoading,
   };
 }
