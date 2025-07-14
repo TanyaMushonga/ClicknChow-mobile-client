@@ -21,6 +21,7 @@ import MerchantsCloseBy from "@/components/ui/merchantsCloseBy";
 import FeaturedToday from "@/components/ui/FeaturedToday";
 import AuthModal from "@/components/client/auth/auth_modal";
 import { useIsAuthenticated } from "@/store/auth";
+import axios from "axios";
 
 export default function Home() {
   const router = useRouter();
