@@ -152,7 +152,7 @@ interface ErrorResponseData {
   [key: string]: unknown;
 }
 
-class CustomApiError extends Error {
+export class CustomApiError extends Error {
   status?: number;
   data?: unknown;
 
