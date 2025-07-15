@@ -1,5 +1,5 @@
-// src/hooks/useAuth.ts
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { BASE_URL } from "@/config/environments";
 import { useIsAuthenticated } from "@/store/auth";
 import {
@@ -8,15 +8,14 @@ import {
   validatePhone,
   validateOtp,
   validateProfile,
-  processDjangoErrors,
 } from "@/utils/auth";
-import { apiPost } from "@/config/apiClient";
- 
+import { apiPost, CustomApiError } from "@/config/apiClient";
+import { useToast } from "@/provider/ToastProvider";
 
 export function useAuth() {
   const [authState, setAuthState] = useState(initialAuthState);
-  const [isLoading, setIsLoading] = useState(false);
   const { setIsAuthenticated, setShowAuthModal } = useIsAuthenticated();
+  const { showToast } = useToast();
 
   const updateAuthState = (updates: Partial<typeof initialAuthState>) => {
     setAuthState((prev) => ({ ...prev, ...updates, errors: {} }));
@@ -26,98 +25,94 @@ export function useAuth() {
     setAuthState(initialAuthState);
   };
 
-  const handleError = (error: any) => {
-    if (typeof error === "string") {
-      setAuthState((prev) => ({
-        ...prev,
-        errors: { nonFieldErrors: [error] },
-      }));
-    } else {
-      setAuthState((prev) => ({ ...prev, errors: error }));
-    }
-  };
-
-  const sendEmailOtp = async (email: string) => {
-    try {
+  const sendEmailOtpMutation = useMutation({
+    mutationFn: async (email: string) => {
       const errors = validateEmail(email);
-      if (errors.length) {
-        throw new Error(errors[0]);
-      }
-
-      setIsLoading(true);
+      if (errors.length) throw new Error(errors[0]);
       await apiPost(`${BASE_URL}/auth/send-otp/`, { email });
+    },
+    onSuccess: () => {
       updateAuthState({ step: "otp" });
-    } catch (error) {
-      handleError(processDjangoErrors(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      showToast("success", "OTP Sent", "An OTP has been sent to your email.");
+    },
+    onError: (error: any) => {
+      showToast(
+        "error",
+        "Error",
+        error instanceof CustomApiError
+          ? error.message
+          : error?.message || "An error occurred while sending OTP."
+      );
+    },
+  });
 
-  const sendPhoneOtp = async (phone: string) => {
-    try {
+  // --- Phone OTP Mutation ---
+  const sendPhoneOtpMutation = useMutation({
+    mutationFn: async (phone: string) => {
       const errors = validatePhone(phone);
-      if (errors.length) {
-        throw new Error(errors[0]);
-      }
-
-      setIsLoading(true);
+      if (errors.length) throw new Error(errors[0]);
       await apiPost(`${BASE_URL}/auth/send-otp/`, { phone_number: phone });
+    },
+    onSuccess: () => {
       updateAuthState({ step: "otp" });
-    } catch (error) {
-      handleError(processDjangoErrors(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    onError: (error: any) => {
+      showToast(
+        "error",
+        "Error",
+        error instanceof CustomApiError
+          ? error.message
+          : error?.message || "An error occurred while sending OTP."
+      );
+    },
+  });
 
-  const verifyOtp = async ({
-    method,
-    otp,
-    email,
-    phone_number,
-  }: {
-    method: "email" | "phone";
-    otp: string;
-    email: string;
-    phone_number: string;
-  }) => {
-    try {
+  // --- OTP Verification Mutation ---
+  const verifyOtpMutation = useMutation({
+    mutationFn: async ({
+      method,
+      otp,
+      email,
+      phone_number,
+    }: {
+      method: "email" | "phone";
+      otp: string;
+      email: string;
+      phone_number: string;
+    }) => {
       const errors = validateOtp(otp);
-      if (errors.length) {
-        throw new Error(errors[0]);
-      }
-
-      setIsLoading(true);
+      if (errors.length) throw new Error(errors[0]);
       const payload =
         method === "email" ? { email, otp } : { phone_number, otp };
-      const data = await apiPost(`${BASE_URL}/auth/verify-otp/`, payload) as { user: any };
-
+      return apiPost(`${BASE_URL}/auth/verify-otp/`, payload);
+    },
+    onSuccess: (data: any) => {
       if (data.user === null) {
         updateAuthState({ step: "onboarding", isNewAccount: true });
       } else {
         setIsAuthenticated(true);
         setShowAuthModal(false);
       }
-    } catch (error) {
-      handleError(processDjangoErrors(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    onError: (error: any) => {
+      showToast(
+        "error",
+        "Error",
+        error instanceof CustomApiError
+          ? error.message
+          : error?.message || "An error occurred while verifying OTP."
+      );
+    },
+  });
 
-  const completeOnboarding = async () => {
-    try {
+  // --- Onboarding Mutation ---
+  const completeOnboardingMutation = useMutation({
+    mutationFn: async () => {
       const profileErrors = validateProfile(authState.profile);
-      if (Object.keys(profileErrors).length) {
-        throw profileErrors;
-      }
-
+      if (Object.keys(profileErrors).length) throw profileErrors;
       if (!authState.termsAccepted) {
         throw { nonFieldErrors: ["You must accept the terms and conditions"] };
       }
-
-      setIsLoading(true);
       const payload = {
         first_name: authState.profile.firstName,
         last_name: authState.profile.lastName,
@@ -126,26 +121,36 @@ export function useAuth() {
           ? { email: authState.credentials.email }
           : { phone_number: authState.credentials.phone }),
       };
-
       await apiPost(`${BASE_URL}/users/`, payload);
+    },
+    onSuccess: () => {
       setIsAuthenticated(true);
       setShowAuthModal(false);
       resetAuth();
-    } catch (error) {
-      handleError(processDjangoErrors(error));
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    onError: (error: any) => {
+      showToast(
+        "error",
+        "Error",
+        error instanceof CustomApiError
+          ? error.message
+          : error?.message || "An error occurred while completing onboarding."
+      );
+    },
+  });
 
   return {
     authState,
     updateAuthState,
     resetAuth,
-    sendEmailOtp,
-    sendPhoneOtp,
-    verifyOtp,
-    completeOnboarding,
-    isLoading,
+    sendEmailOtp: sendEmailOtpMutation.mutate,
+    sendPhoneOtp: sendPhoneOtpMutation.mutate,
+    verifyOtp: verifyOtpMutation.mutate,
+    completeOnboarding: completeOnboardingMutation.mutate,
+    isLoading:
+      sendEmailOtpMutation.isPending ||
+      sendPhoneOtpMutation.isPending ||
+      verifyOtpMutation.isPending ||
+      completeOnboardingMutation.isPending,
   };
 }
