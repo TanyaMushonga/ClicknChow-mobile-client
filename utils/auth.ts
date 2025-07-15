@@ -77,33 +77,79 @@ export const validateProfile = (
   return errors;
 };
 
-// Error handling for Django REST Framework responses
 export const processDjangoErrors = (error: any): Record<string, string[]> => {
-  if (!error.response)
-    return { nonFieldErrors: ["Network error - please try again"] };
+  if (!error) {
+    return { nonFieldErrors: ["An unknown error occurred"] };
+  }
+  if (!error.response) {
+    if (
+      error.code === "NETWORK_ERROR" ||
+      error.message?.includes("Network Error")
+    ) {
+      return {
+        nonFieldErrors: ["Network error - please check your connection"],
+      };
+    }
+    if (error.code === "TIMEOUT" || error.message?.includes("timeout")) {
+      return { nonFieldErrors: ["Request timed out - please try again"] };
+    }
+    return { nonFieldErrors: ["Connection error - please try again"] };
+  }
 
-  const { data } = error.response;
+  const { status, data } = error.response;
+  if (status >= 500) {
+    return { nonFieldErrors: ["Server error - please try again later"] };
+  }
+
+  if (status === 401) {
+    return { nonFieldErrors: ["Authentication failed - please login again"] };
+  }
+
+  if (status === 403) {
+    return { nonFieldErrors: ["Access denied"] };
+  }
+
+  if (status === 429) {
+    return {
+      nonFieldErrors: ["Too many requests - please wait before trying again"],
+    };
+  }
+
+  if (!data) {
+    return { nonFieldErrors: ["Invalid response from server"] };
+  }
 
   if (typeof data === "string") {
     return { nonFieldErrors: [data] };
   }
 
   if (data.detail) {
-    return { nonFieldErrors: [data.detail] };
+    return {
+      nonFieldErrors: Array.isArray(data.detail) ? data.detail : [data.detail],
+    };
   }
 
   if (data.non_field_errors) {
-    return { nonFieldErrors: data.non_field_errors };
+    return {
+      nonFieldErrors: Array.isArray(data.non_field_errors)
+        ? data.non_field_errors
+        : [data.non_field_errors],
+    };
   }
 
-  // Handle field errors (convert from DRF format to our format)
   const errors: Record<string, string[]> = {};
   for (const [field, messages] of Object.entries(data)) {
     if (Array.isArray(messages)) {
-      errors[field] = messages;
+      errors[field] = messages.filter((msg) => typeof msg === "string");
     } else if (typeof messages === "string") {
       errors[field] = [messages];
+    } else if (messages && typeof messages === "object") {
+      errors[field] = [JSON.stringify(messages)];
     }
+  }
+
+  if (Object.keys(errors).length === 0) {
+    return { nonFieldErrors: ["An error occurred - please try again"] };
   }
 
   return errors;
