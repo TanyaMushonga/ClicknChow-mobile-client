@@ -16,7 +16,6 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useIsAuthenticated } from "@/store/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { AnimatedInput } from "@/components/ui/animated_input";
 import PhoneInput from "react-native-phone-number-input";
 
 const AuthModal = () => {
