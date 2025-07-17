@@ -1,21 +1,25 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { BASE_URL } from "@/config/environments";
 import { useIsAuthenticated } from "@/store/auth";
 import {
   initialAuthState,
   validateEmail,
-  validatePhone,
   validateOtp,
   validateProfile,
 } from "@/utils/auth";
 import { apiPost, CustomApiError } from "@/config/apiClient";
 import { useToast } from "@/provider/ToastProvider";
+import { setTokens, setUserData } from "@/utils/token_storage";
+import PhoneInput from "react-native-phone-number-input";
 
 export function useAuth() {
   const [authState, setAuthState] = useState(initialAuthState);
-  const { setIsAuthenticated, setShowAuthModal } = useIsAuthenticated();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const { setIsAuthenticated, login } = useIsAuthenticated();
   const { showToast } = useToast();
+  const phoneInput = useRef<PhoneInput>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const updateAuthState = (updates: Partial<typeof initialAuthState>) => {
     setAuthState((prev) => ({ ...prev, ...updates, errors: {} }));
@@ -33,7 +37,6 @@ export function useAuth() {
     },
     onSuccess: () => {
       updateAuthState({ step: "otp" });
-      showToast("success", "OTP Sent", "An OTP has been sent to your email.");
     },
     onError: (error: any) => {
       showToast(
@@ -46,11 +49,10 @@ export function useAuth() {
     },
   });
 
-  // --- Phone OTP Mutation ---
   const sendPhoneOtpMutation = useMutation({
     mutationFn: async (phone: string) => {
-      const errors = validatePhone(phone);
-      if (errors.length) throw new Error(errors[0]);
+      const isValidPhone = phoneInput.current?.isValidNumber(phone);
+      if (!isValidPhone) throw new Error("Please enter a valid phone number");
       await apiPost(`${BASE_URL}/auth/send-otp/`, { phone_number: phone });
     },
     onSuccess: () => {
@@ -67,7 +69,6 @@ export function useAuth() {
     },
   });
 
-  // --- OTP Verification Mutation ---
   const verifyOtpMutation = useMutation({
     mutationFn: async ({
       method,
@@ -86,12 +87,15 @@ export function useAuth() {
         method === "email" ? { email, otp } : { phone_number, otp };
       return apiPost(`${BASE_URL}/auth/verify-otp/`, payload);
     },
-    onSuccess: (data: any) => {
-      if (data.user === null) {
-        updateAuthState({ step: "onboarding", isNewAccount: true });
-      } else {
-        setIsAuthenticated(true);
-        setShowAuthModal(false);
+    onSuccess: async (data: any) => {
+      if (data.user === null && !data.access && !data.refresh) {
+        setIsAuthenticated(false);
+        updateAuthState({ step: "onboarding" });
+      } else if (data.access && data.refresh && data.user) {
+        await setTokens(data.access, data.refresh);
+        await setUserData(data.user);
+        login(data.user);
+        resetAuth();
       }
     },
     onError: (error: any) => {
@@ -105,28 +109,52 @@ export function useAuth() {
     },
   });
 
-  // --- Onboarding Mutation ---
   const completeOnboardingMutation = useMutation({
     mutationFn: async () => {
-      const profileErrors = validateProfile(authState.profile);
-      if (Object.keys(profileErrors).length) throw profileErrors;
-      if (!authState.termsAccepted) {
-        throw { nonFieldErrors: ["You must accept the terms and conditions"] };
-      }
       const payload = {
-        first_name: authState.profile.firstName,
-        last_name: authState.profile.lastName,
-        date_of_birth: authState.profile.dateOfBirth,
-        ...(authState.method === "email"
-          ? { email: authState.credentials.email }
-          : { phone_number: authState.credentials.phone }),
+        first_name: authState.profile.first_name,
+        last_name: authState.profile.last_name,
+        date_of_birth: authState.profile.date_of_birth,
+        email: authState.credentials.email
+          ? authState.credentials.email
+          : authState.profile.email,
+        phone_number: authState.credentials.phone
+          ? authState.credentials.phone
+          : authState.profile.phone_number,
+        password: authState.profile.password,
       };
-      await apiPost(`${BASE_URL}/users/`, payload);
+      const profileErrors = validateProfile(payload);
+      if (Object.keys(profileErrors).length) {
+        const errorMessages = Object.values(profileErrors).join(", ");
+        throw new Error(errorMessages);
+      }
+      const isValidPhone = phoneInput.current?.isValidNumber(
+        payload.phone_number
+      );
+      if (!isValidPhone) throw new Error("Please enter a valid phone number");
+      return await apiPost(
+        `${BASE_URL}/users/`,
+        payload,
+        {},
+        {
+          headers: {
+            platform: "mobile",
+          },
+        }
+      );
     },
-    onSuccess: () => {
-      setIsAuthenticated(true);
-      setShowAuthModal(false);
-      resetAuth();
+    onSuccess: async (data: any) => {
+      if (data?.user === null && !data?.access && !data?.refresh) {
+        setIsAuthenticated(false);
+        updateAuthState({ step: "login" });
+        showToast("success", "Onboarding Complete", "You can now log in.");
+        return;
+      } else if (data?.access && data?.refresh && data?.user) {
+        await setUserData(data.user);
+        await setTokens(data.access, data.refresh);
+        login(data.user);
+        resetAuth();
+      }
     },
     onError: (error: any) => {
       showToast(
@@ -152,5 +180,10 @@ export function useAuth() {
       sendPhoneOtpMutation.isPending ||
       verifyOtpMutation.isPending ||
       completeOnboardingMutation.isPending,
+    phoneInput,
+    showDatePicker,
+    setShowDatePicker,
+    showPassword,
+    setShowPassword,
   };
 }
