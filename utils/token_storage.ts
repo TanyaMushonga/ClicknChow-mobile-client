@@ -74,3 +74,32 @@ export async function refreshAccessToken(): Promise<string> {
     throw error;
   }
 }
+
+const USER_DATA_KEY = "user_data";
+
+export async function setUserData(userData: object): Promise<void> {
+  try {
+    await SecureStore.setItemAsync(USER_DATA_KEY, JSON.stringify(userData));
+  } catch (error) {
+    console.error("Error saving user data:", error);
+    throw error;
+  }
+}
+
+export async function getUserData<T = any>(): Promise<T | null> {
+  try {
+    const data = await SecureStore.getItemAsync(USER_DATA_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error("Error retrieving user data:", error);
+    return null;
+  }
+}
+
+export async function clearUserData(): Promise<void> {
+  try {
+    await SecureStore.deleteItemAsync(USER_DATA_KEY);
+  } catch (error) {
+    console.error("Error clearing user data:", error);
+  }
+}
