@@ -10,13 +10,14 @@ import {
   Platform,
   TextInput,
 } from "react-native";
-import React, { useEffect } from "react";
+import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useIsAuthenticated } from "@/store/auth";
 import { useAuth } from "@/hooks/useAuth";
 import PhoneInput from "react-native-phone-number-input";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const AuthModal = () => {
   const { showAuthModal, setShowAuthModal } = useIsAuthenticated();
@@ -31,9 +32,12 @@ const AuthModal = () => {
     verifyOtp,
     completeOnboarding,
     isLoading,
+    phoneInput,
+    showDatePicker,
+    setShowDatePicker,
+    showPassword,
+    setShowPassword,
   } = useAuth();
-
-  const phoneInput = React.useRef<PhoneInput>(null);
 
   const handleSendOtp = () => {
     if (authState.method === "email") {
@@ -60,32 +64,9 @@ const AuthModal = () => {
     console.log(`Logging in with ${provider}`);
   };
 
-  const renderError = (field: string) => {
-    if (!authState.errors[field]) return null;
-
-    return (
-      <View className="mt-1">
-        {authState.errors[field].map((error, index) => (
-          <Text key={index} className="text-red-500 text-sm">
-            {error}
-          </Text>
-        ))}
-      </View>
-    );
-  };
-
-  const renderNonFieldErrors = () => {
-    if (!authState.errors.nonFieldErrors) return null;
-
-    return (
-      <View className="mb-4 p-3 bg-red-100 rounded-lg">
-        {authState.errors.nonFieldErrors.map((error, index) => (
-          <Text key={index} className="text-red-700">
-            {error}
-          </Text>
-        ))}
-      </View>
-    );
+  const handleEmailPasswordLogin = () => {
+    // Handle email/password login logic here
+    console.log("Email/Password login");
   };
 
   return (
@@ -168,10 +149,12 @@ const AuthModal = () => {
                         </TouchableOpacity>
                       </View>
                       <View className="px-4">
-                        {renderNonFieldErrors()}
-                        <View className="mb-6">
+                        <View className="mb-4">
                           {authState.method === "phone" ? (
-                            <>
+                            <View className="mb-6">
+                              <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                                Phone number
+                              </Text>
                               <PhoneInputComponent
                                 ref={phoneInput}
                                 defaultValue={
@@ -184,6 +167,13 @@ const AuthModal = () => {
                                     credentials: {
                                       ...authState.credentials,
                                       phone: text,
+                                    },
+                                  });
+                                }}
+                                onChangeText={(text: string) => {
+                                  updateAuthState({
+                                    credentials: {
+                                      ...authState.credentials,
                                       phoneInputValue: text,
                                     },
                                   });
@@ -221,10 +211,12 @@ const AuthModal = () => {
                                   borderRadius: 8,
                                 }}
                               />
-                              {renderError("phone_number")}
-                            </>
+                            </View>
                           ) : (
-                            <>
+                            <View className="mb-4">
+                              <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                                Email address
+                              </Text>
                               <TextInput
                                 placeholder="Enter your email"
                                 placeholderTextColor={
@@ -250,15 +242,26 @@ const AuthModal = () => {
                                   },
                                 ]}
                               />
-                              {renderError("email")}
-                            </>
+                            </View>
                           )}
                         </View>
                         <TouchableOpacity
                           onPress={handleSendOtp}
-                          disabled={isLoading}
+                          disabled={
+                            isLoading ||
+                            (authState.method === "email" &&
+                              !authState.credentials.email.trim()) ||
+                            (authState.method === "phone" &&
+                              !authState.credentials.phone.trim())
+                          }
                           className={`bg-primary rounded-xl py-4 mb-8 ${
-                            isLoading ? "opacity-50" : ""
+                            isLoading ||
+                            (authState.method === "email" &&
+                              !authState.credentials.email.trim()) ||
+                            (authState.method === "phone" &&
+                              !authState.credentials.phone.trim())
+                              ? "opacity-50"
+                              : ""
                           }`}
                         >
                           <Text className="text-white text-center font-bold text-lg">
@@ -273,6 +276,25 @@ const AuthModal = () => {
                           <View className="flex-1 h-px bg-border/35 dark:bg-border-60" />
                         </View>
                         <View className="flex flex-col gap-4">
+                          <TouchableOpacity
+                            onPress={handleEmailPasswordLogin}
+                            className="border-2 border-border/15 dark:border-border/30 rounded-xl p-4 bg-white dark:bg-card-dark"
+                          >
+                            <View className="flex-row items-center justify-center relative">
+                              <View className="absolute left-0">
+                                <Ionicons
+                                  name="mail"
+                                  size={24}
+                                  color={
+                                    colorScheme === "dark" ? "white" : "black"
+                                  }
+                                />
+                              </View>
+                              <Text className="text-center flex-1 text-lg text-foreground dark:text-white">
+                                Continue with Email & Password
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() => handleSocialLogin("google")}
                             className="bg-foreground border rounded-xl p-4"
@@ -335,7 +357,7 @@ const AuthModal = () => {
                           setShowAuthModal(false);
                           resetAuth();
                         }}
-                        className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
+                        className={`w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center`}
                       >
                         <Ionicons
                           name="close"
@@ -358,6 +380,9 @@ const AuthModal = () => {
                       </View>
 
                       <View className="mb-8">
+                        <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                          OTP pin
+                        </Text>
                         <TextInput
                           placeholder="Enter 6-digit code"
                           keyboardType="phone-pad"
@@ -376,20 +401,21 @@ const AuthModal = () => {
                           onChangeText={(text) =>
                             updateAuthState({ otp: text })
                           }
-                          className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
-                            authState.errors.otp
-                              ? "border-destructive"
-                              : "border-border/15 dark:border-border/40"
-                          }`}
+                          className={`border-2 border-border/15 dark:border-border/30 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base`}
                         />
-                        {renderError("otp")}
                       </View>
 
                       <TouchableOpacity
                         onPress={handleVerifyOtp}
-                        disabled={isLoading}
-                        className={`bg-primary rounded-xl py-4 mb-6 shadow-lg ${
-                          isLoading ? "opacity-50" : ""
+                        disabled={
+                          isLoading ||
+                          !authState.otp ||
+                          authState.otp.length !== 6
+                        }
+                        className={`bg-primary rounded-xl py-4 mb-6 shadow-lg $ ${
+                          !authState.otp || authState.otp.length !== 6
+                            ? "opacity-50"
+                            : ""
                         }`}
                         style={{
                           shadowColor: "#3B82F6",
@@ -424,164 +450,277 @@ const AuthModal = () => {
               case "onboarding":
                 return (
                   <View className="flex-1">
-                    <View className="flex-row items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-                      <View className="w-8" />
-                      <Text className="text-xl font-bold text-foreground dark:text-white">
-                        Complete Profile
+                    <View className="flex-row items-center justify-between p-6 border-b border-border/15 dark:border-border/50">
+                      <TouchableOpacity
+                        onPress={() => updateAuthState({ step: "otp" })}
+                        className="w-8 h-8 items-center justify-center"
+                      >
+                        <Ionicons
+                          name="arrow-back"
+                          size={24}
+                          color={colorScheme === "dark" ? "white" : "black"}
+                        />
+                      </TouchableOpacity>
+                      <Text className="text-2xl font-bold text-foreground dark:text-white">
+                        Finish signing up
                       </Text>
                       <TouchableOpacity
                         onPress={() => {
                           setShowAuthModal(false);
                           resetAuth();
                         }}
-                        className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 items-center justify-center"
+                        className="w-8 h-8 items-center justify-center"
                       >
                         <Ionicons
                           name="close"
-                          size={18}
+                          size={24}
                           color={colorScheme === "dark" ? "white" : "black"}
                         />
                       </TouchableOpacity>
                     </View>
 
-                    <ScrollView className="flex-1 px-6 py-8">
-                      {renderNonFieldErrors()}
-                      <View className="items-center mb-8">
-                        <View className="w-20 h-20 bg-primary/10 rounded-full items-center justify-center mb-4">
-                          <Ionicons name="person" size={32} color="#3B82F6" />
+                    <ScrollView className="flex-1 px-6 py-4">
+                      <View className="mb-8">
+                        <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                          Legal name
+                        </Text>
+                        <View className="border-2 border-border/15 dark:border-border/30 rounded-xl bg-white dark:bg-card-dark">
+                          <TextInput
+                            placeholder="First name on ID"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.first_name}
+                            onChangeText={(text) =>
+                              updateAuthState({
+                                profile: {
+                                  ...authState.profile,
+                                  first_name: text,
+                                },
+                              })
+                            }
+                            className="px-4 py-4 text-foreground dark:text-white text-base"
+                            style={{
+                              borderBottomWidth: 1,
+                              borderBottomColor:
+                                colorScheme === "dark" ? "#333" : "#e5e7eb",
+                            }}
+                          />
+                          <TextInput
+                            placeholder="Last name on ID"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.last_name}
+                            onChangeText={(text) =>
+                              updateAuthState({
+                                profile: {
+                                  ...authState.profile,
+                                  last_name: text,
+                                },
+                              })
+                            }
+                            className="px-4 py-4 text-foreground dark:text-white text-base"
+                          />
                         </View>
-                        <Text className="text-center text-gray-600 dark:text-gray-400 text-base">
-                          Just a few more details to get started
+                        <Text className="text-sm text-foreground-muted dark:text-foreground-muted-dark mt-2">
+                          Make sure this matches the name on your government ID.
                         </Text>
                       </View>
 
-                      <View className="space-y-6">
-                        <View>
-                          <Text className="text-foreground dark:text-white font-semibold mb-2">
-                            First Name
+                      <View className="mb-8">
+                        <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                          Date of birth
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setShowDatePicker(true)}
+                          className="border-2 border-border/15 dark:border-border/30 rounded-xl px-4 py-4 bg-white dark:bg-card-dark"
+                        >
+                          <Text className="text-base text-foreground dark:text-white">
+                            {authState.profile.date_of_birth
+                              ? authState.profile.date_of_birth
+                              : "Select your birthday"}
                           </Text>
-                          <TextInput
-                            placeholder="Enter first name"
-                            keyboardType="default"
-                            placeholderTextColor={
-                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                          <DateTimePicker
+                            value={
+                              authState.profile.date_of_birth
+                                ? new Date(authState.profile.date_of_birth)
+                                : new Date(2000, 0, 1)
                             }
-                            value={authState.profile.firstName}
-                            onChangeText={(text) =>
-                              updateAuthState({
-                                profile: {
-                                  ...authState.profile,
-                                  firstName: text,
-                                },
-                              })
-                            }
-                            className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
-                              authState.errors.first_name
-                                ? "border-destructive"
-                                : "border-border/15 dark:border-border/40"
-                            }`}
+                            mode="date"
+                            display="default"
+                            maximumDate={new Date()}
+                            onChange={(event, selectedDate) => {
+                              setShowDatePicker(false);
+                              if (selectedDate) {
+                                updateAuthState({
+                                  profile: {
+                                    ...authState.profile,
+                                    date_of_birth: selectedDate
+                                      .toISOString()
+                                      .slice(0, 10),
+                                  },
+                                });
+                              }
+                            }}
                           />
-                          {renderError("first_name")}
-                        </View>
-                        <View>
-                          <Text className="text-foreground dark:text-white font-semibold mb-2">
-                            Last Name
-                          </Text>
-                          <TextInput
-                            placeholder="Enter last name"
-                            keyboardType="default"
-                            placeholderTextColor={
-                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                            }
-                            value={authState.profile.lastName}
-                            onChangeText={(text) =>
-                              updateAuthState({
-                                profile: {
-                                  ...authState.profile,
-                                  lastName: text,
-                                },
-                              })
-                            }
-                            className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
-                              authState.errors.last_name
-                                ? "border-destructive"
-                                : "border-border/15 dark:border-border/40"
-                            }`}
-                          />
-                          {renderError("last_name")}
-                        </View>
-                        <View>
-                          <Text className="text-foreground dark:text-white font-semibold mb-2">
-                            Date of Birth
-                          </Text>
-                          <TextInput
-                            placeholder="Enter date of birth (DD/MM/YYYY)"
-                            keyboardType="default"
-                            placeholderTextColor={
-                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
-                            }
-                            value={authState.profile.dateOfBirth}
-                            onChangeText={(text) =>
-                              updateAuthState({
-                                profile: {
-                                  ...authState.profile,
-                                  dateOfBirth: text,
-                                },
-                              })
-                            }
-                            className={`border-2 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base ${
-                              authState.errors.date_of_birth
-                                ? "border-destructive"
-                                : "border-border/15 dark:border-border/40"
-                            }`}
-                          />
-                          {renderError("date_of_birth")}
-                        </View>
+                        )}
+                        <Text className="text-sm text-foreground-muted dark:text-foreground-muted-dark mt-2">
+                          To sign up, you need to be at least 18. Other people
+                          who use ClicknChow won't see your birthday.
+                        </Text>
+                      </View>
 
-                        <View className="flex-row items-start mt-6">
-                          <TouchableOpacity
-                            onPress={() =>
+                      <View className="mb-8">
+                        <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                          {authState.method === "phone" ? "Email" : "Phone"}
+                        </Text>
+                        {authState.method === "phone" ? (
+                          <TextInput
+                            placeholder="Email"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.email || ""}
+                            onChangeText={(text) =>
                               updateAuthState({
-                                termsAccepted: !authState.termsAccepted,
+                                profile: {
+                                  ...authState.profile,
+                                  email: text,
+                                },
                               })
                             }
-                            className="mr-3 mt-1"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            className="border-2 border-border/15 dark:border-border/30 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base"
+                          />
+                        ) : (
+                          <View className="border-2 border-border/15 dark:border-border/30 rounded-xl bg-white dark:bg-card-dark">
+                            <PhoneInputComponent
+                              ref={phoneInput}
+                              defaultValue={
+                                authState.profile.phone_number || ""
+                              }
+                              defaultCode="ZW"
+                              layout="second"
+                              onChangeFormattedText={(text: string) => {
+                                updateAuthState({
+                                  profile: {
+                                    ...authState.profile,
+                                    phone_number: text,
+                                  },
+                                });
+                              }}
+                              withDarkTheme={colorScheme === "dark"}
+                              containerStyle={{
+                                borderRadius: 0,
+                                borderWidth: 0,
+                                backgroundColor: "transparent",
+                                width: "100%",
+                                paddingHorizontal: 0,
+                              }}
+                              textContainerStyle={{
+                                borderRadius: 0,
+                                backgroundColor: "transparent",
+                                paddingVertical: 16,
+                              }}
+                              textInputStyle={{
+                                color: colorScheme === "dark" ? "#fff" : "#111",
+                                fontSize: 16,
+                                paddingVertical: 0,
+                              }}
+                              codeTextStyle={{
+                                color: colorScheme === "dark" ? "#fff" : "#111",
+                                fontWeight: "bold",
+                              }}
+                            />
+                          </View>
+                        )}
+                        <Text className="text-sm text-foreground-muted dark:text-foreground-muted-dark mt-2">
+                          {authState.method === "phone"
+                            ? "We'll email you a reservation confirmation."
+                            : "We'll text you a reservation confirmation."}
+                        </Text>
+                      </View>
+
+                      <View className="mb-8">
+                        <Text className="text-lg font-semibold text-foreground dark:text-white mb-4">
+                          Password
+                        </Text>
+                        <View className="relative">
+                          <TextInput
+                            placeholder="Password"
+                            placeholderTextColor={
+                              colorScheme === "dark" ? "#9CA3AF" : "#6B7280"
+                            }
+                            value={authState.profile.password || ""}
+                            onChangeText={(text) =>
+                              updateAuthState({
+                                profile: {
+                                  ...authState.profile,
+                                  password: text,
+                                },
+                              })
+                            }
+                            secureTextEntry={!showPassword}
+                            className="border-2 border-border/15 dark:border-border/30 rounded-xl px-4 py-4 text-foreground dark:text-white bg-white dark:bg-card-dark text-base pr-16"
+                          />
+                          <TouchableOpacity
+                            className="absolute right-4 top-4 bottom-4 justify-center"
+                            onPress={() => {
+                              setShowPassword(!showPassword);
+                            }}
                           >
-                            <View
-                              className={`w-5 h-5 rounded border-2 items-center justify-center ${
-                                authState.termsAccepted
-                                  ? "bg-primary border-primary"
-                                  : "border-gray-300 dark:border-gray-600"
-                              }`}
-                            >
-                              {authState.termsAccepted && (
-                                <Ionicons
-                                  name="checkmark"
-                                  size={12}
-                                  color="white"
-                                />
-                              )}
-                            </View>
-                          </TouchableOpacity>
-                          <Text className="flex-1 text-sm text-foreground-muted dark:text-foreground-muted-dark">
-                            I agree to the{" "}
-                            <Text className="text-primary font-semibold">
-                              Terms of Service
-                            </Text>{" "}
-                            and{" "}
-                            <Text className="text-primary font-semibold">
-                              Privacy Policy
+                            <Text className="text-foreground dark:text-white font-semibold">
+                              {showPassword ? "Hide" : "Show"}
                             </Text>
-                          </Text>
+                          </TouchableOpacity>
                         </View>
-                        {renderError("terms")}
+                      </View>
+
+                      <View className="mb-8">
+                        <Text className="text-sm text-foreground-muted dark:text-foreground-muted-dark">
+                          By selecting{" "}
+                          <Text className="font-semibold text-foreground dark:text-white">
+                            Agree and continue
+                          </Text>
+                          , I agree to ClicknChow's{" "}
+                          <Text className="underline text-foreground dark:text-white">
+                            Terms of Service
+                          </Text>
+                          ,{" "}
+                          <Text className="underline text-foreground dark:text-white">
+                            Payments Terms of Service
+                          </Text>{" "}
+                          and{" "}
+                          <Text className="underline text-foreground dark:text-white">
+                            Nondiscrimination Policy
+                          </Text>
+                          , and acknowledge the{" "}
+                          <Text className="underline text-foreground dark:text-white">
+                            Privacy Policy
+                          </Text>
+                          .
+                        </Text>
                       </View>
 
                       <TouchableOpacity
                         onPress={handleCompleteOnboarding}
-                        disabled={isLoading || !authState.termsAccepted}
-                        className={`bg-primary rounded-xl py-4 mt-8 shadow-lg ${
-                          isLoading || isLoading || !authState.termsAccepted
+                        disabled={
+                          isLoading ||
+                          !authState.profile.first_name.trim() ||
+                          !authState.profile.last_name.trim() ||
+                          !authState.profile.date_of_birth.trim() ||
+                          !authState.profile.password?.trim()
+                        }
+                        className={`bg-primary rounded-xl py-4 shadow-lg ${
+                          isLoading ||
+                          !authState.profile.first_name.trim() ||
+                          !authState.profile.last_name.trim() ||
+                          !authState.profile.date_of_birth.trim() ||
+                          !authState.profile.password?.trim()
                             ? "opacity-50"
                             : ""
                         }`}
@@ -596,7 +735,7 @@ const AuthModal = () => {
                         <Text className="text-white text-center font-bold text-base">
                           {isLoading
                             ? "Creating Account..."
-                            : "Complete Registration"}
+                            : "Agree and continue"}
                         </Text>
                       </TouchableOpacity>
                     </ScrollView>
