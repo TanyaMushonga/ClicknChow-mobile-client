@@ -20,8 +20,6 @@ import RecommendedForYou from "@/components/ui/RecommendedForYou";
 import MerchantsCloseBy from "@/components/ui/merchantsCloseBy";
 import FeaturedToday from "@/components/ui/FeaturedToday";
 import AuthModal from "@/components/client/auth/auth_modal";
-import { useIsAuthenticated } from "@/store/auth";
-import axios from "axios";
 
 export default function Home() {
   const router = useRouter();
@@ -29,30 +27,6 @@ export default function Home() {
   const [showMapButton, setShowMapButton] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const colorScheme = useColorScheme();
-
-  const { isAuthenticated, setIsAuthenticated, setShowAuthModal } =
-    useIsAuthenticated();
-
-  // Check authentication status on mount
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  const checkAuthStatus = async () => {
-    // Replace with your actual authentication check
-    try {
-      // const token = await AsyncStorage.getItem('authToken');
-      // setIsAuthenticated(!!token);
-      // For demo purposes, set to false to show modal
-      setIsAuthenticated(false);
-      if (!isAuthenticated) {
-        setShowAuthModal(true);
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      setShowAuthModal(true);
-    }
-  };
 
   const handleScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
