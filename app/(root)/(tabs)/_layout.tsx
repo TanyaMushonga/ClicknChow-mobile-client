@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import LocationHeader from "@/components/LocationHeader";
+import LocationHeader from "@/components/ui/LocationHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 
@@ -50,7 +50,7 @@ export default function TabsLayout() {
             case "order":
               iconName = isFocused ? "receipt" : "receipt-outline";
               break;
-            case "profile":
+            case "account":
               iconName = isFocused ? "person" : "person-outline";
               break;
             case "cart":
@@ -205,8 +205,8 @@ export default function TabsLayout() {
         options={{ title: "Orders", headerShown: false }}
       />
       <Tabs.Screen
-        name="profile"
-        options={{ title: "Profile", headerShown: false }}
+        name="account"
+        options={{ title: "Account", headerShown: false }}
       />
     </Tabs>
   );

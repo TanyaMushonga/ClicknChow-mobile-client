@@ -8,20 +8,20 @@ import {
   NativeScrollEvent,
   useColorScheme,
 } from "react-native";
-import React, { useRef, useState } from "react";
-import Banner from "@/components/banner";
-import LastOrder from "@/components/last-order";
-import TrendingNearYou from "@/components/treding-near-you";
-import Search from "@/components/search";
-import DealsAndCombos from "@/components/deals&combos";
-import GroceriesAndEssentials from "@/components/Groceries&Essentials";
+import React, { useRef, useState, useEffect } from "react";
+import LastOrder from "@/components/ui/last-order";
+import TrendingNearYou from "@/components/ui/treding-near-you";
+import Search from "@/components/ui/search";
+import DealsAndCombos from "@/components/ui/deals&combos";
+import GroceriesAndEssentials from "@/components/ui/Groceries&Essentials";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import RecommendedForYou from "@/components/RecommendedForYou";
-import MerchantsCloseBy from "@/components/merchantsCloseBy";
-import FeaturedToday from "@/components/FeaturedToday";
+import RecommendedForYou from "@/components/ui/RecommendedForYou";
+import MerchantsCloseBy from "@/components/ui/merchantsCloseBy";
+import FeaturedToday from "@/components/ui/FeaturedToday";
+import AuthModal from "@/components/client/auth/auth_modal";
 
-const Home = () => {
+export default function Home() {
   const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [showMapButton, setShowMapButton] = useState(false);
@@ -110,8 +110,8 @@ const Home = () => {
           </TouchableOpacity>
         </Animated.View>
       )}
+
+      <AuthModal />
     </View>
   );
-};
-
-export default Home;
+}

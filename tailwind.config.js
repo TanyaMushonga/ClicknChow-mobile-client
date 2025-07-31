@@ -24,6 +24,7 @@ module.exports = {
       card: "#f9f9f7",
       "card-dark": "#252525",
       border: "#686867",
+      destructive: "#f13b58",
     },
   },
   plugins: [],

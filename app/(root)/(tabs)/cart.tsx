@@ -501,7 +501,7 @@ const CartScreen: React.FC = () => {
             store.items.length > 0 && (
               <View
                 key={store.id}
-                className="bg-white dark:bg-foreground mx-4 mt-4 rounded-xl shadow-sm"
+                className="bg-card dark:bg-card-dark mx-4 mt-4 rounded-xl shadow-sm"
               >
                 <View className="p-4">
                   <View className="flex-row items-center">
@@ -538,7 +538,7 @@ const CartScreen: React.FC = () => {
 
                   <View className="flex-row mt-6 space-x-2">
                     <TouchableOpacity
-                      className="flex-1 bg-foreground dark:bg-background-dark py-2.5 rounded-lg mr-2"
+                      className="flex-1 bg-foreground py-2.5 rounded-lg mr-2"
                       onPress={() => viewStore(store.id)}
                     >
                       <View className="flex-row items-center justify-center">
@@ -577,7 +577,7 @@ const CartScreen: React.FC = () => {
             {cartData?.savedForLater.map((item, index) => (
               <View
                 key={item.id}
-                className={`flex-row mt-4 p-3 bg-white dark:bg-foreground rounded-lg shadow-sm`}
+                className={`flex-row mt-4 p-3 bg-card dark:bg-card-dark rounded-lg shadow-sm`}
               >
                 <Image
                   source={{ uri: item.image }}
@@ -596,7 +596,7 @@ const CartScreen: React.FC = () => {
                 </View>
                 <View className="justify-center items-end ml-4 w-30">
                   <TouchableOpacity
-                    className="bg-foreground dark:bg-background-dark px-4 py-2 rounded-md mb-2 w-full items-center"
+                    className="bg-foreground px-4 py-2 rounded-md mb-2 w-full items-center"
                     onPress={() => moveToCart(item.id)}
                   >
                     <Text className="text-white text-sm font-semibold">

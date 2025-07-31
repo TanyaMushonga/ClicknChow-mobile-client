@@ -1,3 +1,4 @@
+"use client";
 import {
   View,
   Text,
@@ -6,15 +7,15 @@ import {
   useColorScheme,
 } from "react-native";
 import React, { useRef, useState } from "react";
-import Search from "@/components/search";
+import Search from "@/components/ui/search";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import ExploreFilters from "@/components/ExploreFilters";
-import Merchants from "@/components/merchant/MerchantsList";
-import FilterSheet from "@/components/sheets/Filter-sheet";
-import BottomSheetLayout from "@/components/BottomSheetLayout";
+import ExploreFilters from "@/components/ui/ExploreFilters";
+import Merchants from "@/components/client/merchant/MerchantsList";
+import FilterSheet from "@/components/client/sheets/Filter-sheet";
+import BottomSheetLayout from "@/components/ui/BottomSheetLayout";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useBottomSheetStore } from "@/store";
-import DisclaimerSheet from "@/components/sheets/DisclaimerSheet";
+import DisclaimerSheet from "@/components/client/sheets/DisclaimerSheet";
 import { useMerchantsStore } from "@/store/merchants";
 
 const Explore = () => {
